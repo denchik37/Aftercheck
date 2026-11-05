@@ -22,6 +22,17 @@ jobs:
           node --version | tee output/node-version.txt
       - name: Install from lockfile
         run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Validate DigitalOcean app-spec schema without credentials
+        run: |
+          set -o pipefail
+          mkdir -p output/deployment "$RUNNER_TEMP/aftercheck-doctl"
+          curl --fail --silent --show-error --location --max-time 60 \
+            https://github.com/digitalocean/doctl/releases/download/v2.3.0/doctl-2.3.0-linux-amd64.tar.gz \
+            --output "$RUNNER_TEMP/aftercheck-doctl/doctl.tar.gz"
+          echo "782f720843364bfe5e7eaffa561af7685987ec3658510faa64ec330c5ea87a3c  $RUNNER_TEMP/aftercheck-doctl/doctl.tar.gz" | sha256sum --check --strict
+          tar -xzf "$RUNNER_TEMP/aftercheck-doctl/doctl.tar.gz" -C "$RUNNER_TEMP/aftercheck-doctl" doctl
+          "$RUNNER_TEMP/aftercheck-doctl/doctl" apps spec validate .do/app.yaml --schema-only \
+            2>&1 | tee output/deployment/spec-schema-validation.log
       - name: Test
         run: |
           set -o pipefail
@@ -66,11 +77,17 @@ jobs:
           git rev-parse HEAD > output/browser/source-revision.txt
           "$AFTERCHECK_BROWSER_VENV/bin/python" scripts/test-inspector.py --out output/browser \
             --evidence examples/sepolia/evidence.json --policy examples/sepolia/policy-pass.json
+      - name: Verify HTTP delivery and local report privacy
+        run: |
+          "$AFTERCHECK_BROWSER_VENV/bin/python" scripts/test-hosted-inspector.py \
+            --local --out output/hosted-local
       - name: Retain browser results and screenshots
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: browser-${{ github.run_id }}-${{ github.run_attempt }}
-          path: output/browser/
+          path: |
+            output/browser/
+            output/hosted-local/
           if-no-files-found: error
           retention-days: 30
