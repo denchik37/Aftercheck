@@ -2,11 +2,23 @@
 
 **Issue [#24](https://github.com/denchik37/aftercheck/issues/24) · 6 November 2026 IST**
 
-## Investigation checkpoint: deployed source identities
+## Executive decision: GO for token and receipt compatibility
 
-This first increment authenticates the selected source programs. The final decision
-will follow pinned live runtime/configuration checks and historical receipt replay.
-It does not authorize or execute a transaction.
+**The selected Circle test-USDC and Sepolia WETH contracts are sufficiently
+authenticated and compatible with Aftercheck's existing direct-swap receipt profile
+to justify considering one separately authorized controlled testnet attempt.**
+
+The deployed proxy/WETH programs were independently recompiled in full; the USDC
+implementation's executable program was independently reproduced with a documented
+metadata-only mismatch. Pinned current and historical runtime observations match
+those authenticated programs. A genuine third-party swap of the exact selected pair
+was collected and passed the unchanged receipt adapter with complete required state
+observations. No verifier expansion was needed.
+
+This closes Issue #24's token/receipt research gate. It does **not** establish wallet
+readiness, grant execution authority, guarantee a future transaction, or prove
+immediate balances. **Receipt-emitted amounts under the documented plain-token
+assumption** remains the financial claim boundary. No new reserve PASS is permitted.
 
 Work started from `main` at `3835c5a933c1f3f493ff726dd3b597f68c8c6330`.
 Issue #24, merged PR #23, the existing feasibility report/probe, production adapter,
@@ -84,6 +96,35 @@ above. Admin getter and slot both returned
 These are provider-dependent block-end observations, not transaction-boundary state
 proofs. They do not establish the implementation at earlier blocks.
 
+## Committed pinned observations
+
+The committed probe at `e5a26b08aa3a4757087f64aece5d8d21f7bd87ba` completed two
+independent captures, each with **20 successful read-only requests and zero errors**:
+
+| Capture | Block and hash | Acquisition interval (UTC) |
+|---|---|---|
+| Historical containing block | `12070596` / `0xf6e12d492ab92cd27c63da5cb20dc61f21751825afe83324ead31eb9f8756d26` | `2026-11-05T21:43:11.859Z`–`21:43:49.658Z` |
+| Current observation | `12072216` / `0xd1446030d1c5b15226929451e952c4c3aad414765f3fcd8f3d2f857323ffc5b1` | `2026-11-05T21:43:49.658Z`–`21:44:26.814Z` |
+
+Every runtime code hash matched the table above; both legacy slots agreed with their
+public getters. Final canonical block and chain checks passed independently for
+each capture. These are separate public Tenderly observations; no values from one
+block were substituted into the other.
+
+At **both** blocks, USDC `paused()` was false, the fixed Router02 and pool were not
+blacklisted, and token decimals were `6` / `18`. The implementation and admin were
+the addresses above. Other configured roles agreed at both blocks:
+
+| Role | Observed address |
+|---|---|
+| Token owner and pauser | `0xab7dbf0fc9d32349c484419073098dcd52c14798` |
+| Blacklister | `0x9d2e76e96b295f45f2f5b02a6b150526be94a66d` |
+| Master minter | `0x4b22a317731c7b744b00038ab782f4c54d152ddb` |
+
+The future owner's identity and blacklist/balance/allowance state remain unset.
+Historical implementation reads describe the end of the containing block, not an
+independent proof of the exact implementation at the target transaction boundary.
+
 ## Transfer paths and administrative controls
 
 The authenticated deployed `FiatTokenV1` functions are inherited unchanged by
@@ -109,8 +150,8 @@ addresses identify configured authorities, not the people or mechanisms controll
 them. [Circle's official source](https://github.com/circlefin/stablecoin-evm/blob/fc85788bc7c23cefe3df1a757133048bfddadeaa/contracts/v1/FiatTokenV1.sol)
 and [proxy source](https://github.com/circlefin/stablecoin-evm/blob/fc85788bc7c23cefe3df1a757133048bfddadeaa/contracts/upgradeability/AdminUpgradeabilityProxy.sol)
 provide context; that current upstream revision is **not asserted to be the deployed
-source revision**. The deployed binding comes from recompiling the exact verified
-source inputs recorded in the manifest.
+source revision**. The deployed binding comes from recompiling verified source
+inputs identified and hashed in the manifest.
 
 WETH9 is a standalone non-upgradeable contract in the authenticated source/runtime.
 Its `transfer` delegates internally to `transferFrom`; ordinary transfers debit and
@@ -192,6 +233,158 @@ Do not extend its coverage to the other three.
 | Exact implementation at the transaction boundary | Not independently proven by a block-end getter/code read; an intra-block upgrade is not excluded by that read alone |
 | Immediate balances/reserves | UNKNOWN; receipt logs are not independent state proofs |
 | Future transfer behavior or transaction success | Not guaranteed; upgrades/configuration and execution conditions can change |
+
+## Read-only tooling and reproducibility
+
+`scripts/check-sepolia-token-semantics.mjs` is a separate research probe. It fixes
+the three code addresses, two legacy proxy slots, and permitted getters; validates
+ABI widths/padding; compares complete runtime hashes; cross-checks getters/storage;
+and rechecks chain and canonical block. An unexpected implementation is rejected
+without following its address. It never returns a financial PASS or execution-ready
+status. The receipt helper reuses the unchanged production parser/verifier with a
+retrospective route-compatibility policy and labels synthetic data separately.
+
+The isolated transport admits five methods: `eth_chainId`, `eth_getBlockByNumber`,
+`eth_getCode`, `eth_getStorageAt` and `eth_call`. All state reads use
+`{blockHash,requireCanonical:true}`. Requests have fixed targets/calldata, no caller
+overrides or state overrides, at most 32 requests, at most 15 seconds per request,
+120 seconds total, 1 MB per response and 4 MB aggregate. A normal probe uses 20
+requests. Provider text and endpoint details do not enter errors. Production
+`RpcClient` remains unchanged and still rejects storage reads.
+
+From the repository root, Node 24:
+
+```bash
+npm ci --ignore-scripts --no-audit --no-fund
+npm run verify
+npm run demo
+node --test test/sepolia-token-semantics.test.mjs
+node scripts/check-sepolia-token-semantics.mjs --json
+node scripts/check-sepolia-token-semantics.mjs --json --block=0xb82ec4
+node scripts/check-sepolia-token-semantics.mjs --json --block=0xb83518
+```
+
+The CLI defaults to the public keyless Tenderly endpoint. `AFTERCHECK_RPC_URL` can
+select a provider locally but is never written to probe output. Where the execution
+environment requires an HTTP proxy, use Node's `--use-env-proxy` flag; that flag was
+used for the recorded live probe. Failed reads remain INCOMPLETE/UNKNOWN. Do not
+replace a failed historical read with a current-state answer.
+
+To extract and replay the exact retained capture **offline**:
+
+```bash
+node --input-type=module <<'JS'
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {inflateSync} from 'node:zlib';
+import {createHash} from 'node:crypto';
+import {assessSelectedReceipt} from './scripts/check-sepolia-token-semantics.mjs';
+const m = JSON.parse(fs.readFileSync('docs/evidence/sepolia-token-semantics.json'));
+const h = m.historicalReplay;
+const bytes = inflateSync(Buffer.from(h.evidenceZlibBase64, 'base64'), {maxOutputLength: 1000000});
+assert.equal(createHash('sha256').update(bytes).digest('hex'), h.evidenceFileSha256);
+fs.mkdirSync('output/token-semantics', {recursive: true});
+fs.writeFileSync('output/token-semantics/evidence.json', bytes);
+fs.writeFileSync('output/token-semantics/policy.json', JSON.stringify(h.policy, null, 2) + '\n');
+console.log(assessSelectedReceipt(JSON.parse(bytes)));
+JS
+npm run cli -- verify output/token-semantics/evidence.json output/token-semantics/policy.json output/token-semantics/replay
+```
+
+For source reproduction, download the three exact `sources[].url` entries in the
+manifest as `proxy.json`, `implementation.json`, and `weth.json` into a separate
+temporary directory. These are GET requests to Sourcify API v2. Check source content
+hashes against `sources[].sourceFiles`; API response hashes identify the records
+actually acquired, while later API metadata can change. Install the historical
+compilers **outside this repository**:
+
+```bash
+npm install --ignore-scripts --no-audit --no-fund solc0612@npm:solc@0.6.12 solc0419@npm:solc@0.4.19
+node <<'JS'
+const fs = require('node:fs');
+const crypto = require('node:crypto');
+const sha = b => crypto.createHash('sha256').update(b).digest('hex');
+for (const [file, packageName] of [['proxy.json','solc0612'], ['implementation.json','solc0612'], ['weth.json','solc0419']]) {
+  const record = JSON.parse(fs.readFileSync(file));
+  const solc = require(packageName);
+  const input = structuredClone(record.stdJsonInput);
+  input.settings.outputSelection = {'*': {'*': ['evm.deployedBytecode.object']}};
+  const output = JSON.parse((solc.compileStandardWrapper || solc.compile)(JSON.stringify(input)));
+  if (output.errors?.some(e => e.severity === 'error')) throw new Error('Compiler error');
+  const fqn = record.compilation.fullyQualifiedName;
+  const split = fqn.lastIndexOf(':');
+  const hex = output.contracts[fqn.slice(0, split)][fqn.slice(split + 1)].evm.deployedBytecode.object;
+  const compiled = Buffer.from(hex, 'hex');
+  const observed = Buffer.from(record.runtimeBytecode.onchainBytecode.slice(2), 'hex');
+  const prefix = b => b.subarray(0, b.length - b.readUInt16BE(b.length - 2) - 2);
+  console.log({contract: record.compilation.name, compiler: solc.version(),
+    bytes: compiled.length, compiledSha256: sha(compiled), observedSha256: sha(observed),
+    fullMatch: compiled.equals(observed), programMatch: prefix(compiled).equals(prefix(observed))});
+}
+JS
+```
+
+Expected: proxy and WETH full matches; implementation full-match false/program-match
+true with the exact hashes and 32 metadata-byte differences already documented.
+The retained local compilation results also record compiler-file SHA-256 and warning
+messages. These old compilers are reproduction dependencies only, not product
+dependencies or an endorsement for new deployments.
+
+## Operational stopping conditions and residual risks
+
+Pause, a blacklisted sender/router/pool, insufficient sender balance/allowance, a
+balance overflow, inadequate gas or an unmet router minimum can revert the attempt.
+Additional token/pool events or unsupported calldata/execution cause unsupported
+receipt evidence. Missing, conflicting, stale or noncanonical observations produce
+UNKNOWN. Never relax these gates to obtain a favorable result.
+
+The runtime allowlist deliberately stops on any newly observed implementation or
+code hash. Future token changes need a fresh bounded source review. Current role
+addresses do not authenticate the administrative controllers; no absence of upgrade
+risk is claimed. Historical block-end reads do not prove an intra-block execution
+boundary or independently reconstruct balance/reserve state. RPC observations and
+portable bundle digests are not consensus proofs, and offline replay does not refresh
+finality. Recompilation adds source/program evidence but is not a security audit.
+
+Source retrieval failures are preserved separately: Etherscan and some Blockscout
+requests returned HTTP 403; legacy Sourcify paths returned 404. Successful API-v2
+source records and successful RPC captures are not presented as retries that erase
+those failures. No failed public-source request was treated as evidence of absent
+contract code or incompatible behavior.
+
+## Readiness matrix and verification
+
+| Feature/gate | Actual test or evidence | Source revision | Remaining risk |
+|---|---|---|---|
+| Source-program authentication | Independent Solidity compilation; full proxy/WETH match and USDC executable-prefix match | Exact source/compiler hashes in manifest | Compiler and source-service trust; USDC metadata difference; no audit |
+| Pinned runtime and legacy proxy binding | Historical/current probes, 20/20 reads each | `e5a26b08aa3a4757087f64aece5d8d21f7bd87ba` | Provider trust, block-end scope, future upgrade |
+| Mutable transfer configuration | Both captures unpaused; router/pool unblocked; roles recorded | Same probe revision | Eventual sender and future state not established |
+| Genuine supported direct receipt | 19/19 collector reads, 12 state observations; complete supported replay | `3835c5a933c1f3f493ff726dd3b597f68c8c6330` | Retrospective policy and receipt-emitted amounts only |
+| Research failure handling | 27 synthetic regressions plus genuine retained-capture offline replay | New research script/tests; final PR CI pins the reviewed revision | Synthetic tests do not establish live behavior |
+| Existing product outcomes | Full local suite: 193 tests; demo PASS/VIOLATION/UNKNOWN, exits 0/2/3 | Executable increment `e5a26b0`; final CI linked in PR | Browser gates remain mandatory and are checked on final PR revision |
+| Reserve/balance proof | Same historical receipt with reserve requirement gives UNKNOWN/PARTIAL | Unchanged production verifier | No boundary reconstruction or balance proof |
+| Controlled execution | Not performed or authorized | Not applicable | Owner wallet, funds, allowance, fresh quote/simulation and policy chronology remain unresolved |
+
+The 28 added tests cover chain/block identity, missing/malformed/code conflicts,
+unexpected proxy targets, ABI padding/booleans, administrative restrictions, fixed
+RPC request surface, count/size/time limits, error sanitization, extra events, wrong
+participants, one-unit amount conflicts beyond `2^53`, incomplete evidence and honest
+UNKNOWN. The real offline test checks the retained file hash/digest and confirms that
+the reserve check remains UNKNOWN. No tests call a live network.
+
+## One next operational step
+
+**Close the token-compatibility research gate and prepare one concrete owner execution
+authorization.** It must identify the public-use Sepolia EOA/recipient, exact input
+cap, gas caps, legitimate free test-token/gas acquisition, and any bounded approval.
+Once those owner-controlled prerequisites exist, refresh the implementation and
+restriction checks, obtain a fresh quote and sender-specific read-only router
+simulation, and present the exact final policy/intent record and single direct swap
+for authorization before signing/broadcasting. No owner address or numeric execution
+budget is invented here. Historical zero minimum is not an execution recommendation.
+
+The optional experiment remains separate from the working historical demonstration
+and public deployment. Stop if the refreshed facts fail; retain the existing demo.
 
 ## Scope retained
 
