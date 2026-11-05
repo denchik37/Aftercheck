@@ -67,11 +67,11 @@ Both runs inspect existing third-party Sepolia transactions; no project wallet t
 | [Initial capture, PR #3](https://github.com/denchik37/aftercheck/actions/runs/42066113089), first candidate | Transaction and block present; receipt null; no state observations | Incomplete evidence; UNKNOWN |
 | [Capture matrix, PR #5](https://github.com/denchik37/aftercheck/actions/runs/42067676503), PublicNode, first candidate | SUCCEEDED receipt; transaction/receipt/block identity complete; seven initial protocol reads all return `RPC_REMOTE_ERROR` | Pool binding is not established; UNKNOWN |
 | Same matrix, PublicNode, second candidate | Receipt missing | Incomplete evidence; UNKNOWN |
-| Same matrix, dRPC, both candidates | Chain ID unavailable | Collection stops before transaction/protocol reads; UNKNOWN |
+| Same matrix, dRPC, both candidates | Initial chain-ID request fails | CAPTURE_FAILED; no evidence bundle or policy verdict produced |
 
 The retained Publicnode partial bundle's digest is `0xeb791a7eedbdb9362943d9f939ac9649c29f4d490e08ec1bfdd067c4b78a8e8f`. Its source revision is `b8181d96ea502fe05f2f938cf05815feaa0b1bc4`; it is committed separately in the example. Fields from separate providers were not combined.
 
-These earlier partial attempts remain UNKNOWN after the complete Tenderly capture. A successful workflow status establishes that the job completed and retained observations, not a financial PASS. The recorded sanitized RPC errors do not establish why the provider rejected those reads.
+The retained partial bundles remain UNKNOWN after the complete Tenderly capture; failed capture attempts produced no policy verdict. A successful workflow status establishes that the job completed and retained observations, not a financial PASS. The recorded sanitized RPC errors do not establish why the provider rejected those reads.
 
 ## Reproduce and finish delivery
 

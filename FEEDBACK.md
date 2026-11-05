@@ -25,7 +25,7 @@ These are implementation observations and suggestions, not survey ratings, measu
 
 ## Observed historical capture
 
-Publicnode returned missing receipts in some attempts and a receipt with unavailable historical state in another; dRPC failed the initial chain-ID request. Those results remained separate and replayed as UNKNOWN. A subsequent [keyless Tenderly capture](https://github.com/denchik37/aftercheck/actions/runs/42068312090) returned the receipt and all twelve required hash-bound observations in nineteen read-only calls. The [retained Publicnode partial bundle](examples/sepolia/evidence-publicnode-partial.json) keeps the failure reproducible. Sanitized errors do not establish whether an individual failure was caused by history retention, parameter support or another provider condition.
+Publicnode returned missing receipts in some attempts and a receipt with unavailable historical state in another. Its retained incomplete bundle independently replays as UNKNOWN. dRPC failed the initial chain-ID request, so that attempt produced no evidence bundle or policy verdict. A subsequent [keyless Tenderly capture](https://github.com/denchik37/aftercheck/actions/runs/42068312090) returned the receipt and all twelve required hash-bound observations in nineteen read-only calls. The [retained Publicnode partial bundle](examples/sepolia/evidence-publicnode-partial.json) keeps that incomplete result reproducible. Sanitized errors do not establish whether an individual failure was caused by history retention, parameter support or another provider condition.
 
 ## Form handoff
 
