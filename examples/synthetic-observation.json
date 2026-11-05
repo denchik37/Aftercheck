@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "aftercheck.observation.v1",
+  "evidenceClass": "SYNTHETIC_FIXTURE",
+  "chainId": 11155111,
+  "transactionHash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "blockHash": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "receiptStatus": "SUCCEEDED",
+  "swap": {
+    "kind": "UNISWAP_V3_ROUTER02_EXACT_INPUT_SINGLE",
+    "owner": "0x1111111111111111111111111111111111111111",
+    "recipient": "0x2222222222222222222222222222222222222222",
+    "tokenIn": "0x3333333333333333333333333333333333333333",
+    "tokenOut": "0x4444444444444444444444444444444444444444",
+    "pool": "0x5555555555555555555555555555555555555555",
+    "amountInRaw": "500",
+    "amountOutRaw": "350",
+    "transfers": [
+      {
+        "token": "0x3333333333333333333333333333333333333333",
+        "from": "0x1111111111111111111111111111111111111111",
+        "to": "0x5555555555555555555555555555555555555555",
+        "amountRaw": "500"
+      },
+      {
+        "token": "0x4444444444444444444444444444444444444444",
+        "from": "0x5555555555555555555555555555555555555555",
+        "to": "0x2222222222222222222222222222222222222222",
+        "amountRaw": "350"
+      }
+    ]
+  }
+}

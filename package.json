@@ -8,6 +8,7 @@
   },
   "scripts": {
     "test": "node --disable-warning=ExperimentalWarning --experimental-strip-types --test test/*.test.mjs",
-    "verify": "npm test"
+    "verify": "npm test",
+    "cli": "node --disable-warning=ExperimentalWarning --experimental-strip-types bin/aftercheck.mjs"
   }
 }
