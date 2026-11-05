@@ -38,6 +38,14 @@ Use a dedicated output directory. Files are staged before the complete managed s
 
 The optional **Capture public Sepolia evidence** workflow is separate from deterministic CI. It can run manually or on a dedicated `capture/**` branch, using a fixed credential-free public provider; it retains observations as an artifact and bounded log JSON. A completed collection workflow is not a financial verdict.
 
+## Inspect a saved report in the browser
+
+Open [`web/inspector.html`](web/inspector.html) from your local checkout, then select the generated `report.json`. The single file includes all scripts and styles; it has no backend, remote fonts, analytics or wallet connection. It displays the four result dimensions, exact receipt-emitted amounts, evidence/policy digests, checks and limitations. Malformed input clears the previous display, and imported text cannot insert HTML.
+
+The inspector is a **saved-report viewer**. It does not recompute the financial verdict or authenticate chain evidence. Use the CLI `verify` command for independent offline re-evaluation, then inspect its output.
+
+The optional browser test runtime is pinned in `test/browser-requirements.txt`. CI tests desktop and mobile views in a fresh Chromium context with all networking disabled; it loads the exact HTML source into `about:blank` and retains screenshots. This tests rendering, file import, downloads and hostile input; `file://` navigation itself is not exercised by that isolated harness.
+
 ## Current supported scope
 
 - Strict canonical unsigned decimal strings up to uint256; `bigint` comparisons, not floating-point finance.

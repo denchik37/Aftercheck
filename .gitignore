@@ -6,3 +6,4 @@ aftercheck-output/
 !.env.example
 *.log
 .DS_Store
+__pycache__/

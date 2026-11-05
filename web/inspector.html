@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'none'; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="color-scheme" content="light">
+  <title>Aftercheck — Local report inspector</title>
+  <style>
+    :root { --ink:#192d29; --muted:#52665f; --paper:#f5f5f0; --card:#fff; --line:#d7dfd8; --accent:#076e54; --pass:#075b3c; --pass-bg:#e1f3e7; --violation:#9c3025; --violation-bg:#ffebe5; --unknown:#79500b; --unknown-bg:#fff1cc; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    button,input,textarea { font:inherit; }
+    button,input,textarea,summary { accent-color:var(--accent); }
+    button,summary,input[type=file] { cursor:pointer; }
+    button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible,pre:focus-visible { outline:3px solid #117a9b; outline-offset:4px; }
+    [hidden] { display:none !important; }
+    .wrap { width:min(1100px,calc(100% - 40px)); margin:0 auto; }
+    header { border-bottom:1px solid var(--line); background:var(--card); }
+    .topbar { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:19px 0; }
+    .brand { display:flex; align-items:center; gap:10px; font-size:21px; font-weight:760; letter-spacing:-.7px; }
+    .brand-mark { display:grid; place-items:center; width:30px; height:30px; border:2px solid var(--accent); border-radius:7px; color:var(--accent); font-size:18px; letter-spacing:0; }
+    .local-tag { color:var(--muted); font-size:11px; font-weight:750; letter-spacing:1.2px; text-align:right; }
+    main { padding:35px 0 52px; }
+    .eyebrow { margin:0 0 6px; color:var(--accent); font-size:12px; font-weight:760; letter-spacing:1.5px; text-transform:uppercase; }
+    h1 { margin:0; font-size:clamp(29px,5vw,42px); line-height:1.14; font-weight:720; letter-spacing:-1.4px; }
+    .intro { margin:12px 0 24px; max-width:790px; color:var(--muted); }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:23px; }
+    .import-row { display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap; }
+    .import-row p { margin:4px 0 0; color:var(--muted); font-size:14px; }
+    .import-label { font-weight:700; }
+    input[type=file] { max-width:100%; width:340px; font-size:13px; color:var(--muted); }
+    input[type=file]::file-selector-button { border:1px solid var(--accent); border-radius:6px; padding:11px 15px; margin-right:12px; color:#fff; background:var(--accent); font-weight:650; cursor:pointer; }
+    details.paste { margin-top:18px; padding-top:13px; border-top:1px solid var(--line); }
+    summary { color:var(--muted); font-size:14px; font-weight:650; width:fit-content; }
+    textarea { display:block; width:100%; min-height:140px; resize:vertical; border:1px solid var(--line); border-radius:6px; background:#fbfcfa; padding:12px; margin:10px 0; font:13px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace; }
+    .paste-label { display:block; margin-top:12px; color:var(--muted); font-size:13px; }
+    button { border:1px solid var(--line); background:#fff; border-radius:6px; color:var(--ink); padding:9px 13px; min-height:42px; font-weight:650; font-size:13px; }
+    button:hover { background:#edf4ef; }
+    .button-primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+    .button-primary:hover { background:#075840; }
+    .import-status { margin:10px 0 0; color:var(--muted); font-size:13px; min-height:20px; overflow-wrap:anywhere; }
+    .error { margin-top:16px; border:1px solid #e7aea6; border-left:4px solid var(--violation); background:var(--violation-bg); padding:14px 17px; color:#76271d; border-radius:6px; }
+    .empty { margin:25px 0 0; padding:26px 20px; text-align:center; border:1px dashed #b9c8bd; border-radius:10px; }
+    .empty strong { display:block; font-weight:650; }
+    .empty p { margin:7px auto 0; max-width:650px; color:var(--muted); font-size:14px; }
+    .report { margin-top:24px; }
+    .display-only { padding:12px 16px; background:#eaf0ec; border-radius:7px; color:#3b5148; font-size:13px; }
+    .display-only strong { color:var(--ink); }
+    .report-head { margin:22px 0 16px; display:flex; justify-content:space-between; gap:16px; align-items:flex-start; flex-wrap:wrap; }
+    h2 { margin:0; font-size:24px; letter-spacing:-.5px; line-height:1.25; }
+    .report-subtitle { margin:8px 0 0; font-size:14px; color:var(--muted); max-width:740px; }
+    .actions { display:flex; gap:8px; flex-wrap:wrap; }
+    .status-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+    .status-card { border:1px solid var(--line); background:var(--card); border-radius:9px; padding:16px; min-width:0; }
+    .status-card .label { color:var(--muted); font-size:12px; display:block; margin-bottom:10px; }
+    .status-card small { display:block; margin-top:8px; color:var(--muted); font-size:12px; line-height:1.45; }
+    .badge { display:inline-block; padding:5px 8px; border-radius:4px; font:700 12px/1.35 ui-monospace,SFMono-Regular,Consolas,monospace; letter-spacing:.1px; overflow-wrap:anywhere; max-width:100%; color:#365147; background:#e9efeb; }
+    .badge[data-tone=pass] { color:var(--pass); background:var(--pass-bg); }
+    .badge[data-tone=violation] { color:var(--violation); background:var(--violation-bg); }
+    .badge[data-tone=unknown] { color:var(--unknown); background:var(--unknown-bg); }
+    .evidence-banner { margin:15px 0; padding:14px 16px; border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:7px; background:#fafffb; }
+    .evidence-banner[data-synthetic=true] { background:var(--unknown-bg); border-color:#d8c18b; border-left-color:#b77e1a; }
+    .evidence-banner strong { display:block; font-size:14px; }
+    .evidence-banner p { margin:5px 0 0; font-size:13px; color:#455b51; }
+    .evidence-banner code { display:inline-block; margin-top:6px; font-size:12px; }
+    .section-grid { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:16px; }
+    .section { margin-top:16px; }
+    h3 { font-size:16px; margin:0 0 15px; letter-spacing:-.15px; }
+    .section-note { font-size:13px; color:var(--muted); margin:-7px 0 17px; }
+    dl { margin:0; }
+    .identity-row { padding:10px 0; border-bottom:1px solid #edf0eb; }
+    .identity-row:first-child { padding-top:0; }
+    .identity-row:last-child { border-bottom:0; padding-bottom:0; }
+    dt { color:var(--muted); font-size:12px; font-weight:600; margin-bottom:4px; }
+    dd { margin:0; font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace; overflow-wrap:anywhere; white-space:pre-wrap; }
+    .checks { padding:0; margin:0; list-style:none; }
+    .check { padding:13px 0; border-top:1px solid #edf0eb; }
+    .check:first-child { padding-top:0; border-top:0; }
+    .check:last-child { padding-bottom:0; }
+    .check-heading { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+    .check-heading strong { font-size:14px; overflow-wrap:anywhere; }
+    .check p { margin:7px 0 0; color:var(--muted); font-size:13px; overflow-wrap:anywhere; }
+    .no-checks { margin:0; color:var(--muted); font-size:14px; }
+    .limitations { margin:0; padding-left:20px; color:#455c50; font-size:14px; }
+    .limitations li { margin:9px 0; overflow-wrap:anywhere; }
+    .limitations li:first-child { margin-top:0; }
+    .limitations li:last-child { margin-bottom:0; }
+    .raw { margin-top:16px; }
+    pre { margin:13px 0 0; padding:15px; border:1px solid var(--line); border-radius:7px; max-height:400px; overflow:auto; color:#2f4c3f; background:#f7faf7; font:12px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace; white-space:pre-wrap; overflow-wrap:anywhere; }
+    footer { border-top:1px solid var(--line); margin-top:28px; padding-top:16px; color:var(--muted); font-size:12px; }
+    code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; overflow-wrap:anywhere; }
+    @media(max-width:760px) { .status-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .section-grid { grid-template-columns:1fr; gap:0; } .card { padding:19px; } .import-row { gap:15px; } .topbar { padding:15px 0; } main { padding-top:26px; } }
+    @media(max-width:420px) { .wrap { width:calc(100% - 24px); } .local-tag { font-size:10px; letter-spacing:.6px; max-width:95px; } .status-card { padding:12px; } .badge { font-size:11px; } .actions { width:100%; } .actions button { flex:1; } }
+  </style>
+</head>
+<body>
+  <header><div class="wrap topbar"><div class="brand"><span class="brand-mark" aria-hidden="true">✓</span>Aftercheck</div><span class="local-tag">LOCAL FILES · NO NETWORK</span></div></header>
+  <main class="wrap">
+    <p class="eyebrow">Local report inspector</p>
+    <h1>Inspect a swap outcome.</h1>
+    <p class="intro">Open the JSON report produced by Aftercheck. See what executed, which checks passed, and where the evidence stops.</p>
+    <section class="card" aria-label="Open a saved report">
+      <div class="import-row"><div><label class="import-label" for="report-file">Open a report</label><p>aftercheck.report.v1 · JSON · maximum 2 MiB</p></div><input id="report-file" type="file" accept=".json,application/json" aria-describedby="import-status"></div>
+      <details class="paste"><summary>Or paste report JSON</summary><label for="report-text" class="paste-label">Report JSON is processed on this device.</label><textarea id="report-text" spellcheck="false" placeholder="Paste an Aftercheck report here"></textarea><button type="button" id="open-text" class="button-primary">Inspect pasted report</button></details>
+      <p id="import-status" class="import-status" role="status">Files stay on this device. No wallet connection is needed.</p>
+    </section>
+    <div id="import-error" class="error" role="alert" hidden></div>
+    <div id="empty-state" class="empty"><strong>Your saved report appears here.</strong><p>First collect evidence and run Aftercheck’s verifier. This inspector displays the saved result; it does not perform new blockchain checks.</p></div>
+    <noscript><p class="error">JavaScript is needed to read a local report. This file contains all of its scripts and styles.</p></noscript>
+    <article id="report" class="report" hidden aria-label="Imported report">
+      <div class="display-only"><strong>Imported report · display only.</strong> The results below come from the supplied file. This viewer does not recompute financial checks, authenticate evidence, or independently verify the chain.</div>
+      <div class="report-head"><div><p class="eyebrow">Saved policy result</p><h2 id="report-title"></h2><p id="report-subtitle" class="report-subtitle"></p></div><div class="actions"><button type="button" id="download-report">Download report JSON</button><button type="button" id="clear-report">Clear report</button></div></div>
+      <div class="status-grid" aria-label="Separate result dimensions">
+        <section class="status-card"><span class="label">01 / Execution</span><span class="badge" id="execution"></span><small>Did the transaction execute?</small></section>
+        <section class="status-card"><span class="label">02 / Protocol support</span><span class="badge" id="support"></span><small>Is this operation in the report’s supported scope?</small></section>
+        <section class="status-card"><span class="label">03 / Evidence coverage</span><span class="badge" id="coverage"></span><small>Are the required observations available and consistent?</small></section>
+        <section class="status-card"><span class="label">04 / Policy verdict</span><span class="badge" id="verdict"></span><small>Did the declared financial rules hold?</small></section>
+      </div>
+      <aside id="evidence-banner" class="evidence-banner"><strong id="evidence-title"></strong><code id="evidence-class"></code><p id="evidence-description"></p></aside>
+      <div class="section-grid">
+        <section class="card section"><h3>Financial checks</h3><ol id="checks" class="checks"></ol><p id="no-checks" class="no-checks" hidden>No individual financial checks were established in this report.</p></section>
+        <section class="card section"><h3>Transaction &amp; evidence identity</h3><p class="section-note">Identifiers are read from the report and are not independently authenticated here.</p><dl id="identity"></dl></section>
+      </div>
+      <section id="protocol-section" class="card section" hidden><h3>Receipt observations</h3><p class="section-note">These are receipt-emitted amounts under the report’s plain-token assumption. Raw amounts do not establish account balances, token behavior, or economic value.</p><dl id="protocol"></dl></section>
+      <section class="card section"><h3>Scope &amp; trust limitations</h3><ul id="limitations" class="limitations"></ul></section>
+      <details class="card raw"><summary>Raw report JSON</summary><pre id="raw-report" tabindex="0"></pre></details>
+    </article>
+    <footer>Aftercheck is a read-only inspection tool. A scoped PASS is not an audit, a guarantee about funds, or permission to transact. Policies supplied after execution do not prove original user intent.</footer>
+  </main>
+  <script id="report-parser">
+    'use strict';
+    const AftercheckReports = (() => {
+      const MAX_BYTES = 2 * 1024 * 1024;
+      const FORBIDDEN_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
+      const EXECUTIONS = ['SUCCEEDED', 'REVERTED', 'PENDING', 'UNKNOWN'];
+      const SUPPORTS = ['SUPPORTED', 'SUPPORTED_TEST_PROFILE', 'UNSUPPORTED'];
+      const COVERAGES = ['COMPLETE', 'PARTIAL', 'CONFLICTED'];
+      const VERDICTS = ['PASS', 'VIOLATION', 'UNKNOWN'];
+      const HASH = /^0x[0-9a-f]{64}$/i;
+      const ADDRESS = /^0x[0-9a-f]{40}$/i;
+      const ALLOWED_FIELDS = new Set(['schemaVersion', 'evidenceClass', 'transactionHash', 'execution', 'support', 'coverage', 'verdict', 'checks', 'limitations', 'evidenceDigest', 'policyDigest', 'chainId', 'blockHash', 'blockNumber', 'transactionIndex', 'protocol', 'evaluatorVersion', 'verificationMode', 'policySource', 'sourceTrust', 'observationFinality']);
+      const PROTOCOL_FIELDS = ['profile', 'router', 'factory', 'pool', 'owner', 'recipient', 'tokenIn', 'tokenOut', 'fee', 'amountInRaw', 'amountOutRaw', 'amountOutMinimumRaw', 'logIndices'];
+      const fail = message => { throw new TypeError(message); };
+      const record = value => value !== null && typeof value === 'object' && !Array.isArray(value);
+      const text = (value, label, max = 8192) => typeof value === 'string' && value.length > 0 && value.length <= max ? value : fail(label + ' must be a nonempty bounded string.');
+      const oneOf = (value, allowed, label) => allowed.includes(value) ? value : fail(label + ' is missing or unsupported.');
+      const identityInteger = value => (typeof value === 'number' && Number.isSafeInteger(value) && value >= 0) || (typeof value === 'string' && value.length <= 80 && /^(?:0|[1-9][0-9]*|0x(?:0|[1-9a-f][0-9a-f]*))$/i.test(value));
+
+      // A small bounded JSON reader rejects duplicate/unsafe keys before they can be lost.
+      function readJson(source) {
+        let index = 0, nodes = 0;
+        const whitespace = () => { while (index < source.length && /[\x20\t\r\n]/.test(source[index])) index++; };
+        function string() {
+          const start = index++;
+          while (index < source.length) {
+            const char = source[index++];
+            if (char === '"') {
+              let value;
+              try { value = JSON.parse(source.slice(start, index)); } catch { return fail('Invalid JSON string.'); }
+              if (value.length > 65536) fail('A report string exceeds the size limit.');
+              return value;
+            }
+            if (char === '\\') index++;
+          }
+          return fail('Unterminated JSON string.');
+        }
+        function value(depth) {
+          if (depth > 32 || ++nodes > 20000) fail('Report structure exceeds the size or depth limit.');
+          whitespace();
+          const char = source[index];
+          if (char === '"') return string();
+          if (char === '{') {
+            index++;
+            const result = Object.create(null), keys = new Set();
+            whitespace();
+            if (source[index] === '}') { index++; return result; }
+            while (index < source.length) {
+              whitespace();
+              if (source[index] !== '"') fail('Invalid JSON object key.');
+              const key = string();
+              if (key.length > 128) fail('A report field name exceeds the size limit.');
+              if (FORBIDDEN_KEYS.has(key)) fail('Unsafe JSON key is not allowed.');
+              if (keys.has(key)) fail('Duplicate JSON keys are not allowed.');
+              keys.add(key); whitespace();
+              if (source[index++] !== ':') fail('Invalid JSON object.');
+              result[key] = value(depth + 1); whitespace();
+              const separator = source[index++];
+              if (separator === '}') return result;
+              if (separator !== ',') fail('Invalid JSON object separator.');
+            }
+            return fail('Unterminated JSON object.');
+          }
+          if (char === '[') {
+            index++; const result = []; whitespace();
+            if (source[index] === ']') { index++; return result; }
+            while (index < source.length) {
+              result.push(value(depth + 1)); whitespace();
+              const separator = source[index++];
+              if (separator === ']') return result;
+              if (separator !== ',') fail('Invalid JSON array separator.');
+            }
+            return fail('Unterminated JSON array.');
+          }
+          for (const [literal, output] of [['true', true], ['false', false], ['null', null]]) {
+            if (source.startsWith(literal, index)) { index += literal.length; return output; }
+          }
+          const match = source.slice(index).match(/^-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?/);
+          if (!match) fail('Invalid JSON value.');
+          index += match[0].length;
+          const output = Number(match[0]);
+          if (!Number.isSafeInteger(output)) fail('Report numbers must be safe integers; token amounts must use strings.');
+          return output;
+        }
+        const output = value(0); whitespace();
+        if (index !== source.length) fail('Unexpected content after the report JSON.');
+        return output;
+      }
+
+      function parseReport(source) {
+        if (typeof source !== 'string' || source.length > MAX_BYTES || new TextEncoder().encode(source).byteLength > MAX_BYTES) fail('Report exceeds the 2 MiB file limit.');
+        const report = readJson(source);
+        if (!record(report)) fail('Report must be a JSON object.');
+        if (Object.keys(report).some(key => !ALLOWED_FIELDS.has(key))) fail('Report contains an unsupported top-level field.');
+        if (report.schemaVersion !== 'aftercheck.report.v1') fail('Expected schemaVersion aftercheck.report.v1. Import a report, not an evidence bundle or policy.');
+        text(report.evidenceClass, 'evidenceClass', 160);
+        if (report.transactionHash !== null && (typeof report.transactionHash !== 'string' || !HASH.test(report.transactionHash))) fail('transactionHash must be a 32-byte hex hash or null.');
+        oneOf(report.execution, EXECUTIONS, 'Execution');
+        oneOf(report.support, SUPPORTS, 'Support');
+        oneOf(report.coverage, COVERAGES, 'Coverage');
+        oneOf(report.verdict, VERDICTS, 'Verdict');
+        if (!Array.isArray(report.checks) || report.checks.length > 512) fail('checks must be an array with at most 512 entries.');
+        const checkIds = new Set();
+        for (const check of report.checks) {
+          if (!record(check) || Object.keys(check).some(key => !['id', 'result', 'reason'].includes(key))) fail('Each check must contain only id, result, and reason.');
+          text(check.id, 'Check id', 160); text(check.reason, 'Check reason');
+          oneOf(check.result, VERDICTS, 'Check result');
+          if (checkIds.has(check.id)) fail('Duplicate check identifiers are not allowed.');
+          checkIds.add(check.id);
+        }
+        if (!Array.isArray(report.limitations) || report.limitations.length > 512) fail('limitations must be an array with at most 512 entries.');
+        report.limitations.forEach(item => text(item, 'Limitation'));
+        for (const field of ['evidenceDigest', 'policyDigest', 'blockHash']) {
+          if (report[field] !== undefined && (typeof report[field] !== 'string' || !HASH.test(report[field]))) fail(field + ' must be a 32-byte hex hash.');
+        }
+        for (const field of ['chainId', 'blockNumber', 'transactionIndex']) {
+          if (report[field] !== undefined && !identityInteger(report[field])) fail(field + ' must be an exact nonnegative integer identity.');
+        }
+        if (report.evaluatorVersion !== undefined) text(report.evaluatorVersion, 'evaluatorVersion', 100);
+        for (const [field, expected] of [['verificationMode','OFFLINE_REPLAY'],['policySource','SUPPLIED_RETROSPECTIVE'],['sourceTrust','RPC_OBSERVATION_NOT_CONSENSUS_PROOF'],['observationFinality','NOT_CHECKED']]) {
+          if (report[field] !== undefined && report[field] !== expected) fail(field + ' is unsupported by this report viewer.');
+        }
+        if (report.protocol !== undefined) {
+          const protocol = report.protocol;
+          if (!record(protocol) || Object.keys(protocol).some(key => !PROTOCOL_FIELDS.includes(key)) || PROTOCOL_FIELDS.some(key => !Object.hasOwn(protocol, key))) fail('protocol must contain the complete supported receipt profile.');
+          if (protocol.profile !== 'UNISWAP_V3_ROUTER02_EXACT_INPUT_SINGLE') fail('Unsupported protocol profile.');
+          for (const field of ['router', 'factory', 'pool', 'owner', 'recipient', 'tokenIn', 'tokenOut']) {
+            if (typeof protocol[field] !== 'string' || !ADDRESS.test(protocol[field])) fail('Protocol ' + field + ' must be a 20-byte hex address.');
+          }
+          if (!Number.isSafeInteger(protocol.fee) || protocol.fee < 1 || protocol.fee >= 1000000) fail('Protocol fee must be a valid integer fee tier.');
+          for (const field of ['amountInRaw', 'amountOutRaw', 'amountOutMinimumRaw']) {
+            const value = protocol[field];
+            if (typeof value !== 'string' || value.length > 78 || !/^(?:0|[1-9][0-9]*)$/.test(value) || BigInt(value) >= (1n << 256n)) fail('Protocol raw amounts must be canonical uint256 decimal strings.');
+          }
+          const indices = protocol.logIndices;
+          const indexNames = ['inputTransfer', 'outputTransfer', 'swap'];
+          if (!record(indices) || Object.keys(indices).length !== 3 || indexNames.some(key => typeof indices[key] !== 'string' || indices[key].length > 66 || !/^0x(?:0|[1-9a-f][0-9a-f]*)$/i.test(indices[key]))) fail('Protocol logIndices must contain three exact hex log indices.');
+        }
+        const supportedSuccess = report.execution === 'SUCCEEDED' && report.support !== 'UNSUPPORTED';
+        if (report.verdict === 'PASS' && (!supportedSuccess || report.coverage !== 'COMPLETE' || report.checks.length === 0 || report.checks.some(check => check.result !== 'PASS'))) fail('Contradictory PASS report: successful supported execution, complete evidence, and passing checks are required.');
+        if (report.verdict === 'VIOLATION' && (!supportedSuccess || report.coverage === 'CONFLICTED' || !report.checks.some(check => check.result === 'VIOLATION'))) fail('Contradictory VIOLATION report: a supported coherent failed check is required.');
+        return report;
+      }
+
+      function evidenceDescription(report) {
+        const synthetic = /SYNTHETIC|SPEC_EXAMPLE|SIMULATION|TEST_FIXTURE/i.test(report.evidenceClass) || report.support === 'SUPPORTED_TEST_PROFILE';
+        return synthetic ? {
+          synthetic: true,
+          title: 'Synthetic or simulated evidence — not an authenticated public-chain result',
+          description: 'This report describes a test fixture, simulated case, or synthetic mutation. Its verdict must not be presented as the outcome of a real public-chain transaction.'
+        } : {
+          synthetic: false,
+          title: 'Saved evidence — provenance is supplied by the report',
+          description: 'Captured RPC observations and their digests are not Ethereum consensus or state proofs. Offline inspection does not establish current balances or refresh chain canonicality.'
+        };
+      }
+      return Object.freeze({MAX_BYTES, parseReport, evidenceDescription});
+    })();
+  </script>
+  <script id="inspector-ui">
+    'use strict';
+    (() => {
+      const element = id => document.getElementById(id);
+      const fileInput = element('report-file'), textInput = element('report-text');
+      let currentSource = null, importRevision = 0;
+      const labels = {owner:'Owner / payer', recipient:'Recipient', tokenPair:'Token pair', maxInputRaw:'Maximum input', minReceivedRaw:'Minimum received', reserveFloorRaw:'Remaining reserve', tokenIn:'Input token', tokenOut:'Output token', amountInRaw:'Input amount · raw units', amountOutRaw:'Output amount · raw units', amountOutMinimumRaw:'Router minimum output · raw units', fee:'Pool fee tier', pool:'Pool', router:'Router', factory:'Factory'};
+      const labelFor = key => Object.hasOwn(labels, key) ? labels[key] : key;
+      const tone = value => value === 'PASS' ? 'pass' : value === 'VIOLATION' ? 'violation' : value === 'UNKNOWN' || value === 'PARTIAL' || value === 'CONFLICTED' || value === 'UNSUPPORTED' ? 'unknown' : 'neutral';
+      function badge(target, value) { target.textContent = value; target.dataset.tone = tone(value); }
+      function resetDisplay() {
+        currentSource = null;
+        element('report').hidden = true;
+        element('empty-state').hidden = false;
+        element('import-error').hidden = true;
+        element('import-error').textContent = '';
+        for (const id of ['checks', 'identity', 'protocol', 'limitations']) element(id).replaceChildren();
+        for (const id of ['report-title', 'report-subtitle', 'execution', 'support', 'coverage', 'verdict', 'raw-report', 'evidence-title', 'evidence-class', 'evidence-description']) element(id).textContent = '';
+      }
+      function showError(error) {
+        resetDisplay();
+        element('import-error').textContent = 'Report not loaded. ' + (error instanceof TypeError ? error.message : 'The file could not be read as a valid UTF-8 report.');
+        element('import-error').hidden = false;
+        element('import-status').textContent = 'No report is loaded. Choose a valid report to continue.';
+      }
+      function row(container, label, value) {
+        const wrapper = document.createElement('div'); wrapper.className = 'identity-row';
+        const title = document.createElement('dt'); title.textContent = label;
+        const content = document.createElement('dd'); content.textContent = value === null ? 'UNKNOWN / not established' : typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value);
+        wrapper.append(title, content); container.append(wrapper);
+      }
+      function render(report, source, sourceName) {
+        resetDisplay();
+        currentSource = source;
+        element('report-title').textContent = report.verdict;
+        const summaries = {PASS:'The saved report says all required checks passed within its declared scope.', VIOLATION:'The saved report contains at least one supported policy violation. Other checks may remain unknown.', UNKNOWN:'The saved report cannot establish that the declared policy was satisfied. Inspect missing evidence and scope below.'};
+        element('report-subtitle').textContent = summaries[report.verdict];
+        for (const field of ['execution', 'support', 'coverage', 'verdict']) badge(element(field), report[field]);
+        const evidence = AftercheckReports.evidenceDescription(report);
+        element('evidence-banner').dataset.synthetic = String(evidence.synthetic);
+        element('evidence-title').textContent = evidence.title;
+        element('evidence-class').textContent = report.evidenceClass;
+        element('evidence-description').textContent = evidence.description;
+        const identity = element('identity');
+        row(identity, 'Transaction hash', report.transactionHash);
+        for (const [field, label] of [['chainId','Chain ID'],['blockHash','Block hash'],['blockNumber','Block number'],['transactionIndex','Transaction index'],['evidenceDigest','Evidence digest · integrity only'],['policyDigest','Policy digest · supplied policy'],['evaluatorVersion','Evaluator version'],['verificationMode','Verification mode'],['policySource','Policy source'],['sourceTrust','Source trust'],['observationFinality','Finality check']]) {
+          if (report[field] !== undefined) row(identity, label, report[field]);
+        }
+        if (report.protocol) {
+          for (const field of ['router','factory','pool']) row(identity, labelFor(field), report.protocol[field]);
+        }
+        row(identity, 'Report schema', report.schemaVersion);
+        for (const check of report.checks) {
+          const item = document.createElement('li'); item.className = 'check';
+          const heading = document.createElement('div'); heading.className = 'check-heading';
+          const name = document.createElement('strong'); name.textContent = labelFor(check.id);
+          const result = document.createElement('span'); result.className = 'badge'; badge(result, check.result);
+          const reason = document.createElement('p'); reason.textContent = check.reason;
+          heading.append(name, result); item.append(heading, reason); element('checks').append(item);
+        }
+        element('no-checks').hidden = report.checks.length !== 0;
+        element('protocol-section').hidden = report.protocol === undefined;
+        if (report.protocol) {
+          for (const field of ['amountInRaw','amountOutRaw','amountOutMinimumRaw','owner','recipient','tokenIn','tokenOut','fee','profile']) row(element('protocol'), labelFor(field), report.protocol[field]);
+          for (const [field,label] of [['outputTransfer','Output Transfer log index'],['inputTransfer','Input Transfer log index'],['swap','Swap log index']]) row(element('protocol'), label, report.protocol.logIndices[field]);
+        }
+        const limitations = report.limitations.length ? report.limitations : ['No limitations were included in this file. Their absence does not establish completeness, authenticity, or financial safety.'];
+        limitations.forEach(text => { const item = document.createElement('li'); item.textContent = text; element('limitations').append(item); });
+        element('raw-report').textContent = JSON.stringify(report, null, 2);
+        element('empty-state').hidden = true;
+        element('report').hidden = false;
+        element('import-status').textContent = 'Loaded locally: ' + sourceName + '. This is a display of the saved result.';
+      }
+      function importText(source, sourceName) {
+        const report = AftercheckReports.parseReport(source);
+        render(report, source, sourceName);
+      }
+      fileInput.addEventListener('change', async () => {
+        const revision = ++importRevision;
+        resetDisplay();
+        const file = fileInput.files[0];
+        if (!file) { element('import-status').textContent = 'No report selected.'; return; }
+        element('import-status').textContent = 'Reading the local report…';
+        try {
+          if (file.size > AftercheckReports.MAX_BYTES) throw new TypeError('Report exceeds the 2 MiB file limit.');
+          const source = new TextDecoder('utf-8', {fatal:true}).decode(await file.arrayBuffer());
+          if (revision !== importRevision) return;
+          importText(source, file.name);
+        } catch (error) { if (revision === importRevision) showError(error); }
+        finally { if (revision === importRevision) fileInput.value = ''; }
+      });
+      element('open-text').addEventListener('click', () => {
+        ++importRevision; resetDisplay(); fileInput.value = '';
+        try { importText(textInput.value, 'pasted JSON'); } catch (error) { showError(error); }
+      });
+      element('clear-report').addEventListener('click', () => {
+        ++importRevision; resetDisplay(); fileInput.value = ''; textInput.value = '';
+        element('import-status').textContent = 'Report cleared from this viewer.'; fileInput.focus();
+      });
+      element('download-report').addEventListener('click', () => {
+        if (currentSource === null) return;
+        const url = URL.createObjectURL(new Blob([currentSource], {type:'application/json;charset=utf-8'}));
+        const link = document.createElement('a'); link.href = url; link.download = 'aftercheck-report.json';
+        document.body.append(link); link.click(); link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      });
+    })();
+  </script>
+</body>
+</html>
