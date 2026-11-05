@@ -29,3 +29,14 @@ test('unsecured nonlocal endpoints and non-HTTP protocols are rejected',()=>{
   for(const url of ['file:///etc/passwd','http://example.com','bad url','https://example.com/#fragment'])assert.throws(()=>new RpcClient(url));
   assert.doesNotThrow(()=>new RpcClient('http://127.0.0.1:8545'));
 });
+test('early HTTP and response-length failures cancel bodies and abort their fetch signal',async()=>{
+  for(const options of [{status:503},{headers:{'content-length':'2000001'}}]){
+    let cancelled=false,signal;
+    const fetchImpl=async(url,init)=>{
+      signal=init.signal;
+      return new Response(new ReadableStream({cancel(){cancelled=true;}}),options);
+    };
+    await assert.rejects(new RpcClient(endpoint,{fetchImpl}).call('eth_chainId',[]),/RPC_HTTP_ERROR|RPC_RESPONSE_TOO_LARGE/);
+    assert.equal(cancelled,true);assert.equal(signal.aborted,true);
+  }
+});
