@@ -7,7 +7,8 @@ import {validateReceiptIdentity} from '../src/evidence.ts';
 // signing, latest-state substitution, cross-provider field copying or policy claim.
 const PROVIDERS = [
   {id: 'publicnode', endpoint: 'https://ethereum-sepolia-rpc.publicnode.com'},
-  {id: 'drpc', endpoint: 'https://sepolia.drpc.org'}
+  // Official keyless access: https://docs.tenderly.co/node-rpc/overview#public-endpoint-limits
+  {id: 'tenderly', endpoint: 'https://sepolia.gateway.tenderly.co'}
 ];
 const MAX_EVIDENCE_BYTES = 950_000;
 const MAX_SUMMARY_BYTES = 100_000;
