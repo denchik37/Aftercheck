@@ -68,7 +68,7 @@ It replays `policy-pass.json`, `policy-violation.json` and `policy-reserve.json`
 
 [Real-case PR #7 CI](https://github.com/denchik37/aftercheck/actions/runs/42069380806) tested merge revision `40ee01b30505ba8163c7e18011b2a8cb5e4878b3` for implementation commit `678cf4344d22af89f0d1114d97bd3c62500b2784`: TypeScript checking and **109 tests passed** on Node `24.22.2`, followed by all three committed demo policies with CLI exits `0/2/3`. Tests include literal historical observations, one-unit boundaries, offline replay, hostile input and output consistency.
 
-Its [browser artifact](https://github.com/denchik37/aftercheck/actions/runs/42069380806/artifacts/13435176898) records **28/28 checks** using the genuine capture across desktop 1280×900 and mobile 390×844, with zero attempted page requests, errors or dialogs. Downloads and all three verdicts passed; four screenshots were visually reviewed. Runtime: Python `3.14.4`, Playwright `1.62.0`, Chromium `151.0.7922.34`. The harness executes the exact HTML in offline `about:blank`; direct `file://` navigation itself is not exercised. [READINESS.md](docs/READINESS.md) pins the source, capture, failure history and remaining owner steps.
+Its [browser artifact](https://github.com/denchik37/aftercheck/actions/runs/42069380806/artifacts/13435176898) records **28/28 checks** using the genuine capture across desktop 1280×900 and mobile 390×844, with zero attempted page requests, errors or dialogs. Downloads and all three verdicts passed; four screenshots were visually reviewed. Runtime: Python `3.14.4`, Playwright `1.62.0`, Chromium `151.0.7922.34`. The harness executes the exact HTML in offline `about:blank`; direct `file://` navigation itself is not exercised. The source revision, test logs and screenshots are retained in the linked CI run.
 
 ## CROPS
 
@@ -77,4 +77,4 @@ Its [browser artifact](https://github.com/denchik37/aftercheck/actions/runs/4206
 - **Privacy:** The RPC provider sees the client's IP and requested transactions, contracts and blocks. GitHub/npm see initial download metadata. Policies and reports stay local during evaluation/inspection; the client has no trackers or analytics.
 - **Security:** No wallet keys or signing. Strict parsing, exact arithmetic and explicit trust limits reduce accidental overclaiming; this prototype has no audit, consensus proof or reserve-state guarantee.
 
-These are implemented properties and limitations, not a qualification claim. See [readiness evidence](docs/READINESS.md), [Uniswap feedback](FEEDBACK.md), [AI usage and provenance](AI_USAGE.md), and [submission status](docs/SUBMISSION.md). External forms, recording, eligibility and final submission require their own completion evidence.
+These are implemented properties and limitations, not a security certification. See [protocol boundaries](docs/PROTOCOL.md), [developer feedback](FEEDBACK.md), and [AI engineering assistance](AI_USAGE.md).

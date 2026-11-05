@@ -1,6 +1,6 @@
 # Readiness checkpoint
 
-**5 November 2026 · functional implementation merged through PR #7, main `8bfedc72f5f03d64a003ed27fd1a41768e880bd8`.** The passing PR #7 workflow below tested merge revision `40ee01b30505ba8163c7e18011b2a8cb5e4878b3` for head `678cf4344d22af89f0d1114d97bd3c62500b2784`. This is a pinned engineering checkpoint, not a claim of event acceptance or completed submission.
+**5 November 2026 · functional implementation merged through PR #7, main `8bfedc72f5f03d64a003ed27fd1a41768e880bd8`.** The passing PR #7 workflow below tested merge revision `40ee01b30505ba8163c7e18011b2a8cb5e4878b3` for head `678cf4344d22af89f0d1114d97bd3c62500b2784`. This is a pinned engineering checkpoint, not a claim of production readiness.
 
 The narrow vertical slice is implemented and verified: real historical Sepolia receipt → independent protocol observations → exact receipt amounts → retrospective policy → portable reports → offline CLI replay → browser inspection. TypeScript checking, **109 unit/integration tests**, the three committed demo outcomes, and **28 browser cases using the real capture** passed. Reserve state, arbitrary token balance semantics, consensus and finality remain outside the claim.
 
@@ -40,9 +40,8 @@ The local environment also rejected public RPC POST requests with HTTP 403 and c
 | Offline replay and reports | Deterministic JSON/Markdown output; replay with fetch, sockets, HTTP requests and DNS lookup disabled; exit codes exercised | [`replay.test.mjs`](../test/replay.test.mjs), [`cli.test.mjs`](../test/cli.test.mjs) | PR #3 | Replay does not refresh canonicality or finality |
 | Coherent output publication | Whole managed output set staged before replacement; rollback on publication failure; new collection removes stale reports | [`output.test.mjs`](../test/output.test.mjs) | PR #3 | If external filesystem changes prevent rollback, the previous set is retained in a recovery backup |
 | Real protocol example | Unchanged complete Tenderly capture, literal independent expectations, actual offline CLI PASS/VIOLATION/UNKNOWN; separate genuine partial capture stays UNKNOWN | [`real-case.test.mjs`](../test/real-case.test.mjs), [example provenance](../examples/sepolia/README.md), [capture run](https://github.com/denchik37/aftercheck/actions/runs/42068312090) | PR #7 | One third-party historical testnet swap; provider trust and token assumptions remain |
-| One-command demo | `npm run demo` checks the same evidence digest and three policy outcomes, with common network entry points disabled | [CLI demo log](https://github.com/denchik37/aftercheck/actions/runs/42069380806), [`scripts/demo.mjs`](../scripts/demo.mjs) | PR #7 | Rehearsal guard is not an OS network sandbox; owner records the dependency-loss video |
+| One-command demo | `npm run demo` checks the same evidence digest and three policy outcomes, with common network entry points disabled | [CLI demo log](https://github.com/denchik37/aftercheck/actions/runs/42069380806), [`scripts/demo.mjs`](../scripts/demo.mjs) | PR #7 | Rehearsal guard is not an OS network sandbox |
 | Browser inspector | Local report import/paste, separate statuses, exact quantities, raw-report download; malformed input clears stale results; hostile markup stays inert | [`inspector.test.mjs`](../test/inspector.test.mjs), [`test-inspector.py`](../scripts/test-inspector.py), [real-case browser artifact](https://github.com/denchik37/aftercheck/actions/runs/42069380806/artifacts/13435176898) | PR #4, real-case verification PR #7 | Saved-report display only; no independent chain authentication or verdict recomputation |
-| Submission materials | README/integration anchors, MIT license, feedback, AI attribution, project copy and human-video script prepared | [`SUBMISSION.md`](SUBMISSION.md), [`FEEDBACK.md`](../FEEDBACK.md), [`AI_USAGE.md`](../AI_USAGE.md) | Delivery documentation after PR #7 | Required input disclosure, qualification, video, feedback form and final submission remain owner actions |
 
 ## Complete historical case
 
@@ -73,7 +72,7 @@ The retained Publicnode partial bundle's digest is `0xeb791a7eedbdb9362943d9f939
 
 The retained partial bundles remain UNKNOWN after the complete Tenderly capture; failed capture attempts produced no policy verdict. A successful workflow status establishes that the job completed and retained observations, not a financial PASS. The recorded sanitized RPC errors do not establish why the provider rejected those reads.
 
-## Reproduce and finish delivery
+## Reproduce locally
 
 ```bash
 npm ci --ignore-scripts --no-audit --no-fund
@@ -82,7 +81,5 @@ npm run demo
 ```
 
 Open `web/inspector.html` locally and import `output/demo/pass/report.json`, `output/demo/violation/report.json` or `output/demo/reserve/report.json`. The primary CI repeats verification and demo, records its checked commit, and retains the generated reports. The separate optional capture workflow is not a dependency of deterministic tests.
-
-The next owner checkpoint is an organizer determination about the **28 October 2026 project-specific planning inputs**, the required development-input disclosure and actual human contributions under the selected Classic rules. No eligibility approval is recorded. Then record the supplied 2:45 human-narrated demonstration, submit the Uniswap feedback form, and finish the external submission. No video, form submission, sponsor qualification, application acceptance or check-in is claimed here. The official deadline and four-hour internal buffer are recorded in [SUBMISSION.md](SUBMISSION.md).
 
 See [PROTOCOL.md](PROTOCOL.md) for the exact implemented claim boundary. This prototype is not audited and does not establish safety for real funds.
