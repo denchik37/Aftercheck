@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "aftercheck.policy.v1",
+  "chainId": 11155111,
+  "owner": "0x3f82931394a11582e89366fb837e53d5d0baa62a",
+  "expectedRecipient": "0x3f82931394a11582e89366fb837e53d5d0baa62a",
+  "tokenIn": "0x0f47e03a0383396635846f8495003fc478b71bca",
+  "tokenOut": "0x9142fa65aaef921aea2127e88758adee0510a0f0",
+  "maxInputRaw": "900000000000000000",
+  "minReceivedRaw": "999000000000000000"
+}

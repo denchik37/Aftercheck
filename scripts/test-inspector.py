@@ -265,7 +265,8 @@ def main() -> int:
                 for field in ["execution", "support", "coverage", "verdict"]:
                     expect(page.locator("#" + field)).to_have_text(additional_report[field])
                 expect(page.locator("#evidence-class")).to_have_text(additional_report["evidenceClass"])
-                expect(page.locator("#identity")).to_contain_text(additional_report["transactionHash"])
+                if additional_report.get("transactionHash"):
+                    expect(page.locator("#identity")).to_contain_text(additional_report["transactionHash"])
                 if additional_report.get("protocol"):
                     expect(page.locator("#protocol")).to_contain_text(additional_report["protocol"]["amountOutRaw"])
                 dimensions = page.evaluate("({viewport:innerWidth,page:document.documentElement.scrollWidth})")
