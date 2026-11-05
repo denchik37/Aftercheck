@@ -40,7 +40,7 @@ $env:Path += ";C:\Program Files\Git\cmd"
 git --version
 ```
 
-This is a temporary change for the current session, not a system-wide setting. Install locations vary. If the file is absent, locate the Git installation through Windows Installed apps or rerun the official installer to check its destination; do not add an invented directory to PATH. A Git-free source ZIP route is also possible.
+This is a temporary change for the current session, not a system-wide setting. Install locations vary. If the file is absent, locate the Git installation through Windows Installed apps or rerun the official installer to check its destination; do not add an invented directory to PATH. The [Git-free ZIP route](#7-optional-git-free-source-zip) is another option.
 
 **Seeing `npm.ps1 cannot be loaded because running scripts is disabled`?** Use `npm.cmd` wherever you would otherwise type `npm`:
 
@@ -59,7 +59,7 @@ cd $HOME
 Test-Path .\aftercheck
 ```
 
-If that prints `False`, clone the public repository. No GitHub login is needed:
+If that prints `False`, clone the public repository. No GitHub login is needed. While the Issue #17 PR is still open, add `--branch feature/windows-operator-path` after `git clone`, or use the pinned ZIP in section 7; the plain `main` clone below includes these changes after integration:
 
 ```powershell
 git clone https://github.com/denchik37/aftercheck.git
@@ -82,6 +82,8 @@ git pull --ff-only
 ```
 
 If there are local changes, a different branch, or a fast-forward error, preserve your work and resolve that condition first. Do not reset or discard files to follow this guide. If the existing folder is not an Aftercheck checkout, choose another empty destination and use its path throughout.
+
+An older Windows checkout can retain CRLF bytes in the historical capture even after a clean fast-forward update. If the retained-capture **exact-file hash test** fails, keep that checkout intact and use the pinned ZIP in section 7 or a fresh checkout in a different empty folder. The new Git attributes protect fresh checkouts; do not edit the evidence or weaken its hash test to make an old checkout pass.
 
 From now on, commands assume **the repository root**, normally `$HOME\aftercheck`. Confirm it:
 
@@ -224,12 +226,56 @@ Keep the actual error/UNKNOWN result; do not relabel it as PASS or borrow curren
 | `AFTERCHECK_RPC_URL_REQUIRED` | Set the public endpoint in the same PowerShell session, or use offline CLI `verify`. |
 | RPC HTTP/remote/timeout error, or UNKNOWN | Preserve the status and use retained evidence. Retry later into a fresh directory if fresh observations are needed. |
 | npm cannot find `package.json`, or `Test-Path` is `False` | Use `Get-Location` and return to the repository root; repeat the three checks in section 2. |
+| The retained capture's exact-file hash test fails in an older checkout | Preserve the checkout and use the pinned ZIP in section 7. A clean `git status` does not rule out old CRLF working-tree bytes. |
 | `INVALID_INPUT` or a missing policy/report file | Check the exact path and file type. Import `report.json`; CLI `verify` takes `evidence.json` plus a separate policy. |
 | The HTML opens in an editor or no browser opens | Find `web\inspector.html` in File Explorer and use **Open with** to select your browser. |
 
-## Validation boundary
+## 7. Optional: Git-free source ZIP
+
+For running the application without Git, download this [source ZIP pinned to the Windows-tested revision](https://github.com/denchik37/aftercheck/archive/c44db55d937d924fda8a9b8f4cad2db9f5d83828.zip). It contains the Windows portability fixes. A source ZIP has **no `.git` directory**: it is suitable for running Aftercheck, but cannot use `git pull` or preserve development commit history. Use a Git checkout for ongoing development.
+
+With Node installed, this PowerShell sequence downloads into a temporary ZIP and extracts into a new folder under your profile. It stops if the extraction destination already exists:
+
+```powershell
+$revision = "c44db55d937d924fda8a9b8f4cad2db9f5d83828"
+$zip = Join-Path $env:TEMP ("aftercheck-" + [guid]::NewGuid().ToString("N") + ".zip")
+$destination = Join-Path $HOME "aftercheck-zip-c44db55"
+if (Test-Path -LiteralPath $destination) { throw "Destination exists. Choose a new extraction folder." }
+Invoke-WebRequest -UseBasicParsing -Uri "https://github.com/denchik37/aftercheck/archive/$revision.zip" -OutFile $zip -ErrorAction Stop
+Expand-Archive -LiteralPath $zip -DestinationPath $destination -ErrorAction Stop
+Set-Location (Join-Path $destination "aftercheck-$revision") -ErrorAction Stop
+Test-Path .\package.json
+Test-Path .\web\inspector.html
+Test-Path .\examples\sepolia\evidence.json
+```
+
+All three checks must print `True`. For this pinned archive, GitHub's inner folder is `aftercheck-c44db55d937d924fda8a9b8f4cad2db9f5d83828`. Other ZIP revisions and extraction tools can produce different directory names; enter the folder actually containing `package.json`, not its outer container. Continue with section 3's `npm.cmd ci`, `npm.cmd run verify` and `npm.cmd run demo`. Your `output` folder will be inside this extracted directory, not `$HOME\aftercheck`.
+
+The pinned ZIP was downloaded and its dependency-free demo executed on Linux; the new Windows tests also exercise a Git-free runtime copy with no `node_modules`. The actual `Invoke-WebRequest`/`Expand-Archive` sequence above has not been executed on Windows. Download and dependency installation still need network access; subsequent retained-evidence replay does not.
+
+## 8. Executed validation and remaining limits
 
 The dedicated [Windows workflow](../.github/workflows/windows-quickstart.yml) runs the actual PowerShell/npm/CLI path using committed evidence; its source revision, OS, shell and Node/npm versions, test results and resolved report paths are retained as CI evidence. A workflow definition is not itself a passing run: use the linked PR's completed checks and logs to determine the tested revision.
+
+**Recorded on 6 November 2026 (IST):** [Windows run 42102336603](https://github.com/denchik37/aftercheck/actions/runs/42102336603) passed both jobs at source **`c44db55d937d924fda8a9b8f4cad2db9f5d83828`**, which is also the ZIP revision above. Both used Windows Server 2025 Datacenter, build `26100`, runner image `win25-vs2026` version `20261103.298.1`, and Git `2.56.0.windows.4`.
+
+| Environment | Observed result | Retained evidence |
+|---|---|---|
+| Windows PowerShell `5.1.26100.33648`, Node `24.22.2`, npm `11.19.1` | Type checking; **120/120 tests**, zero skipped; demo and standalone PASS; persisted report checks | [Job and logs](https://github.com/denchik37/aftercheck/actions/runs/42102336603/job/127508091693), [artifact](https://github.com/denchik37/aftercheck/actions/runs/42102336603/artifacts/13449942511) |
+| PowerShell `7.6.9`, Node `26.13.0`, npm `11.20.0` | Type checking; **120/120 tests**, zero skipped; demo and standalone PASS; persisted report checks | [Job and logs](https://github.com/denchik37/aftercheck/actions/runs/42102336603/job/127508091225), [artifact](https://github.com/denchik37/aftercheck/actions/runs/42102336603/artifacts/13450407152) |
+
+The readiness matrix below refers to that exact source revision and run:
+
+| Operator requirement | Actual check | Remaining limit |
+|---|---|---|
+| PowerShell npm launcher | `npm.ps1` was blocked under a Restricted child process; `npm.cmd --version` succeeded in that same process | Installer dialogs and PATH refresh were not exercised. |
+| Offline PASS / VIOLATION / UNKNOWN | All three genuine retained-evidence replays and CLI exits `0/2/3`; same evidence digest | Retrospective policy and provider-observation trust limits still apply. |
+| Portable JSON and Markdown | Four-file bundles, expected dimensions, exact offline re-evaluation, and stale-output preservation | Windows files inherit folder access controls; POSIX permission masks are tested on POSIX systems only. |
+| Report discovery | Real `Test-Path`, `Resolve-Path` and modification-time checks from a checkout path containing spaces | GUI Explorer launch remains unverified. |
+| Inspector location | Local HTML exists and its absolute Windows path resolves | Default-browser `file://` launch and manual import remain unverified. |
+| ZIP operation | Pinned archive downloaded and demo replayed on Linux; Git-free runtime replay tested on Windows | Windows ZIP download/extraction commands remain unverified. |
+
+The [first Windows run](https://github.com/denchik37/aftercheck/actions/runs/42101934531), at `a57410ab1f7c8c862a14613db6d38d6aac7db543`, exposed **8 failures out of 120** on each Node version: native drive paths used as ESM preload specifiers, a POSIX-only permission assertion, and CRLF conversion of the byte-pinned capture. File-URL imports, platform-correct test fixtures and a narrow Git LF attribute repaired those failures. The retained evidence content and financial logic were unchanged. The failed run and its artifacts remain available; they are not reported as successful validation.
 
 The existing Ubuntu browser harness checks the inspector's HTML in an isolated Chromium `about:blank` page. It does **not** establish a manual Windows `file://` launch, Explorer window, default-browser association or file-picker interaction. No test of your own computer is implied. Git/Node installer dialogs, PATH refresh in an already open terminal and the interactive desktop steps require operator confirmation on that machine. Nothing here requires a hosted Aftercheck service or DigitalOcean deployment.
 
