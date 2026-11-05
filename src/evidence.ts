@@ -159,6 +159,7 @@ export function validateReceiptIdentity(input: unknown): {execution: 'SUCCEEDED'
     if (e.canonicalBlockHash === null) return {execution,coverage:'PARTIAL',reason:'CANONICAL_BLOCK_UNAVAILABLE'};
     if (hash32(e.canonicalBlockHash) !== bh) throw new Error('CANONICAL_BLOCK_CONFLICT');
     if (!Array.isArray(e.collectionErrors)) throw new Error('INVALID_COLLECTION_ERRORS');
+    if (e.collectionErrors.some(item => requireRecord(item,'collectionError').code === 'CHAIN_ID_CONFLICT')) throw new Error('CHAIN_ID_CONFLICT');
     if (e.collectionErrors.length !== 0) return {execution,coverage:'PARTIAL',reason:'COLLECTION_INCOMPLETE'};
     return {execution,coverage:'COMPLETE'};
   } catch (error) {

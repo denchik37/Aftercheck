@@ -32,9 +32,9 @@ The command writes only a deterministic JSON report and readable Markdown report
 
 ## Important limits
 
-The bounded read-only collector library in `src/rpc.ts` and `src/evidence.ts` validates transaction/receipt/block identities and exports a deterministic integrity digest. Its tests use mocked RPC responses; the CLI still evaluates only the synthetic example.
+The bounded read-only collector library in `src/rpc.ts` and `src/evidence.ts` validates transaction/receipt/block identities and exports a deterministic integrity digest. The adapter in `src/uniswap.ts` checks direct Sepolia Router02 calldata, hash-bound factory/pool observations and exact Transfer/Swap event reconciliation. See [the implemented receipt profile](docs/PROTOCOL.md). Its regression tests use mocked RPC responses; the CLI still evaluates only the synthetic example.
 
-This version has **no verified router/pool binding, real swap evidence, contract deployment, production asset support, transaction-boundary reserve reconstruction, or security audit**. The normalized input format is currently a testing interface, not proof of raw Ethereum logs. Offline reports evaluate only supplied evidence and do not establish canonicality. Do not use the prototype to protect or move real funds.
+This version has **no published real swap evidence, contract deployment, production asset support, transaction-boundary reserve reconstruction, or security audit**. The normalized input format is currently a testing interface, not proof of raw Ethereum logs. Offline reports evaluate only supplied evidence and do not establish canonicality. Do not use the prototype to protect or move real funds.
 
 The next milestone is to collect a genuinely supported direct swap receipt, independently validate the actual router/pool/event identities, and preserve a reproducible evidence bundle.
 
