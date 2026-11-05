@@ -32,7 +32,9 @@ The command writes only a deterministic JSON report and readable Markdown report
 
 ## Important limits
 
-This version has **no authenticated onchain collector, verified router/pool binding, real swap evidence, contract deployment, production asset support, transaction-boundary reserve reconstruction, or security audit**. The normalized input format is currently a testing interface, not proof of raw Ethereum logs. Offline reports evaluate only supplied evidence and do not establish canonicality. Do not use the prototype to protect or move real funds.
+The bounded read-only collector library in `src/rpc.ts` and `src/evidence.ts` validates transaction/receipt/block identities and exports a deterministic integrity digest. Its tests use mocked RPC responses; the CLI still evaluates only the synthetic example.
+
+This version has **no verified router/pool binding, real swap evidence, contract deployment, production asset support, transaction-boundary reserve reconstruction, or security audit**. The normalized input format is currently a testing interface, not proof of raw Ethereum logs. Offline reports evaluate only supplied evidence and do not establish canonicality. Do not use the prototype to protect or move real funds.
 
 The next milestone is to collect a genuinely supported direct swap receipt, independently validate the actual router/pool/event identities, and preserve a reproducible evidence bundle.
 
