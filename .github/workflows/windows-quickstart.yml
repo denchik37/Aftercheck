@@ -1,0 +1,188 @@
+name: Windows quickstart
+
+on:
+  push:
+    branches: [feature/windows-operator-path]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  offline:
+    name: ${{ matrix.label }} / Node ${{ matrix.node }}
+    runs-on: windows-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - node: '24'
+            shell: powershell
+            label: Windows PowerShell
+          - node: '26'
+            shell: pwsh
+            label: PowerShell 7
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
+        working-directory: aftercheck checkout
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+          # Exercise ordinary Windows paths containing spaces.
+          path: aftercheck checkout
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Record source, Windows and tool versions
+        run: |
+          New-Item -ItemType Directory -Path .\output\windows -Force | Out-Null
+          $revision = git rev-parse HEAD
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $gitVersion = git --version
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $nodeVersion = node --version
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $npmVersion = npm.cmd --version
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          foreach ($path in @('.\package.json', '.\web\inspector.html', '.\examples\sepolia\evidence.json')) {
+            if (!(Test-Path -LiteralPath $path -PathType Leaf)) { throw "Required file missing: $path" }
+          }
+          $os = Get-CimInstance Win32_OperatingSystem
+          $environment = [ordered]@{
+            sourceRevision = $revision
+            runnerImage = $env:ImageOS
+            runnerImageVersion = $env:ImageVersion
+            windows = $os.Caption
+            windowsVersion = $os.Version
+            windowsBuild = $os.BuildNumber
+            powershellEdition = $PSVersionTable.PSEdition
+            powershellVersion = $PSVersionTable.PSVersion.ToString()
+            executionPolicy = (Get-ExecutionPolicy).ToString()
+            node = $nodeVersion
+            npm = $npmVersion
+            git = $gitVersion
+            checkout = (Get-Location).Path
+            inspector = (Resolve-Path .\web\inspector.html).Path
+          }
+          $environment | ConvertTo-Json | Set-Content -Encoding UTF8 .\output\windows\environment.json
+          Get-Content .\output\windows\environment.json
+          $revision | Set-Content -Encoding ASCII .\output\windows\source-revision.txt
+          @(
+            '## Windows quickstart evidence', '',
+            '| Field | Observed value |', '|---|---|',
+            "| Source revision | $revision |",
+            "| Windows | $($os.Caption), $($os.Version) |",
+            "| Runner image | $env:ImageOS / $env:ImageVersion |",
+            "| PowerShell | $($PSVersionTable.PSEdition) $($PSVersionTable.PSVersion) |",
+            "| Node / npm | $nodeVersion / $npmVersion |",
+            "| Git | $gitVersion |", '',
+            'The checkout path contains spaces. This workflow performs no live RPC collection.',
+            'Explorer, the default-browser launch and manual file import are not exercised here.'
+          ) | Add-Content -Encoding UTF8 $env:GITHUB_STEP_SUMMARY
+      - name: Verify npm.cmd under a restricted PowerShell process
+        run: |
+          Start-Transcript -Path .\output\windows\restricted-policy.log
+          # Tighten only this child process; do not modify machine/user policy.
+          $probe = @'
+          $ErrorActionPreference = 'Stop'
+          $ProgressPreference = 'SilentlyContinue'
+          if ((Get-ExecutionPolicy) -ne 'Restricted') { throw 'Expected a Restricted child process.' }
+          $blocked = $false
+          try { & (Get-Command npm.ps1 -ErrorAction Stop).Source --version }
+          catch [System.Management.Automation.PSSecurityException] { $blocked = $true }
+          if (!$blocked) { throw 'The npm.ps1 restriction was not reproduced.' }
+          Write-Output 'npm.ps1 is blocked under Restricted; npm.cmd must still work.'
+          npm.cmd --version
+          exit $LASTEXITCODE
+          '@
+          powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Restricted -Command $probe
+          $code = $LASTEXITCODE
+          Stop-Transcript
+          if ($code -ne 0) { exit $code }
+          'Restricted-policy probe: npm.ps1 was blocked and npm.cmd succeeded without changing user/machine policy.' | Add-Content -Encoding UTF8 $env:GITHUB_STEP_SUMMARY
+      - name: Install locked development dependencies
+        run: |
+          Start-Transcript -Path .\output\windows\install.log
+          npm.cmd ci --ignore-scripts --no-audit --no-fund
+          $code = $LASTEXITCODE
+          Stop-Transcript
+          if ($code -ne 0) { exit $code }
+      - name: Run the full verifier test suite
+        run: |
+          Start-Transcript -Path .\output\windows\verification.log
+          npm.cmd run verify
+          $code = $LASTEXITCODE
+          Stop-Transcript
+          if ($code -ne 0) { exit $code }
+      - name: Replay PASS, VIOLATION and UNKNOWN without networking
+        run: |
+          Start-Transcript -Path .\output\windows\demo.log
+          npm.cmd run demo
+          $code = $LASTEXITCODE
+          Stop-Transcript
+          if ($code -ne 0) { exit $code }
+      - name: Run the standalone offline command
+        run: |
+          Start-Transcript -Path .\output\windows\offline-pass.log
+          npm.cmd run cli -- verify .\examples\sepolia\evidence.json .\examples\sepolia\policy-pass.json .\output\offline-pass
+          $code = $LASTEXITCODE
+          Stop-Transcript
+          if ($code -ne 0) { exit $code }
+      - name: Inspect persisted files, dimensions and resolved Windows paths
+        run: |
+          Start-Transcript -Path .\output\windows\reports.log
+          $cases = @(
+            @{ Path = '.\output\demo\pass'; Verdict = 'PASS'; Coverage = 'COMPLETE' },
+            @{ Path = '.\output\demo\violation'; Verdict = 'VIOLATION'; Coverage = 'COMPLETE' },
+            @{ Path = '.\output\demo\reserve'; Verdict = 'UNKNOWN'; Coverage = 'PARTIAL' },
+            @{ Path = '.\output\offline-pass'; Verdict = 'PASS'; Coverage = 'COMPLETE' }
+          )
+          $digest = $null
+          $locations = @()
+          @('', '| Report | Execution | Support | Evidence | Verdict |', '|---|---|---|---|---|') | Add-Content -Encoding UTF8 $env:GITHUB_STEP_SUMMARY
+          foreach ($case in $cases) {
+            foreach ($name in @('evidence.json', 'policy.json', 'report.json', 'report.md')) {
+              $file = Join-Path $case.Path $name
+              if (!(Test-Path -LiteralPath $file -PathType Leaf)) { throw "Missing output: $file" }
+            }
+            $reportPath = (Resolve-Path (Join-Path $case.Path 'report.json')).Path
+            $report = Get-Content -LiteralPath $reportPath -Raw | ConvertFrom-Json
+            if ($report.execution -cne 'SUCCEEDED' -or $report.support -cne 'SUPPORTED' -or
+                $report.coverage -cne $case.Coverage -or $report.verdict -cne $case.Verdict -or
+                $report.evidenceClass -cne 'RPC_RECEIPT' -or $report.verificationMode -cne 'OFFLINE_REPLAY' -or
+                $report.policySource -cne 'SUPPLIED_RETROSPECTIVE' -or $report.observationFinality -cne 'NOT_CHECKED' -or
+                $report.transactionHash -cne '0x608ca58e7d01dbe0c7fe48af8c0bb9f2bddcf07ccc36f5c28d033bc8d198d5e9') {
+              throw "Unexpected report dimensions: $reportPath"
+            }
+            if ($null -ne $digest -and $report.evidenceDigest -cne $digest) { throw 'The historical evidence changed between policies.' }
+            $digest = $report.evidenceDigest
+            $locations += [pscustomobject]@{
+              report = $reportPath
+              modifiedUtc = (Get-Item -LiteralPath $reportPath).LastWriteTimeUtc.ToString('o')
+              execution = $report.execution
+              support = $report.support
+              coverage = $report.coverage
+              verdict = $report.verdict
+              evidenceDigest = $report.evidenceDigest
+            }
+            Write-Output "$reportPath : $($report.execution) / $($report.support) / $($report.coverage) / $($report.verdict)"
+            "| $reportPath | $($report.execution) | $($report.support) | $($report.coverage) | $($report.verdict) |" | Add-Content -Encoding UTF8 $env:GITHUB_STEP_SUMMARY
+          }
+          $locations | ConvertTo-Json | Set-Content -Encoding UTF8 .\output\windows\report-locations.json
+          node --import ./scripts/offline-guard.mjs scripts/check-public-example-inspection.mjs .\output\demo\pass
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node --import ./scripts/offline-guard.mjs scripts/check-public-example-inspection.mjs .\output\offline-pass
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Stop-Transcript
+          'Both saved PASS bundles matched fresh offline re-evaluation, including exact JSON and Markdown. The normal test suite also checks all three outcomes.' | Add-Content -Encoding UTF8 $env:GITHUB_STEP_SUMMARY
+      - name: Retain Windows logs and generated report bundles
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: windows-quickstart-node${{ matrix.node }}-${{ matrix.shell }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: aftercheck checkout/output/
+          if-no-files-found: error
+          retention-days: 30

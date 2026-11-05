@@ -4,7 +4,9 @@
 
 ## Run locally
 
-Requires **Node.js 24**. The CLI has no runtime npm dependencies, wallet connection, signing or transaction submission. Locked development dependencies provide TypeScript checking.
+Requires **Node.js 24 or newer**. The CLI has no runtime npm dependencies, wallet connection, signing or transaction submission. Locked development dependencies provide TypeScript checking.
+
+**Windows PowerShell:** Start with the [Windows quickstart](docs/WINDOWS_QUICKSTART.md) for Git/Node setup, `npm.cmd`, offline replay, optional Sepolia inspection, and exact report locations.
 
 ```bash
 npm ci --ignore-scripts
