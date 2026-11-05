@@ -84,6 +84,115 @@ above. Admin getter and slot both returned
 These are provider-dependent block-end observations, not transaction-boundary state
 proofs. They do not establish the implementation at earlier blocks.
 
+## Transfer paths and administrative controls
+
+The authenticated deployed `FiatTokenV1` functions are inherited unchanged by
+`FiatTokenV2_2`. Ordinary `transferFrom(from,to,value)` requires an unpaused token,
+unblocked caller/from/to, sufficient allowance and sufficient balance. It debits
+and credits exactly `value`, emits one `Transfer`, decrements allowance silently,
+and returns ABI `true`. Even maximum allowance is decremented: this implementation
+has no unlimited-allowance exemption. The proxy's fallback adds no event; delegated
+execution emits the token log from the **proxy address**.
+
+The reviewed transfer path has no transfer fee, rebase, receiver hook or external
+recipient callback. V2.2 packs the blacklist bit above a 255-bit balance and rejects
+an overflowing balance. This is a source-level conclusion about the authenticated
+program, not a proof extracted from its event names. An explicit approval emits
+`Approval`; authorization, mint/burn and administrative entry points have their
+own events. They are not invoked by the proposed ordinary input payment.
+
+USDC remains mutable. The proxy admin can upgrade and change admin; the token owner
+can replace the pauser, blacklister and master minter. The pauser can stop transfers;
+the blacklister can block participants. For the input leg, the checked participants
+must include **Router02 as caller, the actual sender, and the pool**. Public role
+addresses identify configured authorities, not the people or mechanisms controlling
+them. [Circle's official source](https://github.com/circlefin/stablecoin-evm/blob/fc85788bc7c23cefe3df1a757133048bfddadeaa/contracts/v1/FiatTokenV1.sol)
+and [proxy source](https://github.com/circlefin/stablecoin-evm/blob/fc85788bc7c23cefe3df1a757133048bfddadeaa/contracts/upgradeability/AdminUpgradeabilityProxy.sol)
+provide context; that current upstream revision is **not asserted to be the deployed
+source revision**. The deployed binding comes from recompiling the exact verified
+source inputs recorded in the manifest.
+
+WETH9 is a standalone non-upgradeable contract in the authenticated source/runtime.
+Its `transfer` delegates internally to `transferFrom`; ordinary transfers debit and
+credit the same raw amount, emit one `Transfer`, and return `true`. Finite third-party
+allowance decreases without `Approval`; maximum allowance remains unchanged.
+Its ordinary transfer path has no fee, rebasing, pause/blocklist, upgrade control or
+recipient hook. `deposit`/payable fallback emit `Deposit`, and `withdraw` emits
+`Withdrawal` and sends native ETH. The proposed route uses neither: **native value
+stays zero and the output remains WETH**.
+
+## Genuine historical receipt and unchanged adapter replay
+
+The bounded discovery queried exactly two 2,000-block ranges, with the selected pool,
+Swap topic and indexed Router02 sender fixed. It returned 48 matching Swap logs;
+15 positive-USDC-input transaction candidates were inspected. Four called Router02
+directly; eleven called other contracts and were not treated as supported. Discovery
+used 25 public read-only requests with no RPC failures. Its `eth_getLogs` calls were
+isolated research; the production RPC allowlist remains unchanged.
+
+The strongest selected transaction was then collected independently through the
+**unchanged production collector**, including all twelve historical protocol-state
+observations, EOA code check, block membership and final canonical/chain rechecks.
+
+| Field | Actual observation |
+|---|---|
+| Transaction | [`0x43507127d3dc456b9f04f8d303268ae908a3620f08c05a30265567f74e61468d`](https://sepolia.etherscan.io/tx/0x43507127d3dc456b9f04f8d303268ae908a3620f08c05a30265567f74e61468d) |
+| Chain / block / index | `11155111` / `12070596` (`0xb82ec4`) / `0x72` |
+| Block hash | `0xf6e12d492ab92cd27c63da5cb20dc61f21751825afe83324ead31eb9f8756d26` |
+| Block timestamp | `2026-11-05T16:14:12Z` |
+| Sender and recipient | `0x1ef24506bbab74c2e99e8b8cbea63ec6d343834f` |
+| Call | Direct Router02, selector `0x04e45aaf`, selected token pair, fee `500` |
+| Type / native value / price limit | `0x2` / `0` / `0` |
+| Input / output raw | `25000000` / `945281192884240` |
+| Router minimum raw | `0` (historical fact, not a proposed safe minimum) |
+| Capture | `2026-11-05T21:36:28.889Z`–`2026-11-05T21:38:06.784Z` |
+| Provider / requests | Public keyless Tenderly / `19`, all successful |
+| Collector source | `3835c5a933c1f3f493ff726dd3b597f68c8c6330`; imported production files unchanged |
+
+The **entire receipt** contains these three logs, with no Approval or extra activity:
+
+| Index | Event | Participants | Raw quantity |
+|---|---|---|---|
+| `0xf9` | WETH `Transfer` | Pool → recipient | `945281192884240` |
+| `0xfa` | USDC `Transfer` | Sender → pool | `25000000` |
+| `0xfb` | Pool `Swap` | Router02 / recipient | `amount0=25000000`, `amount1=-945281192884240` |
+
+All log/transaction/receipt identities agree. The exact calldata input equals the
+input Transfer and positive signed pool input; output Transfer equals negative
+signed pool output. Order matches output payment → input callback → Swap.
+
+The unchanged verifier returned **SUCCEEDED / SUPPORTED / COMPLETE / PASS** under a
+retrospectively derived **compatibility-only** policy (actual participants/pair,
+input cap `25000000`, output minimum `0`). This is not an independently predeclared
+financial policy, an owner-executed experiment, a loss incident or a new transaction.
+Adding `reserveFloorRaw: "0"` returns **UNKNOWN / PARTIAL**, with the reserve check
+UNKNOWN. The evidence digest is
+`0x2085ade6fc6fdf6421df10d384492f32994b5ba1a0e296c312054d2a2f1f1171`.
+
+The manifest embeds the exact 172,438-byte canonical capture using `zlib+base64` to
+avoid duplicating large contract bytecode in several JSON sections. It includes the
+original file SHA-256, digest, readable transaction/receipt, retrospective policy,
+source hashes and replay results. Decompression reconstructs the original bytes;
+replay checks them without contacting any server. This new research capture does not
+replace or modify the existing genuine public example.
+
+The other three direct transaction candidates are recorded in the discovery manifest
+summary. Only the selected transaction received complete collector verification.
+Do not extend its coverage to the other three.
+
+## Compatibility versus financial state
+
+| Proposition | Supported conclusion |
+|---|---|
+| Standard token transfer paths | Authenticated deployed programs support ordinary exact-amount transfers with the restrictions above |
+| Supported complete receipt | Observed in a genuine included third-party transaction; replayed through the unchanged adapter |
+| Extra input Approval | Existing adapter permits at most one ordinary sender/router Approval inside the payment callback; neither authenticated ordinary token path emits it here |
+| More transfers/swaps, Deposit/Withdrawal, unrelated events | Remain unsupported; no verifier relaxation |
+| Current or historical block-end implementation | Must be tied to its own pinned state observation; never inferred from the token symbol or another block |
+| Exact implementation at the transaction boundary | Not independently proven by a block-end getter/code read; an intra-block upgrade is not excluded by that read alone |
+| Immediate balances/reserves | UNKNOWN; receipt logs are not independent state proofs |
+| Future transfer behavior or transaction success | Not guaranteed; upgrades/configuration and execution conditions can change |
+
 ## Scope retained
 
 The research concerns one direct zero-native-value Router02 `exactInputSingle`
