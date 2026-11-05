@@ -34,8 +34,12 @@ test('complete output publication replaces the whole coherent managed set', asyn
   await writeOutputDirectory(output, newFiles);
   assert.deepEqual(await readSet(output), newFiles);
   assert.deepEqual(await fs.readdir(root), ['out']);
-  assert.equal((await fs.stat(output)).mode & 0o777, 0o700);
-  for (const name of Object.keys(newFiles)) assert.equal((await fs.stat(join(output, name))).mode & 0o777, 0o600);
+  // Windows uses ACLs and cannot represent POSIX owner/group permission masks.
+  // All publication, rollback and preservation assertions still run on Windows.
+  if (process.platform !== 'win32') {
+    assert.equal((await fs.stat(output)).mode & 0o777, 0o700);
+    for (const name of Object.keys(newFiles)) assert.equal((await fs.stat(join(output, name))).mode & 0o777, 0o600);
+  }
 });
 
 test('a successful evidence-only collection removes stale reports and policy from that output', async t => {
@@ -80,7 +84,9 @@ test('root, symlinks, files, nested entries and unrelated output content are nev
   assert.equal(await fs.readFile(output, 'utf8'), 'keep this unrelated file');
   await fs.unlink(output);
   const target = join(root, 'target'); await fs.mkdir(target);
-  await fs.symlink(target, output, 'dir');
+  // Junctions exercise linked-directory rejection without Windows symlink privileges.
+  const linkType = process.platform === 'win32' ? 'junction' : 'dir';
+  await fs.symlink(target, output, linkType);
   await assert.rejects(writeOutputDirectory(output, newFiles), /DIRECTORY_REQUIRED/);
   assert.equal((await fs.lstat(output)).isSymbolicLink(), true);
   await fs.unlink(output); await fs.mkdir(output);
@@ -89,7 +95,7 @@ test('root, symlinks, files, nested entries and unrelated output content are nev
   assert.equal(await fs.readFile(join(output, 'notes.txt'), 'utf8'), 'keep user content');
   await fs.unlink(join(output, 'notes.txt')); await fs.mkdir(join(output, 'report.json'));
   await assert.rejects(writeOutputDirectory(output, newFiles), /UNMANAGED_FILES/);
-  await fs.rmdir(join(output, 'report.json')); await fs.symlink(target, join(output, 'report.json'));
+  await fs.rmdir(join(output, 'report.json')); await fs.symlink(target, join(output, 'report.json'), linkType);
   await assert.rejects(writeOutputDirectory(output, newFiles), /UNMANAGED_FILES/);
   assert.deepEqual(await fs.readdir(target), []);
 });

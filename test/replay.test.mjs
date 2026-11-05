@@ -4,6 +4,7 @@ import {mkdtemp,readFile,writeFile,rm,stat} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join,resolve} from 'node:path';
 import {spawnSync} from 'node:child_process';
+import {pathToFileURL} from 'node:url';
 import {sealEvidence} from '../src/evidence.ts';
 import {verifyEvidence} from '../src/verify.ts';
 import {rpcFixture,policyFixture} from './helpers/uniswap-fixture.mjs';
@@ -37,7 +38,7 @@ test('CLI verify exports portable evidence/policy/reports while every network pr
     await writeFile(evidence,canonicalJson(sealEvidence(rpcFixture())));
     await writeFile(policy,canonicalJson(policyFixture()));
     await writeFile(guard,`import net from 'node:net'; import http from 'node:http'; import https from 'node:https'; import dns from 'node:dns'; const fail=()=>{throw Error('NETWORK_FORBIDDEN_DURING_REPLAY')};globalThis.fetch=fail;net.Socket.prototype.connect=fail;http.request=fail;https.request=fail;dns.lookup=fail;`);
-    const run=()=>spawnSync(process.execPath,['--import',guard,resolve('bin/aftercheck.mjs'),'verify',evidence,policy,out],{encoding:'utf8',env:{...process.env,AFTERCHECK_RPC_URL:'https://unreachable.invalid/SHOULD_NOT_BE_USED'}});
+    const run=()=>spawnSync(process.execPath,['--import',pathToFileURL(guard).href,resolve('bin/aftercheck.mjs'),'verify',evidence,policy,out],{encoding:'utf8',env:{...process.env,AFTERCHECK_RPC_URL:'https://unreachable.invalid/SHOULD_NOT_BE_USED'}});
     const result=run();assert.equal(result.status,0,result.stderr);
     const first=await readFile(join(out,'report.json'),'utf8');
     for(const file of ['evidence.json','policy.json','report.json','report.md'])assert.ok((await stat(join(out,file))).size>0);
