@@ -39,6 +39,7 @@ def make_reports(evidence: Path | None, policy: Path | None) -> dict:
     """Use the real offline verifier for all financial states, never hand-set them."""
     source = """
 import {readFileSync} from 'node:fs';
+import {resolve} from 'node:path';
 import {sealEvidence} from './src/evidence.ts';
 import {verifyEvidence} from './src/verify.ts';
 import {rpcFixture,policyFixture} from './test/helpers/uniswap-fixture.mjs';
@@ -47,10 +48,30 @@ const evidence=paths.evidence ? JSON.parse(readFileSync(paths.evidence,'utf8')) 
 const policy=paths.policy ? JSON.parse(readFileSync(paths.policy,'utf8')) : policyFixture();
 const pass=verifyEvidence(evidence,policy);
 if(pass.verdict!=='PASS'||!pass.protocol)throw Error('BROWSER_TEST_REQUIRES_A_SUPPORTED_PASS_BASELINE');
+const retainedCase=paths.evidence===resolve('examples/sepolia/evidence.json') && paths.policy===resolve('examples/sepolia/policy-pass.json');
 const violation=verifyEvidence(evidence,{...policy,minReceivedRaw:(BigInt(pass.protocol.amountOutRaw)+1n).toString()});
-const unknown=verifyEvidence(evidence,{...policy,reserveFloorRaw:'0'});
+const reservePolicy=retainedCase ? JSON.parse(readFileSync('examples/sepolia/policy-reserve.json','utf8')) : {...policy,reserveFloorRaw:'0'};
+const unknown=verifyEvidence(evidence,reservePolicy);
 if(violation.verdict!=='VIOLATION'||unknown.verdict!=='UNKNOWN')throw Error('BROWSER_TEST_BASELINE_STATES_NOT_ESTABLISHED');
-console.log(JSON.stringify({pass,violation,unknown}));
+const maxPolicy=retainedCase
+  ? JSON.parse(readFileSync('examples/sepolia/policy-violation.json','utf8'))
+  : {...policy,maxInputRaw:(BigInt(pass.protocol.amountInRaw)-1n).toString()};
+const maxInput=verifyEvidence(evidence,maxPolicy);
+if(!maxInput.checks.some(c=>c.id==='maxInputRaw'&&c.result==='VIOLATION'))throw Error('BROWSER_TEST_REQUIRES_MAX_INPUT_VIOLATION');
+const mixed=verifyEvidence(evidence,{...maxPolicy,reserveFloorRaw:'0'});
+// Deliberately put UNKNOWN first: the UI must still prioritize a proven violation.
+mixed.checks.sort((a,b)=>Number(b.result==='UNKNOWN')-Number(a.result==='UNKNOWN'));
+const fixtureReport=mutate=>{const input=rpcFixture();mutate(input);return verifyEvidence(sealEvidence(input),policyFixture());};
+const synthetic=fixtureReport(()=>{});
+const pending=fixtureReport(e=>{e.transaction.blockHash=null;e.transaction.blockNumber=null;e.transaction.transactionIndex=null;e.receipt=null;});
+const reverted=fixtureReport(e=>{e.receipt.status='0x0';e.receipt.logs=[];});
+const unsupported=fixtureReport(e=>{e.transaction.input='0x12345678';});
+const conflicted=fixtureReport(e=>{e.transaction.chainId='0x1';});
+// Optional-field compatibility case; statuses and checks still come from the verifier.
+const noProtocol=structuredClone(maxInput);delete noProtocol.protocol;delete noProtocol.policySource;
+if(mixed.verdict!=='VIOLATION'||mixed.coverage!=='PARTIAL'||!mixed.checks.some(c=>c.id==='reserveFloorRaw'&&c.result==='UNKNOWN'))throw Error('BROWSER_TEST_REQUIRES_MIXED_RESULT');
+for(const report of [pending,reverted,unsupported,conflicted])if(report.verdict!=='UNKNOWN')throw Error('BROWSER_TEST_INVALID_NEGATIVE_FIXTURE');
+console.log(JSON.stringify({pass,violation,unknown,'max-input-violation':maxInput,mixed,synthetic,pending,reverted,unsupported,conflicted,'no-protocol':noProtocol}));
 """
     paths = {"evidence": str(evidence) if evidence else None, "policy": str(policy) if policy else None}
     result = subprocess.run(
@@ -96,9 +117,12 @@ def main() -> int:
         "sourceCommit": commit,
         "workingTreeHasChanges": dirty,
         "inspectorSha256": sha256(html_bytes),
+        "harnessSha256": sha256(Path(__file__).read_bytes()),
         "evidenceClass": reports["pass"]["evidenceClass"],
         "evidenceDigest": reports["pass"]["evidenceDigest"],
         "reportSha256": {name: sha256(value.encode("utf-8")) for name, value in serialized.items()},
+        "reportStates": {name: {field: report[field] for field in ["execution", "support", "coverage", "verdict", "evidenceClass"]} for name, report in reports.items()},
+        "rendererMutations": {"mixed": "Actual verifier result with UNKNOWN checks placed first; statuses, reasons and digests are unchanged.", "no-protocol": "Actual max-input violation with optional protocol and policySource fields omitted to test schema compatibility."},
         "runtime": {"python": sys.version.split()[0], "playwright": importlib.metadata.version("playwright"), "chromiumExecutable": args.chromium or "Playwright bundled Chromium"},
         "isolation": {"pageURL": "about:blank", "persistentProfile": False, "offlineContext": True, "allRequestsAborted": True},
         "limitation": "Tests run exact application source in about:blank with networking disabled. file:// navigation itself is not tested.",
@@ -158,11 +182,69 @@ def main() -> int:
                 expect(page.locator("#report-title")).to_have_text(reports[name]["verdict"])
                 for field in ["execution", "support", "coverage", "verdict"]:
                     expect(page.locator("#" + field)).to_have_text(reports[name][field])
+                expect(page.locator("#outcome-summary")).to_be_focused()
+                expect(page.locator("#execution")).to_be_in_viewport()
+                expect(page.locator("#verdict")).to_be_in_viewport()
+                assert not page.locator("#import-panel").evaluate("element => element.open")
+                expect(page.locator("#import-status")).to_have_attribute("role", "status")
+                assert page.locator("#import-panel #import-status").count() == 0
 
-            def screenshot(name: str):
-                path = out / f"{device}-{name}.png"
-                page.screenshot(path=str(path), full_page=True)
-                summary["screenshots"].append(str(path))
+            def screenshot(name: str, both: bool = True):
+                for suffix, full_page in [("viewport", False), ("full", True)] if both else [("viewport", False)]:
+                    path = out / f"{device}-{name}-{suffix}.png"
+                    page.screenshot(path=str(path), full_page=full_page)
+                    summary["screenshots"].append(str(path))
+
+            def no_overflow():
+                dimensions = page.evaluate("({viewport:innerWidth,page:document.documentElement.scrollWidth})")
+                assert dimensions["page"] <= dimensions["viewport"], dimensions
+
+            def assert_cleared():
+                expect(page.locator("#report")).to_be_hidden()
+                for selector in ["#verdict", "#raw-report", "#report-subtitle", "#primary-requirement", "#policy-context", "#outcome-origin", "#amount-in", "#amount-out", "#router-minimum", "#attention-checks", "#checks", "#guidance", "#identity", "#protocol"]:
+                    expect(page.locator(selector)).to_have_text("")
+                assert page.locator("#import-panel").evaluate("element => element.open")
+
+            def inspect_outcome(name: str, primary: str | None = None):
+                report = reports[name]
+                for field in ["execution", "verdict", "support", "coverage"]:
+                    region = page.locator(f'#outcome-summary [data-dimension="{field}"]')
+                    expect(region).to_be_visible()
+                    expect(region).to_contain_text(report[field])
+                expect(page.locator("#report-subtitle")).not_to_be_empty()
+                expect(page.locator("#guidance")).not_to_be_empty()
+                expect(page.locator("#limitations")).to_be_visible()
+                if primary:
+                    expect(page.locator("#primary-requirement")).to_be_visible()
+                    expect(page.locator("#primary-requirement")).to_be_in_viewport()
+                    expect(page.locator("#primary-requirement")).to_contain_text(primary)
+                attention = [c for c in report["checks"] if c["result"] != "PASS"]
+                attention.sort(key=lambda c: c["result"] != "VIOLATION")
+                assert page.locator("#attention-checks .check-id").all_text_contents() == [c["id"] for c in attention]
+                assert page.locator("#attention-checks .check-reason").all_text_contents() == [c["reason"] for c in attention]
+                for row in page.locator("#attention-checks .check").all():
+                    expect(row).to_be_visible()
+                    expect(row.locator(".check-meaning")).not_to_be_empty()
+                assert page.locator("#checks .check-id").all_text_contents() == [c["id"] for c in report["checks"]]
+                assert page.locator("#checks .check-reason").all_text_contents() == [c["reason"] for c in report["checks"]]
+                if report.get("protocol"):
+                    expect(page.locator("#observed-amounts")).to_be_visible()
+                    for selector, field in [("#amount-in", "amountInRaw"), ("#amount-out", "amountOutRaw"), ("#router-minimum", "amountOutMinimumRaw")]:
+                        expect(page.locator(selector)).to_have_text(report["protocol"][field])
+                else:
+                    expect(page.locator("#observed-amounts")).to_be_hidden()
+                    expect(page.locator("#amount-in")).to_have_text("")
+                    expect(page.locator("#amount-out")).to_have_text("")
+                note = page.locator("#policy-threshold-note")
+                expect(note).to_be_visible()
+                expect(note).to_contain_text("not provided as structured fields")
+                expect(note).to_contain_text("original supplied policy")
+                expect(note).to_contain_text("does not substitute")
+                if report.get("policySource") == "SUPPLIED_RETROSPECTIVE":
+                    expect(page.locator("#policy-context")).to_contain_text("Retrospective")
+                else:
+                    expect(page.locator("#policy-context")).to_contain_text("does not state when")
+                no_overflow()
 
             show_report("pass")
             expect(page.locator("#protocol")).to_contain_text(reports["pass"]["protocol"]["amountInRaw"])
@@ -192,23 +274,89 @@ def main() -> int:
             show_report("violation")
             expect(page.locator("#checks")).to_contain_text("VIOLATION")
             checked(device, "actual verifier financial VIOLATION renders")
+            inspect_outcome("violation", "minReceivedRaw")
+            expect(page.locator("#report-subtitle")).to_contain_text("completed, but")
+            screenshot("min-received-violation")
 
             show_report("unknown")
             expect(page.locator("#coverage")).to_have_text("PARTIAL")
             expect(page.locator("#checks")).to_contain_text("Remaining reserve")
             expect(page.locator("#checks")).to_contain_text("UNKNOWN")
             checked(device, "actual verifier reserve UNKNOWN remains visible")
-            if device == "desktop":
-                screenshot("unknown")
+            inspect_outcome("unknown", "reserveFloorRaw")
+            expect(page.locator("#primary-requirement")).to_contain_text("do not prove")
+            screenshot("unknown")
+
+            for name, primary in [("pass", None), ("max-input-violation", "maxInputRaw"), ("mixed", "maxInputRaw"), ("synthetic", None), ("no-protocol", "maxInputRaw"), ("pending", None), ("reverted", None), ("unsupported", None), ("conflicted", None)]:
+                show_report(name)
+                inspect_outcome(name, primary)
+                if name == "max-input-violation":
+                    expect(page.locator("#execution")).to_have_text("SUCCEEDED")
+                    expect(page.locator("#primary-requirement")).to_contain_text("input exceeds")
+                    expect(page.locator("#report-subtitle")).to_contain_text("policy was violated")
+                    screenshot(name)
+                if name == "mixed":
+                    expect(page.locator("#coverage")).to_have_text("PARTIAL")
+                    expect(page.locator("#verdict-scope")).to_contain_text("remain UNKNOWN")
+                    screenshot(name)
+                if name == "synthetic":
+                    expect(page.locator("#outcome-origin")).to_contain_text("SYNTHETIC / SIMULATED")
+                    expect(page.locator("#report-subtitle")).to_contain_text("simulated operation")
+                    expect(page.locator("#evidence-banner")).to_have_attribute("data-synthetic", "true")
+                if name in ["pending", "reverted", "unsupported", "conflicted"]:
+                    expect(page.locator("#verdict")).to_have_text("UNKNOWN")
+                    expect(page.locator("#report-subtitle")).to_contain_text("cannot establish")
+                if name == "conflicted":
+                    expect(page.locator("#coverage-description")).to_contain_text("Observations conflict")
+                checked(device, f"{name}: separate outcomes, exact checks, amounts, provenance and guidance")
 
             show_report("pass")
-            page.locator(".paste summary").click()
+            page.locator("#import-panel > summary").focus()
+            page.keyboard.press("Enter")
+            expect(page.locator(".paste summary")).to_be_visible()
+            page.locator(".paste summary").focus()
+            page.keyboard.press("Enter")
+            page.keyboard.press("Tab")
+            expect(page.locator("#report-text")).to_be_focused()
+            page.locator("#report-text").fill(serialized["max-input-violation"])
+            page.keyboard.press("Tab")
+            expect(page.locator("#open-text")).to_be_focused()
+            page.keyboard.press("Enter")
+            expect(page.locator("#outcome-summary")).to_be_focused()
+            expect(page.locator("#verdict")).to_have_text("VIOLATION")
+            checked(device, "keyboard paste opens import and moves focus to accepted outcome")
+
+            show_report("pass")
+            for details, content in [("#checks-details", "#checks"), ("#identity-details", "#identity"), ("#protocol-section", "#protocol"), (".raw", "#raw-report")]:
+                page.locator(details + " > summary").focus()
+                page.keyboard.press("Enter")
+                expect(page.locator(content)).to_be_visible()
+            page.keyboard.press("Tab")
+            expect(page.locator("#raw-report")).to_be_focused()
+            assert json.loads(page.locator("#raw-report").inner_text()) == reports["pass"]
+            no_overflow()
+            checked(device, "keyboard opens technical evidence and complete raw report without horizontal overflow")
+
+            if device == "mobile":
+                page.set_viewport_size({"width": 320, "height": 740})
+                for name in ["pass", "max-input-violation", "unknown", "mixed"]:
+                    show_report(name)
+                    no_overflow()
+                    screenshot("320-" + name)
+                checked(device, "320px PASS, VIOLATION, UNKNOWN and mixed results have no horizontal overflow")
+                page.set_viewport_size(viewport)
+
+            show_report("pass")
+            page.locator("#import-panel > summary").click()
+            if not page.locator(".paste").evaluate("element => element.open"):
+                page.locator(".paste summary").click()
             page.locator("#report-text").fill('{"schemaVersion":')
             page.locator("#open-text").click()
             expect(page.locator("#import-error")).to_be_visible()
             expect(page.locator("#report")).to_be_hidden()
             expect(page.locator("#verdict")).to_have_text("")
             expect(page.locator("#raw-report")).to_have_text("")
+            assert_cleared()
             checked(device, "malformed pasted input clears stale PASS and raw report")
             if device == "desktop":
                 screenshot("malformed")
@@ -228,7 +376,7 @@ def main() -> int:
             hostile["limitations"].append(hostile_text)
             upload(json.dumps(hostile), "hostile-text.json")
             expect(page.locator("#report")).to_be_visible()
-            expect(page.locator("#checks .check p").first).to_have_text(hostile_text)
+            expect(page.locator("#checks .check-reason").first).to_have_text(hostile_text)
             assert page.locator("#report img, #report script").count() == 0
             assert page.evaluate("typeof globalThis.aftercheckInjected") == "undefined"
             checked(device, "hostile markup stays inert text without elements or script execution")
@@ -250,12 +398,37 @@ def main() -> int:
             expect(page.locator("#report")).to_be_hidden()
             checked(device, "duplicate report key rejected")
 
+            strict_inputs = []
+            for key in ["__proto__", "constructor", "prototype"]:
+                strict_inputs.append(("unsafe key " + key, serialized["pass"].rstrip()[:-1] + ',' + json.dumps(key) + ':{}}'))
+            for name, patch in [
+                ("contradictory execution PASS", {"execution": "REVERTED"}),
+                ("contradictory incomplete PASS", {"coverage": "PARTIAL"}),
+                ("contradictory unsupported PASS", {"support": "UNSUPPORTED"}),
+                ("unknown top-level field", {"unexpected": True}),
+                ("invalid digest", {"evidenceDigest": "0x1234"}),
+                ("excess check count", {"checks": [{"id": f"check-{i}", "result": "PASS", "reason": "bounded"} for i in range(513)]}),
+                ("excess text length", {"limitations": ["x" * 20001]}),
+                ("duplicate check ID", {"checks": [reports["pass"]["checks"][0]] * 2}),
+            ]:
+                strict_inputs.append((name, json.dumps({**reports["pass"], **patch})))
+            numeric_amount = json.loads(serialized["pass"])
+            numeric_amount["protocol"]["amountInRaw"] = 9007199254740993
+            strict_inputs.append(("unsafe numeric token amount", json.dumps(numeric_amount)))
+            for name, source in strict_inputs:
+                show_report("pass")
+                upload(source, "invalid-report.json")
+                expect(page.locator("#import-error")).to_be_visible()
+                assert_cleared()
+                checked(device, name + " rejected and all stale outcome content cleared")
+
             show_report("pass")
             page.locator("#clear-report").click()
             expect(page.locator("#empty-state")).to_be_visible()
             expect(page.locator("#report")).to_be_hidden()
             expect(page.locator("#report-text")).to_have_value("")
             expect(page.locator("#report-file")).to_be_focused()
+            assert_cleared()
             checked(device, "clear action removes data and returns keyboard focus")
 
             if additional_report is not None:
