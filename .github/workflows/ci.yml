@@ -34,3 +34,36 @@ jobs:
           path: output/
           if-no-files-found: error
           retention-days: 30
+  browser:
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      AFTERCHECK_BROWSER_VENV: ${{ runner.temp }}/aftercheck-browser-venv
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: '24'
+      - name: Install isolated browser test runtime
+        run: |
+          mkdir -p output/browser
+          git rev-parse HEAD > output/browser/source-revision.txt
+          python3 -m venv "$AFTERCHECK_BROWSER_VENV"
+          "$AFTERCHECK_BROWSER_VENV/bin/pip" install --disable-pip-version-check -r test/browser-requirements.txt
+          "$AFTERCHECK_BROWSER_VENV/bin/python" -m playwright install --with-deps chromium
+      - name: Inspect reports in an offline disposable browser
+        run: |
+          mkdir -p output/browser
+          git rev-parse HEAD > output/browser/source-revision.txt
+          "$AFTERCHECK_BROWSER_VENV/bin/python" scripts/test-inspector.py --out output/browser
+      - name: Retain browser results and screenshots
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: browser-${{ github.run_id }}-${{ github.run_attempt }}
+          path: output/browser/
+          if-no-files-found: error
+          retention-days: 30
