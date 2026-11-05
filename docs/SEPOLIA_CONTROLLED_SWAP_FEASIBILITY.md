@@ -82,6 +82,75 @@ The fresh evidence digest was `0xd170ac971902427d8939803ddd596837a9be5d44e467172
 
 This establishes a working collector path on the same provider at the observation time, not a service guarantee. [Tenderly documents its keyless Sepolia endpoint](https://docs.tenderly.co/node-rpc/rpc-reference) and [public limits](https://docs.tenderly.co/node-rpc/overview); the live test, rather than ordinary method availability, established this historical [EIP-1898](https://eips.ethereum.org/EIPS/eip-1898) capability. No observations from another provider were merged into an evidence bundle.
 
-## Completion checkpoint
+## D. Token acquisition and behavior
 
-Deployment, concrete pool observations, and the historical collector path are established to the limits above. Token/gas prerequisites, the separate chronology procedure, the bounded probe's regression evidence, and final reproducibility/CI references will be completed in the following focused increments. This checkpoint does not authorize execution or claim final spike CI has run.
+**Historical pair — BLOCKED for this attempt.** Exact-address searches found explorer records but no authenticated issuer faucet or legitimate public distribution for TIGER/Lab USD. This bounded search does not prove none exists. The February 2025 receipt and today's nonempty code/positive quote do not establish present token access or transfer semantics. Do not call these contracts freely mintable.
+
+**Circle input — documented path, actual funding UNVERIFIED.** [Circle's official address table](https://developers.circle.com/stablecoins/usdc-contract-addresses) identifies the candidate USDC as a Sepolia test token with no financial value or real-USD backing. The reachable [Circle faucet](https://faucet.circle.com/) lists Ethereum Sepolia, advertises 20 test USDC per address/network every two hours, requires no account, and uses reCAPTCHA. No wallet address was submitted and no claim was requested. Faucet reserves, acceptance, and owner receipt are not established. USDC input avoids a prior WETH-wrapping transaction; the output can remain wrapped.
+
+Circle's [upstream implementation](https://github.com/circlefin/stablecoin-evm/blob/master/contracts/v1/FiatTokenV1.sol) has amount-preserving transfers plus allowance, pause, and blacklist controls, with an upgradeable architecture. This supports a compatibility hypothesis only. Direct source retrieval from both Etherscan and Sepolia Blockscout was blocked by HTTP 403 for the USDC and WETH addresses. The current USDC proxy implementation's source/bytecode binding, pause/blacklist state for the eventual participants, upgrade state, and deployed transfer behavior therefore remain **UNVERIFIED**. WETH's source/bytecode binding also remains unverified. A documented address and an ERC-20 interface do not prove those properties.
+
+The next technical prerequisite is narrowly defined: establish the selected tokens' deployed behavior from authenticated source binding or a retained, ordinary direct Router02 receipt for this pair, then check the actual owner's read-only call after legitimate funding/allowance are established. Do not relax the current receipt profile to accommodate extra events. The owner-specific swap still needs its own receipt verification even if a preceding example is compatible.
+
+## E. Gas, wallet, and execution prerequisites
+
+[Ethereum's network documentation](https://ethereum.org/developers/docs/networks/) identifies Sepolia for application development and lists free faucets. Documentation, a reachable page, owner eligibility, and actual funding are four different conditions.
+
+| Gas path | Established on 6 November IST | Remaining gap |
+|---|---|---|
+| [Google Cloud Sepolia faucet](https://cloud.google.com/application/web3/faucet/ethereum/sepolia) | Reachable official sign-in page | Google sign-in, current allowance/capacity, owner eligibility and receipt unverified |
+| [Alchemy faucet documentation](https://www.alchemy.com/docs/faucets) | No Alchemy account; 0.1 Sepolia ETH per wallet per 24 hours; CAPTCHA | Same recipient must already hold at least 0.001 mainnet ETH and real mainnet transaction history, and not exceed testnet balance restrictions; owner eligibility unverified |
+
+The Alchemy restrictions do not justify purchasing/moving mainnet ETH or using an owner's existing mainnet identity without approval. Google is a candidate path for an owner-controlled test wallet, not a promise of free funds. Circle's native-ETH developer-console faucet only funds Circle-created wallets; introducing that infrastructure is unnecessary here.
+
+An eventual owner-controlled flow would require a public-use Sepolia EOA with no observed contract/delegated code, received test USDC and Sepolia ETH, and a separate bounded USDC approval if allowance is insufficient. The target transaction must call the pinned Router02 directly with `value = 0`; WETH output need not be unwrapped. No wallet has been selected, and balances, nonce, allowance, participant blacklist state, and a full sender-specific router `eth_call` are **UNVERIFIED**. QuoterV2 success is not that sender-specific simulation. A lack-of-balance/allowance failure would not by itself reject pool liquidity.
+
+Gas must cover the approval (if needed), swap, and any separately authorized cleanup. A conservative spending cap is the sum of each authorized `gasLimit × maxFeePerGas`. The observed QuoterV2 number concerns only the simulated swap path, not intrinsic gas, the router's full work, or an approval. No numeric owner gas budget or expenditure is authorized by this report. See [Ethereum gas documentation](https://ethereum.org/developers/docs/gas/).
+
+## F. Candidate transaction and independent minimum
+
+This is a **research design**, not a final policy, unsigned transaction, or execution instruction. Owner, recipient, nonce, gas caps, and final thresholds are intentionally unset.
+
+| Parameter | Candidate design |
+|---|---|
+| Chain / to | `11155111` / pinned Router02 above |
+| Pool / fee | `0x3289680dd4d6c10bb19b899729cda5eef58aeff1` / `500` |
+| Direction | Circle Sepolia test USDC → documented Sepolia WETH |
+| Exact input / policy input cap | `1000000` raw input units, subject to owner approval |
+| Recipient / owner | UNVERIFIED; owner must approve the actual public addresses |
+| Native value / price limit | `0` / `0` |
+| Router minimum formula | `floor(Q × 99 / 100)` |
+| Independent operator minimum formula | `ceil(Q × 101 / 100)` |
+| `Q` | A fresh pre-publication quote for the exact approved input, with provider and block/hash recorded |
+
+The proposed 1% stricter-than-quote operator threshold deliberately demonstrates a parameter mismatch; it is not a fair-value estimate or evidence of unexpected market loss. With the research quote `Q = 37929811014366`, the illustrative router minimum is `37550512904222` and the independent policy minimum is `38309109124510` raw WETH units. These numbers are **not a published final pre-execution policy**. Before any authorized attempt, choose and freeze the exact thresholds from a fresh quote and disclose the construction. Do not recompute them after seeing a receipt. Market movement may produce PASS, VIOLATION, or revert; incomplete evidence may produce UNKNOWN.
+
+The policy must retain exactly the existing required fields: `schemaVersion`, `chainId`, `owner`, `expectedRecipient`, `tokenIn`, `tokenOut`, `maxInputRaw`, `minReceivedRaw`. Do not add provenance fields or a reserve requirement. Keep router parameters in a separate intent record, so the encoded minimum cannot be confused with the independent operator requirement.
+
+## G. Proposed pre-execution chronology procedure
+
+**Designed only; none of these publication or execution steps has occurred.**
+
+1. After the external prerequisites and owner authorization are resolved, freeze one attempt's actual owner/recipient, input, pool/fee, router minimum, independent policy minimum, and quote context. Decode the seven-field router call and compare it with the separate intent record. Identify the nonce if available after approvals.
+2. Validate the unchanged policy schema. Compute both **SHA-256 of the exact policy file bytes** and Aftercheck's **normalized policy digest**, `digestJson(parsePolicy(parseJson(text)))`. The latter normalizes addresses and sorts keys; it is not the file-byte hash. Hash the separate intent file too.
+3. Commit and push the policy and intent as commit **S**. Fetch their actual Git blobs by full commit SHA and recheck both digests. This also detects unexpected line-ending conversion. Do not force-push or rewrite this history.
+4. Publish a **new dedicated, unedited** GitHub PR or issue-comment record whose initial body already binds full commit **S**, commit-pinned file URLs, both policy digests, the intent digest, and attempt ID. Retain the API response with record ID/URL, author, body, `created_at` and `updated_at`; verify public readability. An old PR's creation date does not timestamp a later-added policy, and an edited comment's original date does not timestamp its current body.
+5. The owner reviews that published record before signing/broadcasting the authorized call. Retain the observed owner confirmation/submission sequence. A later block timestamp alone cannot prove publication preceded broadcast: a previously broadcast transaction can be included later. Allow a clear temporal separation and report ambiguous ordering as ambiguous.
+6. Collect the actual transaction from one provider. Match sender, recipient, router, value, calldata, tokens, fee, input and applicable nonce against the frozen intent. Verify the exact committed policy, retaining the complete evidence and honest verdict. Failed/reverted/passing attempts remain part of the record; changed parameters require a newly published attempt before a retry.
+7. Create a later closeout manifest **M** referencing **S**, the publication record, transaction/block, and evidence/report digests. A commit cannot meaningfully contain its own future SHA. Verify the publication record remains unedited and retain its original captured response.
+
+GitHub's server-created records provide inspectable third-party chronology, not immutable cryptographic timestamping. Git author/committer dates are caller-controlled; signed commits do not turn those dates into trusted publication times. The comparison also depends on clocks and retained observations. See GitHub's [issue-comment API](https://docs.github.com/en/rest/issues/comments) and [Git commit API](https://docs.github.com/en/rest/git/commits).
+
+**Current software limitation:** `src/verify.ts` always emits `policySource: "SUPPLIED_RETROSPECTIVE"`, and the report explicitly does not authenticate original intent. The CLI normalizes the exported policy, so exported byte hashes can differ from the committed original while the normalized policy digest agrees. This spike does not change that schema or wording. A future chronology assessment must be a separately reviewed artifact; do not relabel the financial report or imply Aftercheck automatically verified prepublication.
+
+## H. Bounded engineering implementation
+
+[`scripts/probe-sepolia-feasibility.mjs`](../scripts/probe-sepolia-feasibility.mjs) is separate research tooling and reuses the existing bounded `RpcClient`. A complete path uses **20 read-only requests**, with parallel independent batches, 32-call transport ceiling, 8-second per-request/90-second total defaults, 2 MB per-response and 8 MB total byte ceilings. It has no runtime dependencies beyond the existing project.
+
+The probe validates the chain, pinned block, code/metadata, factory pool binding, liquidity/slot0, and QuoterV2 quote ABI and price bounds; it rechecks chain/canonical block afterward. It emits fixed read methods and fixed contract calls, without an owner `from`, state overrides, wallet generation, signing, approvals or broadcasting. Endpoint credentials and arbitrary error bodies are omitted. Code observations retain byte length and SHA-256 rather than dumping bytecode. A hash identifies captured bytes; it does not authenticate them.
+
+`candidateStatus: OBSERVED` means the research reads completed; it is **not GO, financial PASS, or a supported transaction verdict**. `readiness` always remains `NOT_ESTABLISHED`. The output distinguishes token access, wallet funding, quote simulation, capture-block state reads, and the full collector path. Zero active liquidity alone is not interpreted as proof that every possible trade is impossible. Missing data, malformed responses, wrong identities, and failed final rechecks never become a complete observation.
+
+[`test/sepolia-feasibility.test.mjs`](../test/sepolia-feasibility.test.mjs) adds **16 explicitly synthetic regression tests** for correct identities, wrong chain, missing code, zero selected pool, conflicting metadata, missing liquidity, malformed envelopes/ABI, sanitized failures, read-only methods, no state overrides, exact quote encoding, invalid quoted prices, canonicality, incomplete final reads, input bounds, and batching dependencies. These fabricated responses do not establish public liquidity.
+
+The production verifier, schemas, retained genuine evidence, browser, Windows workstream and existing workflows are unchanged. The feature/test/evidence matrix and final capture/CI provenance are completed in the final reproducibility increment.
