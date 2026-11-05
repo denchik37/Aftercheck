@@ -32,7 +32,7 @@ try {
   assert.equal(replay.evidenceDigest,evidence.digest);
   assert.equal(replay.policySource,'SUPPLIED_RETROSPECTIVE');
   assert.equal(replay.observationFinality,'NOT_CHECKED');
-  console.log('Observed existing Sepolia swap and reproduced PASS under this public RPC provider and retrospective policy.');
+  console.log('Historical Sepolia evidence and saved reports replay consistently: scoped retrospective-policy PASS.');
   console.log('No consensus proof, finality refresh or token balance semantics are established.');
 } catch (error) {
   const code = error instanceof Error && /^[A-Z][A-Z0-9_]{0,80}$/.test(error.message)
