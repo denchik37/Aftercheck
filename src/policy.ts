@@ -14,6 +14,8 @@ export interface Policy {
 
 export function parsePolicy(input: unknown): Policy {
   const obj = requireRecord(input, 'policy');
+  const fields = ['schemaVersion','chainId','owner','expectedRecipient','tokenIn','tokenOut','maxInputRaw','minReceivedRaw','reserveFloorRaw'];
+  if (Object.keys(obj).some(key => !fields.includes(key))) throw new TypeError('Unknown policy field');
   if (obj.schemaVersion !== 'aftercheck.policy.v1') {
     throw new TypeError('Unsupported policy schema');
   }

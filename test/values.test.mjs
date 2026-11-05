@@ -34,5 +34,7 @@ test('rejects unsupported policy schema, equal token pair, malformed values',()=
  assert.throws(()=>parsePolicy({...policy,tokenOut:a('3')}));
  assert.throws(()=>parsePolicy({...policy,maxInputRaw:'0'}));
  assert.throws(()=>parsePolicy({...policy,owner:'0x123'}));
+ assert.throws(()=>parsePolicy({...policy,ignoredLimit:'1'}),/Unknown policy field/);
+ assert.throws(()=>rawAmount('9'.repeat(10000)));
  assert.throws(()=>parsePolicy([]));
 });

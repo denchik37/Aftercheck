@@ -5,7 +5,7 @@ const ADDRESS = /^0x[0-9a-fA-F]{40}$/;
 const HASH32 = /^0x[0-9a-fA-F]{64}$/;
 
 export function rawAmount(value: unknown, label = 'amount'): bigint {
-  if (typeof value !== 'string' || !RAW_AMOUNT.test(value)) {
+  if (typeof value !== 'string' || value.length > 78 || !RAW_AMOUNT.test(value)) {
     throw new TypeError(`${label} must be a canonical nonnegative decimal string`);
   }
   const result = BigInt(value);

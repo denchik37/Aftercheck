@@ -9,7 +9,7 @@ export interface Report {
   evidenceClass: string;
   transactionHash: string | null;
   execution: 'SUCCEEDED' | 'REVERTED' | 'PENDING' | 'UNKNOWN';
-  support: 'SUPPORTED_TEST_PROFILE' | 'UNSUPPORTED';
+  support: 'SUPPORTED_TEST_PROFILE' | 'SUPPORTED' | 'UNSUPPORTED';
   coverage: 'COMPLETE' | 'PARTIAL' | 'CONFLICTED';
   verdict: Verdict;
   checks: Check[];
