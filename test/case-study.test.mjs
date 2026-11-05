@@ -1,10 +1,17 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
+import {cp, copyFile, mkdir, mkdtemp, readFile, readdir, rm, stat, writeFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
+import {spawnSync} from 'node:child_process';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import vm from 'node:vm';
 import {parseEvidence, sealEvidence, validateReceiptIdentity} from '../src/evidence.ts';
 import {canonicalJson, digestJson, parseJson} from '../src/json.ts';
 import {parsePolicy} from '../src/policy.ts';
+import {renderMarkdown} from '../src/report.ts';
 import {verifyEvidence} from '../src/verify.ts';
 
 // Fixed anchors from the unchanged historical fixture and its existing
@@ -218,4 +225,209 @@ test('Existing PASS, input-cap VIOLATION and reserve UNKNOWN demonstrations reta
       assert.equal(report.checks.filter(check => check.result === 'VIOLATION').length, 0);
     }
   }
+});
+
+const root = fileURLToPath(new URL('../', import.meta.url));
+const managedFiles = ['evidence.json', 'policy.json', 'report.json', 'report.md'];
+const caseNames = ['pass', 'output-threshold-violation'];
+const secretSentinel = 'CASE_STUDY_SECRET_SENTINEL';
+const nodeArgs = ['--disable-warning=ExperimentalWarning', '--experimental-strip-types'];
+
+function runCaseStudy(args, {cwd = root, repository = root} = {}) {
+  return spawnSync(process.execPath, [...nodeArgs,
+    '--import', join(repository, 'scripts/offline-guard.mjs'),
+    join(repository, 'scripts/case-study.mjs'), ...args], {
+    cwd, encoding: 'utf8', timeout: 15_000, maxBuffer: 64_000,
+    env: {...process.env, AFTERCHECK_RPC_URL: 'https://unreachable.invalid/' + secretSentinel}
+  });
+}
+
+function assertRunnerSuccess(result) {
+  assert.equal(result.error, undefined);
+  assert.equal(result.signal, null);
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.stderr, '');
+  assert.ok(!result.stdout.includes(secretSentinel));
+}
+
+function assertRunnerFailure(result) {
+  assert.equal(result.error, undefined);
+  assert.equal(result.signal, null);
+  assert.equal(result.status, 1, result.stderr);
+  assert.match(result.stderr, /^Case study failed during /);
+  assert.ok(!(result.stdout + result.stderr).includes(secretSentinel));
+  assert.doesNotMatch(result.stdout, /Financial verdict:|CASE A|CASE B|SUCCEEDED/);
+}
+
+async function readManagedOutputs(output) {
+  const files = {};
+  for (const name of caseNames) {
+    for (const file of managedFiles) files[`${name}/${file}`] = await readFile(join(output, name, file), 'utf8');
+  }
+  return files;
+}
+
+async function copyCaseStudyRepository(directory) {
+  const repository = join(directory, 'copied-repo');
+  await mkdir(join(repository, 'scripts'), {recursive: true});
+  await mkdir(join(repository, 'examples/sepolia'), {recursive: true});
+  await cp(join(root, 'src'), join(repository, 'src'), {recursive: true});
+  for (const file of ['package.json', 'scripts/case-study.mjs', 'scripts/offline-guard.mjs',
+    'examples/sepolia/evidence.json', 'examples/sepolia/policy-pass.json',
+    'examples/sepolia/policy-output-threshold.json']) {
+    await copyFile(join(root, file), join(repository, file));
+  }
+  return repository;
+}
+
+test('Offline case runner exports eight deterministic files that independently replay and load in the existing inspector', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'aftercheck-case-study-'));
+  try {
+    const output = join(directory, 'relative-output');
+    // Explicit relative output belongs to the caller, even outside the repo.
+    // The guard disables fetch and common Node networking entry points, while
+    // the unusable endpoint demonstrates that no live provider is required.
+    const firstRun = runCaseStudy(['relative-output'], {cwd: directory});
+    assertRunnerSuccess(firstRun);
+    const first = await readManagedOutputs(output);
+    const secondRun = runCaseStudy(['relative-output'], {cwd: directory});
+    assertRunnerSuccess(secondRun);
+    assert.deepEqual(await readManagedOutputs(output), first);
+    assert.equal(secondRun.stdout, firstRun.stdout);
+    assert.deepEqual((await readdir(output)).sort(), [...caseNames].sort());
+
+    // Exercise the actual standalone viewer parser; no parser or schema is
+    // invented here, and the other workstream's HTML is read without editing.
+    const html = readFileSync(new URL('../web/inspector.html', import.meta.url), 'utf8');
+    const parserSource = html.match(/<script id="report-parser">([\s\S]*?)<\/script>/)?.[1];
+    assert.ok(parserSource, 'The existing report parser must be present');
+    const context = vm.createContext({TextEncoder});
+    new vm.Script(parserSource + '\nglobalThis.inspectorParser = AftercheckReports;').runInContext(context);
+
+    for (const [name, verdict] of [['pass', 'PASS'], ['output-threshold-violation', 'VIOLATION']]) {
+      assert.deepEqual((await readdir(join(output, name))).sort(), [...managedFiles].sort());
+      const evidence = parseEvidence(parseJson(first[`${name}/evidence.json`]));
+      const policy = parsePolicy(parseJson(first[`${name}/policy.json`]));
+      const saved = parseJson(first[`${name}/report.json`]);
+      const replayed = verifyEvidence(evidence, policy);
+      assertScopedReport(saved, verdict);
+      assert.equal(canonicalJson(saved), canonicalJson(replayed));
+      assert.equal(canonicalJson(evidence), canonicalJson(load('evidence.json')));
+      for (const file of ['evidence.json', 'policy.json', 'report.json']) {
+        assert.equal(first[`${name}/${file}`], canonicalJson(parseJson(first[`${name}/${file}`])) + '\n');
+      }
+      assert.equal(first[`${name}/report.md`], renderMarkdown(replayed));
+      const displayed = context.inspectorParser.parseReport(first[`${name}/report.json`]);
+      assertScopedReport(displayed, verdict);
+      assert.equal(displayed.checks.find(check => check.id === 'minReceivedRaw').result, verdict);
+      assert.deepEqual(JSON.parse(JSON.stringify(displayed)), JSON.parse(first[`${name}/report.json`]));
+    }
+    assert.equal(first['pass/evidence.json'], first['output-threshold-violation/evidence.json']);
+    assert.notEqual(parseJson(first['pass/report.json']).policyDigest,
+      parseJson(first['output-threshold-violation/report.json']).policyDigest);
+    for (const value of [target, evidenceDigest, amountIn, amountOut, '503746230655540']) {
+      assert.ok(firstRun.stdout.includes(value), `Operator comparison must contain ${value}`);
+    }
+  } finally { await rm(directory, {recursive: true, force: true}); }
+});
+
+test('Case runner succeeds as a demonstration while its portable violating report retains verifier CLI exit 2', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'aftercheck-case-exits-'));
+  try {
+    const output = join(directory, 'case-study');
+    assertRunnerSuccess(runCaseStudy([output]));
+    const portable = join(output, 'output-threshold-violation');
+    const independentlyVerified = join(directory, 'independent-verify');
+    const result = spawnSync(process.execPath, [...nodeArgs, '--import', join(root, 'scripts/offline-guard.mjs'),
+      join(root, 'bin/aftercheck.mjs'), 'verify', join(portable, 'evidence.json'),
+      join(portable, 'policy.json'), independentlyVerified], {
+      cwd: directory, encoding: 'utf8', timeout: 15_000, maxBuffer: 64_000,
+      env: {...process.env, AFTERCHECK_RPC_URL: 'https://unreachable.invalid/' + secretSentinel}
+    });
+    assert.equal(result.error, undefined);
+    assert.equal(result.signal, null);
+    assert.equal(result.status, 2, result.stderr);
+    assert.ok(!(result.stdout + result.stderr).includes(secretSentinel));
+    const report = parseJson(await readFile(join(independentlyVerified, 'report.json'), 'utf8'));
+    assertScopedReport(report, 'VIOLATION');
+    assert.equal(report.checks.find(check => check.id === 'minReceivedRaw').result, 'VIOLATION');
+    for (const file of managedFiles) {
+      assert.equal(await readFile(join(independentlyVerified, file), 'utf8'), await readFile(join(portable, file), 'utf8'));
+    }
+  } finally { await rm(directory, {recursive: true, force: true}); }
+});
+
+test('Default case output is rooted at the runner repository when invoked from a foreign working directory', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'aftercheck-case-default-'));
+  try {
+    const repository = await copyCaseStudyRepository(directory);
+    const caller = join(directory, 'caller');
+    await mkdir(caller);
+    assertRunnerSuccess(runCaseStudy([], {cwd: caller, repository}));
+    const files = await readManagedOutputs(join(repository, 'output/case-study'));
+    assertScopedReport(parseJson(files['pass/report.json']), 'PASS');
+    assertScopedReport(parseJson(files['output-threshold-violation/report.json']), 'VIOLATION');
+    assert.deepEqual(await readdir(caller), []);
+  } finally { await rm(directory, {recursive: true, force: true}); }
+});
+
+test('Copied corrupt or misconfigured inputs fail before publication and preserve previous complete case exports', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'aftercheck-case-invalid-'));
+  try {
+    const repository = await copyCaseStudyRepository(directory);
+    const output = join(directory, 'previous-export');
+    assertRunnerSuccess(runCaseStudy([output], {repository}));
+    const previous = await readManagedOutputs(output);
+    const fixtureDirectory = join(repository, 'examples/sepolia');
+    const originalEvidence = await readFile(join(fixtureDirectory, 'evidence.json'), 'utf8');
+    const originalPass = await readFile(join(fixtureDirectory, 'policy-pass.json'), 'utf8');
+    const originalThreshold = await readFile(join(fixtureDirectory, 'policy-output-threshold.json'), 'utf8');
+    const tamperedEvidence = JSON.parse(originalEvidence);
+    tamperedEvidence.receipt.logs[0].data = '0x' + BigInt(minimumOut).toString(16).padStart(64, '0');
+    const corruptions = [
+      ['evidence.json', originalEvidence, '{"secret":"' + secretSentinel + '",'],
+      ['evidence.json', originalEvidence, JSON.stringify(tamperedEvidence)],
+      ['policy-output-threshold.json', originalThreshold,
+        JSON.stringify({...JSON.parse(originalThreshold), minReceivedRaw: 'https://invalid.example/' + secretSentinel})],
+      ['policy-output-threshold.json', originalThreshold,
+        JSON.stringify({...JSON.parse(originalThreshold), minReceivedRaw: amountOut})],
+      ['policy-pass.json', originalPass,
+        JSON.stringify({...JSON.parse(originalPass), minReceivedRaw: minimumOut})]
+    ];
+    for (const [index, [name, original, modified]] of corruptions.entries()) {
+      await writeFile(join(fixtureDirectory, name), modified);
+      const freshOutput = join(directory, `not-published-${index}`);
+      assertRunnerFailure(runCaseStudy([freshOutput], {repository}));
+      await assert.rejects(stat(freshOutput), {code: 'ENOENT'});
+      assertRunnerFailure(runCaseStudy([output], {repository}));
+      assert.deepEqual(await readManagedOutputs(output), previous);
+      await writeFile(join(fixtureDirectory, name), original);
+    }
+    assert.equal(parseEvidence(load('evidence.json')).digest, evidenceDigest);
+  } finally { await rm(directory, {recursive: true, force: true}); }
+});
+
+test('Rejected publication preserves unmanaged output files and the prior managed case results', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'aftercheck-case-output-'));
+  try {
+    const output = join(directory, 'case-study');
+    assertRunnerSuccess(runCaseStudy([output]));
+    const previous = await readManagedOutputs(output);
+    const unmanaged = join(output, 'output-threshold-violation', 'operator-notes.txt');
+    await writeFile(unmanaged, 'Retain this operator note.\n');
+    const result = runCaseStudy([output]);
+    assertRunnerFailure(result);
+    assert.match(result.stderr, /OUTPUT_CONTAINS_UNMANAGED_FILES/);
+    assert.equal(await readFile(unmanaged, 'utf8'), 'Retain this operator note.\n');
+    assert.deepEqual(await readManagedOutputs(output), previous);
+  } finally { await rm(directory, {recursive: true, force: true}); }
+});
+
+test('Case runner rejects extra arguments without publishing output or echoing imported values', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'aftercheck-case-arguments-'));
+  try {
+    const output = join(directory, 'not-created');
+    assertRunnerFailure(runCaseStudy([output, secretSentinel]));
+    assert.deepEqual(await readdir(directory), []);
+  } finally { await rm(directory, {recursive: true, force: true}); }
 });
