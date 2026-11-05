@@ -6,7 +6,7 @@ import {createHash} from 'node:crypto';
 import {spawnSync} from 'node:child_process';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
-import {fileURLToPath} from 'node:url';
+import {fileURLToPath, pathToFileURL} from 'node:url';
 import vm from 'node:vm';
 import {parseEvidence, sealEvidence, validateReceiptIdentity} from '../src/evidence.ts';
 import {canonicalJson, digestJson, parseJson} from '../src/json.ts';
@@ -235,7 +235,7 @@ const nodeArgs = ['--disable-warning=ExperimentalWarning', '--experimental-strip
 
 function runCaseStudy(args, {cwd = root, repository = root} = {}) {
   return spawnSync(process.execPath, [...nodeArgs,
-    '--import', join(repository, 'scripts/offline-guard.mjs'),
+    '--import', pathToFileURL(join(repository, 'scripts/offline-guard.mjs')).href,
     join(repository, 'scripts/case-study.mjs'), ...args], {
     cwd, encoding: 'utf8', timeout: 15_000, maxBuffer: 64_000,
     env: {...process.env, AFTERCHECK_RPC_URL: 'https://unreachable.invalid/' + secretSentinel}
@@ -338,7 +338,7 @@ test('Case runner succeeds as a demonstration while its portable violating repor
     assertRunnerSuccess(runCaseStudy([output]));
     const portable = join(output, 'output-threshold-violation');
     const independentlyVerified = join(directory, 'independent-verify');
-    const result = spawnSync(process.execPath, [...nodeArgs, '--import', join(root, 'scripts/offline-guard.mjs'),
+    const result = spawnSync(process.execPath, [...nodeArgs, '--import', pathToFileURL(join(root, 'scripts/offline-guard.mjs')).href,
       join(root, 'bin/aftercheck.mjs'), 'verify', join(portable, 'evidence.json'),
       join(portable, 'policy.json'), independentlyVerified], {
       cwd: directory, encoding: 'utf8', timeout: 15_000, maxBuffer: 64_000,
