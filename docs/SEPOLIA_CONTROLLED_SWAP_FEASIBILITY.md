@@ -6,7 +6,7 @@
 
 **CONDITIONAL GO for one existing Circle test-USDC → WETH pool; execution is not ready or authorized.** The proposed experiment is a direct Sepolia Router02 swap that can succeed under its encoded minimum while violating a stricter operator minimum published beforehand. Any future result must be reported as observed, including PASS, UNKNOWN, unsupported execution, or revert. This is an intentionally constructed parameter-mismatch demonstration, not evidence of a real financial loss or a Uniswap defect.
 
-The historical TIGER/Lab USD pool still returns a positive quote, but legitimate input-token acquisition and current token semantics are unverified. Do not spend more time searching for those tokens. One bounded alternative has a documented free input-token faucet, an existing factory-selected pool, positive liquidity, and a successful read-only quote. No new contracts, liquidity position, paid provider, backend, or verifier scope expansion is needed for that candidate.
+The historical TIGER/Lab USD pool returned a positive quote, but legitimate input-token acquisition and current token semantics are unverified. Do not spend more time searching for those tokens. One bounded alternative has a documented free input-token faucet, an existing factory-selected pool, positive liquidity, and a successful read-only quote. **INFERRED:** that candidate does not currently indicate a need for new contracts, a liquidity position, paid provider, backend, or verifier scope expansion.
 
 This investigation does not authorize wallet creation on the owner's behalf, funding, token approvals, signing, broadcasting, deployment, or publication of a final policy containing an owner wallet identity. None has been performed. No final pre-execution policy or controlled transaction exists.
 
@@ -42,7 +42,7 @@ The collector needs transaction, receipt, containing block, chain/canonicality c
 | Factory | `0x0227628f3f023bb0b980b67d528571c95c6dac1c` | Official deployment and observed code/pool binding |
 | QuoterV2 | `0xed1f6473345f45b75f8179591dd5ba1888cf2fb3` | Official deployment; observed code and matching `factory()` |
 | Circle test USDC | `0x1c7d4b196cb0c7b01d743fbc6116a902379c7238` | Circle's official Sepolia deployment |
-| Sepolia WETH | `0xfff9976782d46cc05630d1f6ebab18b2324d6b14` | Uniswap's official wrapped-native table |
+| Sepolia WETH | `0xfff9976782d46cc05630d1f6ebab18b2324d6b14` | [Uniswap's official wrapped-native table](https://developers.uniswap.org/docs/protocols/v3/deployments/v3-ethereum-deployments#wrapped-native-token-addresses) |
 
 [Uniswap's deployment table](https://developers.uniswap.org/docs/protocols/v3/deployments/v3-ethereum-deployments) and the official [Router02 interface](https://github.com/Uniswap/swap-router-contracts/blob/main/contracts/interfaces/IV3SwapRouter.sol) were checked on 6 November IST. Documentation recommends Universal Router for general integrations, but explicitly lists this Router02 deployment. This spike preserves the narrower supported interface.
 
@@ -52,7 +52,7 @@ Nonempty runtime code and matching metadata are provider observations, not a rep
 
 ## B. Bounded candidate investigation
 
-Both candidates below were observed through the single public keyless provider `https://sepolia.gateway.tenderly.co`. Complete probe attempts pinned block **12071805** (`0xb8337d`), hash `0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1`, timestamp **2026-11-05T20:20:12Z**, and passed their final block/chain rechecks. These quotes are observations at that block, not promises about later output.
+Both candidates below were observed through the single public keyless provider `https://sepolia.gateway.tenderly.co`. Initial complete probe attempts pinned block **12071805** (`0xb8337d`), hash `0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1`, timestamp **2026-11-05T20:20:12Z**, and passed their final block/chain rechecks. Those captures identify the precommit prototype by its exact script hash. The final probe, executed at the local source revision mapped below to published commit `f24584bc8512626afe436af58163790b48062364`, independently repeated the **selected USDC/WETH candidate** at block **12071829** (`0xb83395`), hash `0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e`, timestamp **2026-11-05T20:25:12Z**: all **20 requests completed**, with the same liquidity and quote quantities below. These are observations at the recorded blocks, not promises about later output.
 
 | Item | Historical candidate | Selected bounded alternative |
 |---|---|---|
@@ -70,15 +70,21 @@ Both candidates below were observed through the single public keyless provider `
 
 For each full probe the official factory selected exactly the nominated pool; pool factory/token order/fee matched; router/factory/pool/token/quoter code was nonempty; `slot0` was unlocked. The positive quotes support a small-trade hypothesis more directly than the liquidity field alone. They do not establish future inclusion, an actual supported receipt, full-fill behavior of a future owner call, or ordinary token balance semantics.
 
+A separate hash-bound metadata supplement at the final selected block returned USDC decimals `6` and WETH decimals `18`, with the same canonical block rechecked. Thus `1000000` raw input represents **1 test USDC**, and the quote represents **0.000037929811014366 test WETH**. These display conversions do not ascribe monetary value. Exact requests, replies, code hashes, source revisions and separate failed attempts are retained in the [research manifest](evidence/sepolia-controlled-swap-feasibility.json).
+
 Only one fallback token pair was investigated. Discovery queried fee tiers `500` and `3000`; the latter returned `0x6ce0896eae6d4bd668fde41bb784548fb8f59b50`, but was not developed as another candidate after the `500` pool quoted successfully. No further pool search is justified.
 
 An earlier sequential research attempt at block `12071790` returned metadata and a quote but timed out on an optional token-balance read, exhausting the request time budget before canonicality/chain rechecks. It is an **incomplete attempt**, not silently repaired using another capture. Bounded parallel reads subsequently completed independent captures.
+
+The final committed probe's repeat of the historical TIGER/Lab USD candidate was also **INCOMPLETE**: `quoter.code`, `pool.liquidity`, `chain.final`, and `block.final` returned sanitized `RPC_HTTP_ERROR`. The HTTP status and provider body were not retained, so the cause is not attributed to rate limits or a provider defect. That failed attempt is preserved separately from both earlier successful captures and the independently complete selected-candidate capture. No retry or further pool search is needed for the rejected token-acquisition path.
 
 ## C. Historical evidence availability
 
 The unchanged production `inspect` command was run afresh against the retained third-party transaction `0x608ca58e7d01dbe0c7fe48af8c0bb9f2bddcf07ccc36f5c28d033bc8d198d5e9`. Capture began **2026-11-05T20:19:22.233Z** and returned **SUCCEEDED / SUPPORTED / COMPLETE / PASS** under the existing retrospective pass policy, with all **12 historical state observations** and no collection errors.
 
 The fresh evidence digest was `0xd170ac971902427d8939803ddd596837a9be5d44e4671727db354164db631441`. Its entire normalized payload matched the retained original apart from capture timestamp and digest. It still describes the February 2025 transaction at block `7689923`, hash `0x6526359f4e3c5e1db4d70ecef4510b8f510fd1e05e3dce986a9de32bd7fa7a34`; it is not a new transaction.
+
+The [manifest's `historicalCollectorCheck`](evidence/sepolia-controlled-swap-feasibility.json) records all 12 requests, sanitized results/code hashes, verdict and capture hashes. The unchanged retained base plus the captured acquisition timestamp reconstructs the exact fresh canonical payload/digest and file bytes. That reconstruction is an offline reproduction of the recorded acquisition, not a new chain observation; the supplied `inspect` command below performs a new read.
 
 This establishes a working collector path on the same provider at the observation time, not a service guarantee. [Tenderly documents its keyless Sepolia endpoint](https://docs.tenderly.co/node-rpc/rpc-reference) and [public limits](https://docs.tenderly.co/node-rpc/overview); the live test, rather than ordinary method availability, established this historical [EIP-1898](https://eips.ethereum.org/EIPS/eip-1898) capability. No observations from another provider were merged into an evidence bundle.
 
@@ -88,9 +94,9 @@ This establishes a working collector path on the same provider at the observatio
 
 **Circle input — documented path, actual funding UNVERIFIED.** [Circle's official address table](https://developers.circle.com/stablecoins/usdc-contract-addresses) identifies the candidate USDC as a Sepolia test token with no financial value or real-USD backing. The reachable [Circle faucet](https://faucet.circle.com/) lists Ethereum Sepolia, advertises 20 test USDC per address/network every two hours, requires no account, and uses reCAPTCHA. No wallet address was submitted and no claim was requested. Faucet reserves, acceptance, and owner receipt are not established. USDC input avoids a prior WETH-wrapping transaction; the output can remain wrapped.
 
-Circle's [upstream implementation](https://github.com/circlefin/stablecoin-evm/blob/master/contracts/v1/FiatTokenV1.sol) has amount-preserving transfers plus allowance, pause, and blacklist controls, with an upgradeable architecture. This supports a compatibility hypothesis only. Direct source retrieval from both Etherscan and Sepolia Blockscout was blocked by HTTP 403 for the USDC and WETH addresses. The current USDC proxy implementation's source/bytecode binding, pause/blacklist state for the eventual participants, upgrade state, and deployed transfer behavior therefore remain **UNVERIFIED**. WETH's source/bytecode binding also remains unverified. A documented address and an ERC-20 interface do not prove those properties.
+Circle's [upstream implementation](https://github.com/circlefin/stablecoin-evm/blob/master/contracts/v1/FiatTokenV1.sol) has amount-preserving transfers plus allowance, pause, and blacklist controls, with an upgradeable architecture. This supports a compatibility hypothesis only. Direct source retrieval from both Etherscan ([USDC](https://sepolia.etherscan.io/address/0x1c7d4b196cb0c7b01d743fbc6116a902379c7238#code), [WETH](https://sepolia.etherscan.io/address/0xfff9976782d46cc05630d1f6ebab18b2324d6b14#code)) and Sepolia Blockscout ([USDC API](https://eth-sepolia.blockscout.com/api/v2/smart-contracts/0x1c7d4b196cb0c7b01d743fbc6116a902379c7238), [WETH API](https://eth-sepolia.blockscout.com/api/v2/smart-contracts/0xfff9976782d46cc05630d1f6ebab18b2324d6b14)) was blocked by HTTP 403. The current USDC proxy implementation's source/bytecode binding, pause/blacklist state for the eventual participants, upgrade state, and deployed transfer behavior therefore remain **UNVERIFIED**. WETH's source/bytecode binding also remains unverified. A documented address and an ERC-20 interface do not prove those properties.
 
-The next technical prerequisite is narrowly defined: establish the selected tokens' deployed behavior from authenticated source binding or a retained, ordinary direct Router02 receipt for this pair, then check the actual owner's read-only call after legitimate funding/allowance are established. Do not relax the current receipt profile to accommodate extra events. The owner-specific swap still needs its own receipt verification even if a preceding example is compatible.
+The next technical prerequisite is narrowly defined: authenticate the selected tokens' deployed code/implementation and relevant source/state to assess transfer semantics. A retained ordinary direct Router02 receipt can **separately** establish observed event-shape compatibility; it cannot replace source/state analysis or prove actual balance semantics, absence of transfer fees/rebasing, or future proxy behavior. The verifier retains its plain-token assumption. After legitimate funding/allowance are established, the actual owner's read-only router call must also be checked. Do not relax the receipt profile to accommodate extra events; a future owner swap still needs its own receipt verification.
 
 ## E. Gas, wallet, and execution prerequisites
 
@@ -153,4 +159,87 @@ The probe validates the chain, pinned block, code/metadata, factory pool binding
 
 [`test/sepolia-feasibility.test.mjs`](../test/sepolia-feasibility.test.mjs) adds **16 explicitly synthetic regression tests** for correct identities, wrong chain, missing code, zero selected pool, conflicting metadata, missing liquidity, malformed envelopes/ABI, sanitized failures, read-only methods, no state overrides, exact quote encoding, invalid quoted prices, canonicality, incomplete final reads, input bounds, and batching dependencies. These fabricated responses do not establish public liquidity.
 
-The production verifier, schemas, retained genuine evidence, browser, Windows workstream and existing workflows are unchanged. The feature/test/evidence matrix and final capture/CI provenance are completed in the final reproducibility increment.
+The production verifier, schemas, retained genuine evidence, browser, Windows workstream and existing workflows are unchanged.
+
+## I. Readiness matrix and decision gates
+
+| Gate / feature | Actual evidence or test | Source revision / observation | Status and remaining risk |
+|---|---|---|---|
+| A — official supported deployment | Official mappings plus matching chain/code/router factory | Final selected probe, `f24584b`, block `12071829` | PASS within documented RPC trust; OBSERVED BUT PROVIDER-DEPENDENT |
+| B — one existing usable pool | Factory/pool metadata, nonzero active liquidity, positive exact-input quote | Same 20-request selected capture | PASS for a quoted small-trade candidate, not future execution |
+| C — accessible ordinary test tokens | Circle identity/faucet documentation; 6/18 decimal reads | Official sources retrieved 6 November IST; same hash-bound block | CONDITIONAL: deployed implementation/semantics and actual acquisition UNVERIFIED |
+| D — gas funding | Official Ethereum faucet list; reachable Google sign-in and Alchemy requirements | Sources retrieved 6 November IST | CONDITIONAL: owner eligibility/capacity/balance UNVERIFIED |
+| E — supported execution path | Correct Router02 tuple/profile; QuoterV2 simulation | `f24584b`; existing decoder and 16 new synthetic tests | CONDITIONAL: funded EOA, allowance, full owner simulation, gas budget and actual receipt absent |
+| F — post-execution evidence path | Fresh unchanged production `inspect`; 12 hash-bound reads, COMPLETE/PASS | Production source `09bfe5d`; captured `2026-11-05T20:19:22.233Z` | PASS as a demonstrated historical path; public provider availability is not guaranteed |
+| Prepublication procedure | Separate policy/intent, digests, fresh server-created publication record, owner sequence, closeout | Section G; current parser/digest implementation | Designed, UNVERIFIED in practice; no final policy or publication exists |
+| Probe failure handling | 16 synthetic tests including wrong chain/code, malformed/error data and reorg | Probe/test implementation `f24584b` | VERIFIED local tests; mocked replies do not prove chain facts |
+| Existing financial verifier | Typecheck and 133 Node tests; all three offline demos | Same code files as `f24584b`; Node `24.22.1` | VERIFIED locally; final PR CI is recorded separately below |
+| Transaction-boundary reserves | Existing reserve demo returns UNKNOWN / PARTIAL | Unchanged genuine example | NOT APPLICABLE to this experiment; never inferred from receipts |
+
+**Overall: CONDITIONAL GO, not execution GO.** Pool/deployment/quote and a historical evidence path are credible. Token behavior, actual access, wallet state, owner-specific execution feasibility, and chronology are not established. Making the desired four-field result appear in a report is not a reason to bypass any condition.
+
+## J. Reproduce the investigation
+
+Requires Node.js 24. These commands perform tests, offline replay, or public reads only:
+
+```bash
+npm ci --ignore-scripts --no-audit --no-fund
+npm run verify
+npm run demo
+node --experimental-strip-types --test test/sepolia-feasibility.test.mjs
+node --experimental-strip-types scripts/probe-sepolia-feasibility.mjs --json
+```
+
+The last command probes the historical candidate. Exit `0` means its research observations completed, **not GO or policy PASS**; exit `2` means incomplete/rejected observations and `1` indicates invalid setup. `--help` describes the CLI. An endpoint can be provided locally using `AFTERCHECK_RPC_URL`; do not paste private URLs into a shared command or document.
+
+For the selected fallback, this Bash/Node snippet uses the same narrow exported probe:
+
+```bash
+node --input-type=module <<'JS'
+import {RpcClient} from './src/rpc.ts';
+import {probeSepoliaFeasibility} from './scripts/probe-sepolia-feasibility.mjs';
+const client = new RpcClient(process.env.AFTERCHECK_RPC_URL ?? 'https://sepolia.gateway.tenderly.co');
+const result = await probeSepoliaFeasibility(client, {candidate: {
+  pool: '0x3289680dd4d6c10bb19b899729cda5eef58aeff1',
+  tokenIn: '0x1c7d4b196cb0c7b01d743fbc6116a902379c7238',
+  tokenOut: '0xfff9976782d46cc05630d1f6ebab18b2324d6b14',
+  fee: 500, amountInRaw: '1000000'
+}});
+console.log(JSON.stringify(result, null, 2));
+process.exitCode = result.candidateStatus === 'OBSERVED' ? 0 : 2;
+JS
+```
+
+Each invocation obtains a new head block, pins its hash, and may return different data or provider errors. To re-query a retained observation, use its exact method/parameters from the manifest; do not silently replace its block context with `latest`. The manifest is a research artifact, deliberately not accepted as `aftercheck.evidence.v1` or a financial report.
+
+Recheck the existing historical collector independently, using one public provider:
+
+```bash
+AFTERCHECK_RPC_URL=https://sepolia.gateway.tenderly.co npm run cli -- inspect \
+  0x608ca58e7d01dbe0c7fe48af8c0bb9f2bddcf07ccc36f5c28d033bc8d198d5e9 \
+  examples/sepolia/policy-pass.json output/issue18-reinspection
+node scripts/check-public-example-inspection.mjs output/issue18-reinspection
+```
+
+The live probe source published as `f24584bc8512626afe436af58163790b48062364` has script SHA-256 `3a810316866d1b6948e7982b128c348fe3cbbac1e1c30ba044bce3c92cf86234`. The manifest preserves the earlier prototype hash and each separate success/failure without relabeling it as that final source. It also retains the local verification log digests: **133/133 Node tests**, **16/16 new synthetic tests**, typecheck success and demo exits **0/2/3**. The production historical collection succeeded separately from those synthetic/offline tests.
+
+Publication provenance: the shell push lacked GitHub authentication, so the same focused snapshots were published through the connected GitHub API. Local deployment-report commit `94834847159606e2ed40f2c0a6acb018dbca81eb` maps to published `98804365aba73a38e2114c78160199601b7aaae3`, with identical tree `df747db48cb9020b05ee645d177ba39ffca7cbaa`. The live probe executed from local `605bb9e95b439cc15a415a7ea9dfe42d7edc4550`; published `f24584bc8512626afe436af58163790b48062364` has the identical complete source tree `e4ba295c82518e492178899f73ad1606f969ba6e` and script hash. Capture records retain their actual local revision and add the published mapping; publication time is not represented as acquisition time. No branch history was force-pushed.
+
+The existing GitHub Actions workflow runs the full tests/demo and its browser job on the PR revision. The PR's Testing section supplies the final head SHA, Actions run, tested checkout SHA and inspected job outcomes; baseline CI links above are not substituted for the new branch's final CI.
+
+## K. Material risks and owner boundary
+
+- **Token semantics:** source/bytecode and live USDC proxy-state verification remain open; events can misrepresent balances. A matching example receipt does not close this gap.
+- **Liquidity and execution:** the quoted price/liquidity can change; an EOA may lack funds/allowance or encounter pause/blacklist restrictions. A future swap can revert, pass the policy, violate it, or be outside the strict profile.
+- **Provider trust and availability:** RPC answers are trusted observations. Both successful and failed captures occurred. Code hashes/digests do not prove consensus or finality; future historical reads can fail.
+- **Policy chronology:** GitHub records are mutable third-party evidence with clock assumptions. Block time proves an inclusion context, not when the owner broadcast. The current evaluator does not authenticate original intent.
+- **Interpretation:** the stricter threshold is intentionally constructed from a prior quote. A violation would demonstrate declared-policy versus encoded-parameter divergence for test tokens, not profit, real loss, a security guarantee, or universal balance protection.
+- **Delivery cost:** this P1 investigation must not delay the working P0 historical/offline demonstration. No broader token/pool search, new deployment, liquidity funding, or backend build is justified.
+
+After the token-behavior prerequisite is resolved, advancing to a real attempt would require explicit owner authorization for the actual public EOA/recipient, free test-token and gas acquisition, exact input cap, any bounded router approval, gas caps, policy/intent publication, and one owner-signed direct swap. The current report authorizes none of those actions and requests no wallet secrets. Owner addresses, wallet balances, approval transaction, final policy commit, publication event and controlled transaction are all absent.
+
+## L. Consequential recommendation
+
+**Choose one narrowly defined prerequisite resolution, not execution:** authenticate the selected USDC/WETH deployed implementation and relevant transfer behavior. Event-profile corroboration and later owner-funded read-only simulation remain distinct checks. If this cannot be resolved quickly from accessible public evidence, stop the optional execution effort and retain the functioning historical example.
+
+The authorized spike itself is complete: it identifies one concrete quoted candidate, tests the available historical evidence path, implements bounded reproducible research tooling, preserves failures, and defines honest chronology/authorization gates. A later controlled swap could add evidence of predeclared intent; until it actually occurs and is verified, the existing retrospective case remains the demonstrable product result.
