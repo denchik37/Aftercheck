@@ -11,6 +11,11 @@ on:
         required: true
         type: string
         default: '0x608ca58e7d01dbe0c7fe48af8c0bb9f2bddcf07ccc36f5c28d033bc8d198d5e9'
+      second_transaction_hash:
+        description: Optional second existing Sepolia transaction (read-only)
+        required: false
+        type: string
+        default: '0xbc9d8049ad3e9b0ed9f18700110017c45df3643acfd9500c5d7a027d01b17ea0'
 
 permissions:
   contents: read
@@ -35,11 +40,18 @@ jobs:
       - name: Collect existing public transaction
         env:
           AFTERCHECK_TRANSACTION_HASH: ${{ inputs.transaction_hash || '0x608ca58e7d01dbe0c7fe48af8c0bb9f2bddcf07ccc36f5c28d033bc8d198d5e9' }}
-        run: node scripts/capture-example.mjs "$AFTERCHECK_TRANSACTION_HASH"
+          AFTERCHECK_SECOND_TRANSACTION_HASH: ${{ github.event_name == 'push' && '0xbc9d8049ad3e9b0ed9f18700110017c45df3643acfd9500c5d7a027d01b17ea0' || inputs.second_transaction_hash }}
+        run: |
+          if [ -n "$AFTERCHECK_SECOND_TRANSACTION_HASH" ]; then
+            node scripts/capture-example.mjs "$AFTERCHECK_TRANSACTION_HASH" "$AFTERCHECK_SECOND_TRANSACTION_HASH"
+          else
+            node scripts/capture-example.mjs "$AFTERCHECK_TRANSACTION_HASH"
+          fi
       - name: Retain captured evidence
+        if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: sepolia-evidence-${{ github.run_id }}-${{ github.run_attempt }}
-          path: output/captured-evidence.json
+          path: output/capture/
           if-no-files-found: error
           retention-days: 30
