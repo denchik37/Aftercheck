@@ -58,6 +58,13 @@ Receipt events are evaluated under an explicit plain-token assumption. Nonempty 
 
 ## Local inspector and demo
 
+**Public hosting work:** [DigitalOcean deployment and rollback](docs/DIGITALOCEAN_DEPLOYMENT.md)
+documents the static-site configuration and release checks. A working production
+URL has not yet been established; account access remains required. The inspector
+now includes four downloadable historical sample reports that can be imported
+without developer tools. Hosted page/sample delivery uses the network; report
+contents are processed locally without uploads.
+
 Open [web/inspector.html](web/inspector.html) from your checkout and choose a generated `report.json`. Everything is in one HTML file: no backend, remote fonts, analytics or wallet. It displays statuses, raw amounts, identities, digests, checks and limitations. Malformed imports clear the previous result; imported text stays inert. The inspector **displays saved results** and does not recompute or authenticate them. Use CLI `verify` for offline re-evaluation.
 
 **Historical example:** transaction [`0x608ca58e…98d5e9`](https://sepolia.etherscan.io/tx/0x608ca58e7d01dbe0c7fe48af8c0bb9f2bddcf07ccc36f5c28d033bc8d198d5e9), executed by a third party on **12 February 2025**, was captured read-only on **5 November 2026**. Its unchanged receipt and 12 historical observations are retained in [examples/sepolia](examples/sepolia/README.md), with exact quantities, independent checks and capture provenance. It is not a newly executed Aftercheck transaction.

@@ -10,6 +10,8 @@ inspector.html index. It does not establish DigitalOcean routing, TLS, or header
 --url requires a clean checkout at the expected commit and uses normal certificate
 validation in both urllib and Chromium. Public requests contain only public asset
 paths. All attempted browser requests during report import are recorded and blocked.
+The harness verifies the served viewer; DigitalOcean app/deployment identifiers and
+the provider's source commit require a separate authenticated deployment record.
 """
 
 from __future__ import annotations
@@ -159,11 +161,17 @@ def main() -> int:
     if args.expected_revision and not re.fullmatch(r"[0-9a-f]{40}", args.expected_revision):
         parser.error("--expected-revision must be a full lowercase commit SHA")
     if args.url:
-        parsed = urlsplit(args.url)
-        if (parsed.scheme != "https" or not parsed.hostname or parsed.username or parsed.password
-                or parsed.query or parsed.fragment or parsed.path not in ("", "/") or parsed.port not in (None, 443)):
+        try:
+            parsed = urlsplit(args.url)
+            invalid = (parsed.scheme != "https" or not parsed.hostname or parsed.username is not None
+                       or parsed.password is not None or parsed.query or parsed.fragment
+                       or parsed.path not in ("", "/") or parsed.port not in (None, 443))
+        except ValueError:
+            invalid = True
+        if invalid:
             parser.error("--url must be the public HTTPS root without credentials, query, fragment, or a custom port")
-        args.url = f"https://{parsed.netloc}/"
+        hostname = f"[{parsed.hostname}]" if ":" in parsed.hostname else parsed.hostname
+        args.url = f"https://{hostname}/"
     out = args.out.resolve()
     if (out == ROOT or ROOT in out.parents) and out != ROOT / "output" and ROOT / "output" not in out.parents:
         parser.error("Keep generated artifacts inside ignored output/ or outside the repository")
@@ -171,7 +179,9 @@ def main() -> int:
     mode = "LOCAL_HTTP" if args.local else "PUBLIC_HTTPS"
     summary = {
         "startedAt": datetime.now(timezone.utc).isoformat(), "mode": mode, "result": "FAIL",
-        "publicDeploymentVerified": False, "harnessSha256": sha256(Path(__file__).read_bytes()),
+        "publicViewerSmokePassed": False, "deploymentIdentityVerified": False,
+        "deploymentIdentityLimitation": "DigitalOcean app/deployment IDs and provider source SHA require a separate authenticated deployment record.",
+        "harnessSha256": sha256(Path(__file__).read_bytes()),
         "runtime": {"python": sys.version, "playwright": importlib.metadata.version("playwright")},
         "checks": [], "http": [], "screenshots": [], "requests": [], "postLoadRequests": [],
         "pageErrors": [], "dialogs": [], "tls": {"result": "NOT_TESTED_LOCAL_HTTP" if args.local else "NOT_EXECUTED"},
@@ -247,7 +257,7 @@ def main() -> int:
             require(record["status"] == 404, f"Unintended public route or catchall response at {path}")
         checked("http", "known source, credentials, upload, map, and missing routes return real 404s")
         if args.url:
-            http_url = f"http://{urlsplit(url).hostname}/"
+            http_url = "http://" + url.removeprefix("https://")
             record, _ = retrieve(http_url, url, follow=False)
             summary["http"].append(record)
             require(record["status"] in (301, 302, 307, 308), "HTTP is not redirected to HTTPS")
@@ -405,10 +415,10 @@ def main() -> int:
             require(page.url == url, "Import placed report data into navigation or query parameters")
             require(not unexpected and not summary["postLoadRequests"], "Unexpected asset or report-import networking")
             require(not summary["pageErrors"] and not summary["dialogs"], "Browser errors or unexpected dialogs")
-            checked(device, "imports, downloads, and clear cause zero outgoing requests, storage writes, errors, or dialogs")
+            checked(device, "imports, downloads, and clear: zero outgoing requests, errors, or dialogs; no persisted web storage")
             context.close()
         summary["result"] = "PASS"
-        summary["publicDeploymentVerified"] = bool(args.url)
+        summary["publicViewerSmokePassed"] = bool(args.url)
         if args.url:
             summary["tls"]["result"] = "PASS"
     except Exception as error:
