@@ -6,11 +6,11 @@ Aftercheck explores read-only verification of EVM transaction outcomes, emphasiz
 
 ## Try the current prototype
 
-Requires Node.js 24. No runtime npm dependencies, wallet connection, or RPC endpoint.
+Requires Node.js 24. There are no runtime npm dependencies or wallet connection. Synthetic examples and offline replay need no RPC endpoint; live collection uses a provider you explicitly configure. Locked development dependencies provide TypeScript checking.
 
 ```bash
 npm ci --ignore-scripts
-npm test
+npm run verify
 npm run cli -- examples/synthetic-observation.json examples/synthetic-policy.json
 # inspect aftercheck-output/report.json and aftercheck-output/report.md
 ```
@@ -19,7 +19,24 @@ The supplied data is **SYNTHETIC_FIXTURE**: invented addresses, transaction iden
 
 Change `maxInputRaw` to `400` to see a policy VIOLATION. Add `reserveFloorRaw: "100"` to see UNKNOWN: receipt-scoped evidence cannot prove the remaining wallet balance immediately after the transaction. The CLI exits `0` for PASS, `2` for VIOLATION, `3` for UNKNOWN, and `1` for invalid input.
 
-The command writes only a deterministic JSON report and readable Markdown report to the chosen local output directory. It does not sign transactions or make RPC requests.
+The synthetic command writes a normalized policy, deterministic JSON report and readable Markdown report to the chosen local output directory. It does not sign transactions or make RPC requests.
+
+## Collect and replay a supported Sepolia transaction
+
+Configure `AFTERCHECK_RPC_URL` in your local environment; keep keyed provider URLs out of command history, reports and shared files. Then run:
+
+```bash
+npm run cli -- collect <transaction-hash> output/capture
+npm run cli -- verify output/capture/evidence.json <your-policy.json> output/replay
+```
+
+`collect` retrieves the transaction, receipt, containing block and EIP-1898 hash-bound protocol observations. A provider that cannot serve those historical calls produces explicit incomplete evidence; there is no latest-state fallback. Only existing Ethereum Sepolia transactions are supported. No wallet or signing operation exists.
+
+`verify` checks the bundle digest, revalidates its identities, decodes the supported protocol events, and applies the supplied retrospective policy. It works offline and exports `evidence.json`, `policy.json`, `report.json` and `report.md`. A matching digest establishes internal integrity, not source authenticity. Policy addresses and raw-unit limits must describe your chosen case; the synthetic policy's invented addresses are not a real transaction policy.
+
+Use a dedicated output directory. Files are staged before the complete managed set is replaced, so a write failure cannot mix a new policy with an old PASS report. Unrelated files and symlink outputs are rejected. A successful new `collect` replaces earlier reports in that directory with evidence only. Always check the command's exit status; failed input evaluation does not refresh an earlier result.
+
+The optional **Capture public Sepolia evidence** workflow is separate from deterministic CI. It can run manually or on a dedicated `capture/**` branch, using a fixed credential-free public provider; it retains observations as an artifact and bounded log JSON. A completed collection workflow is not a financial verdict.
 
 ## Current supported scope
 
@@ -27,15 +44,16 @@ The command writes only a deterministic JSON report and readable Markdown report
 - Explicit chain, owner, recipient, token pair, maximum input and minimum received policy.
 - Normalized, synthetic direct Uniswap v3 `exactInputSingle`-shaped example with two reconciled token-transfer edges.
 - Independent execution, support, evidence coverage, and policy verdict fields.
-- Fail-closed UNKNOWN for unsupported routes, non-synthetic external data, receipt conflicts, missing transfer evidence, and unverifiable reserve claims.
+- Direct Sepolia Router02 collection, hash-bound factory/pool checks, receipt-emitted amount reconciliation, portable evidence integrity and offline replay.
+- Fail-closed UNKNOWN for unsupported routes, unverified normalized external data, receipt conflicts, missing transfer evidence, and unverifiable reserve claims.
 - Tests for large amounts, contradictions, unsupported inputs, and negative cases.
 
 ## Important limits
 
-The bounded read-only collector library in `src/rpc.ts` and `src/evidence.ts` validates transaction/receipt/block identities and exports a deterministic integrity digest. The adapter in `src/uniswap.ts` checks direct Sepolia Router02 calldata, hash-bound factory/pool observations and exact Transfer/Swap event reconciliation. See [the implemented receipt profile](docs/PROTOCOL.md). Its regression tests use mocked RPC responses; the CLI still evaluates only the synthetic example.
+The bounded read-only collector library in `src/rpc.ts` and `src/evidence.ts` validates transaction/receipt/block identities and exports a deterministic integrity digest. The adapter in `src/uniswap.ts` checks direct Sepolia Router02 calldata, hash-bound factory/pool observations and exact Transfer/Swap event reconciliation. See [the implemented receipt profile](docs/PROTOCOL.md). Its regression tests use mocked RPC responses, and offline CLI tests disable network primitives before replay.
 
 This version has **no published real swap evidence, contract deployment, production asset support, transaction-boundary reserve reconstruction, or security audit**. The normalized input format is currently a testing interface, not proof of raw Ethereum logs. Offline reports evaluate only supplied evidence and do not establish canonicality. Do not use the prototype to protect or move real funds.
 
-The next milestone is to collect a genuinely supported direct swap receipt, independently validate the actual router/pool/event identities, and preserve a reproducible evidence bundle.
+The next milestone is to retain and independently cross-check a genuine supported public-chain capture with its source revision. Do not confuse the synthetic regression fixtures with that milestone.
 
 Licensed under MIT. Development includes AI-assisted code and test generation.

@@ -36,9 +36,10 @@ export class RpcClient {
     const id = this.#id;
     const controller = new AbortController();
     let timedOut = false;
+    let response: Response | undefined;
     const timer = setTimeout(() => { timedOut = true; controller.abort(); }, Math.min(this.#timeout, this.#totalTimeout - (Date.now() - this.#started)));
     try {
-      const response = await this.#fetch(this.#endpoint, {
+      response = await this.#fetch(this.#endpoint, {
         method: 'POST', headers: {'content-type': 'application/json'},
         body: JSON.stringify({jsonrpc: '2.0', id, method, params}), signal: controller.signal,
         redirect: 'error', credentials: 'omit'
@@ -68,6 +69,11 @@ export class RpcClient {
       if (timedOut) throw new RpcError('RPC_TIMEOUT');
       if (error instanceof RpcError) throw error;
       throw new RpcError('RPC_TRANSPORT_ERROR');
-    } finally { clearTimeout(timer); }
+    } finally {
+      clearTimeout(timer);
+      controller.abort();
+      // Early status/Content-Length failures have no reader to cancel yet.
+      if (response?.body && !response.body.locked) await response.body.cancel().catch(() => {});
+    }
   }
 }

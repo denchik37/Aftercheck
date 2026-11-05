@@ -1,11 +1,14 @@
 import type {Report} from './evaluate.ts';
+import type {ReplayReport} from './verify.ts';
+
+const text = (value: string) => value.replace(/[\r\n]/g,' ').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/[\\`*\[\]]/g,'\\$&');
 
 /** Deterministic, offline-readable report; no RPC call or floating-point math. */
 export function renderMarkdown(report: Report): string {
   const lines = [
     '# Aftercheck outcome report',
     '',
-    `- **Evidence class:** ${report.evidenceClass}`,
+    `- **Evidence class:** ${text(report.evidenceClass)}`,
     `- **Transaction:** ${report.transactionHash ?? 'UNKNOWN'}`,
     `- **Execution:** ${report.execution}`,
     `- **Support:** ${report.support}`,
@@ -15,10 +18,25 @@ export function renderMarkdown(report: Report): string {
     '## Checks',
     ''
   ];
-  for(const c of report.checks) lines.push(`- **${c.id}: ${c.result}** — ${c.reason}`);
+  for(const c of report.checks) lines.push(`- **${text(c.id)}: ${c.result}** — ${text(c.reason)}`);
   if (report.checks.length===0) lines.push('- No policy checks were independently established.');
+  const replay=report as Partial<ReplayReport>;
+  if(replay.protocol){
+    const p=replay.protocol;
+    lines.push('', '## Receipt observations', '',
+      `- **Chain ID:** ${replay.chainId}`,
+      `- **Block:** ${replay.blockHash} (${replay.blockNumber}); transaction index ${replay.transactionIndex}`,
+      `- **Router:** ${p.router}`,`- **Factory:** ${p.factory}`,`- **Pool:** ${p.pool}`,
+      `- **Input token:** ${p.tokenIn}; **logged input:** ${p.amountInRaw} raw units`,
+      `- **Output token:** ${p.tokenOut}; **logged output:** ${p.amountOutRaw} raw units`,
+      `- **Recipient:** ${p.recipient}`);
+  }
+  if(replay.evidenceDigest)lines.push('', '## Reproduction', '',
+    `- **Evidence SHA-256:** ${replay.evidenceDigest}`,`- **Policy SHA-256:** ${replay.policyDigest}`,
+    '- **Mode:** offline replay of trusted RPC observations; finality is not checked.',
+    '- **Policy origin:** supplied retrospectively, not authenticated original intent.');
   lines.push('', '## Limitations', '');
-  for(const reason of report.limitations)lines.push(`- ${reason}`);
+  for(const reason of report.limitations)lines.push(`- ${text(reason)}`);
   lines.push('', '**Not a production security audit, financial recommendation, or permission to move funds.**','');
   return lines.join('\n');
 }
