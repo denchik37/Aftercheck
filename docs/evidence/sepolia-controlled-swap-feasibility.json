@@ -1,0 +1,2133 @@
+{
+  "kind": "AFTERCHECK_ISSUE_18_FEASIBILITY_MANIFEST_NOT_CANONICAL_EVIDENCE",
+  "createdAt": "2026-11-05T20:27:50.628Z",
+  "decision": "CONDITIONAL_GO",
+  "executedControlledTransaction": false,
+  "finalPolicyPublished": false,
+  "baseRevision": "09bfe5d0352276267476d5050bc996a3d0f09513",
+  "probeRevision": "f24584bc8512626afe436af58163790b48062364",
+  "probeFileSha256": "3a810316866d1b6948e7982b128c348fe3cbbac1e1c30ba044bce3c92cf86234",
+  "provider": "https://sepolia.gateway.tenderly.co",
+  "trust": "Provider observations and sanitized local capture records; no consensus proof, token-semantics proof, owner funding, policy chronology, or execution authorization.",
+  "attempts": {
+    "initialSequentialPrimaryIncomplete": {
+      "kind": "LIVE_READ_ONLY_FEASIBILITY_NOT_VERIFIER_EVIDENCE",
+      "acquiredAt": "2026-11-05T20:17:08.428Z",
+      "provider": "https://sepolia.gateway.tenderly.co",
+      "observations": [
+        {
+          "key": "chain",
+          "method": "eth_chainId",
+          "params": [],
+          "result": "0xaa36a7"
+        },
+        {
+          "key": "block",
+          "method": "eth_getBlockByNumber",
+          "params": [
+            "latest",
+            false
+          ],
+          "result": {
+            "number": "0xb8336e",
+            "hash": "0xe44bbe038512c14e347057d5cf7d4cab1b1a625779a417ee987ee290ad0c5e2d",
+            "timestamp": "0x6aece448"
+          }
+        },
+        {
+          "key": "router.code",
+          "method": "eth_getCode",
+          "params": [
+            "0x3bfa4769fb09eefc5a80d6e87c3b9c650f7ae48e",
+            {
+              "blockHash": "0xe44bbe038512c14e347057d5cf7d4cab1b1a625779a417ee987ee290ad0c5e2d",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 24497,
+            "sha256": "e18dacff07368baa9974b34f1039c31726d374cd0838c7969232b9f287590562"
+          }
+        },
+        {
+          "key": "factory.code",
+          "method": "eth_getCode",
+          "params": [
+            "0x0227628f3f023bb0b980b67d528571c95c6dac1c",
+            {
+              "blockHash": "0xe44bbe038512c14e347057d5cf7d4cab1b1a625779a417ee987ee290ad0c5e2d",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 24535,
+            "sha256": "f4e0ac5ddb8b0ed6b47df04645557d13af2a8b7a1bc9583acd08b0788440928b"
+          }
+        },
+        {
+          "key": "pool.code",
+          "method": "eth_getCode",
+          "params": [
+            "0x029603931809d430ae47d2f55212cc0e89dbfd52",
+            {
+              "blockHash": "0xe44bbe038512c14e347057d5cf7d4cab1b1a625779a417ee987ee290ad0c5e2d",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 22142,
+            "sha256": "8d590aada1c3c21dbdbc2754bf67ae6979502acacc02462995e9157dc2a20f0d"
+          }
+        },
+        {
+          "key": "tokenIn.code",
+          "method": "eth_getCode",
+          "params": [
+            "0x0f47e03a0383396635846f8495003fc478b71bca",
+            {
+              "blockHash": "0xe44bbe038512c14e347057d5cf7d4cab1b1a625779a417ee987ee290ad0c5e2d",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 4380,
+            "sha256": "8d5ab55c4e3ee83c5058ad5912de9ca449035c2e99a462a335ba92cdbb29e71c"
+          }
+        },
+        {
+          "key": "tokenOut.code",
+          "method": "eth_getCode",
+          "params": [
+            "0x9142fa65aaef921aea2127e88758adee0510a0f0",
+            {
+              "blockHash": "0xe44bbe038512c14e347057d5cf7d4cab1b1a625779a417ee987ee290ad0c5e2d",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 4380,
+            "sha256": "a5a02890e3f35fc56e61694f7836a606841ed62bb4f6b7a5affa007c2914b214"
+          }
+        },
+        {
+          "key": "quoter.code",
+          "method": "eth_getCode",
+          "params": [
+            "0xed1f6473345f45b75f8179591dd5ba1888cf2fb3",
+            {
+              "blockHash": "0xe44bbe038512c14e347057d5cf7d4cab1b1a625779a417ee987ee290ad0c5e2d",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 8273,
+            "sha256": "41807167ee6769e9848dc88cc44931db2c9d9f3fe320f8c10e5a588722f4496b"
+          }
+        },
+        {
+          "key": "router.factory",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x3bfa4769fb09eefc5a80d6e87c3b9c650f7ae48e",
+              "data": "0xc45a0155"
+            },
+            {
+              "blockHash": "0xe44bbe038512c14e347057d5cf7d4cab1b1a625779a417ee987ee290ad0c5e2d",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000000227628f3f023bb0b980b67d528571c95c6dac1c"
+        },
+        {
+          "key": "factory.pool",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x0227628f3f023bb0b980b67d528571c95c6dac1c",
+              "data": "0x1698ee820000000000000000000000000f47e03a0383396635846f8495003fc478b71bca0000000000000000000000009142fa65aaef921aea2127e88758adee0510a0f000000000000000000000000000000000000000000000000000000000000001f4"
+            },
+            {
+              "blockHash": "0xe44bbe038512c14e347057d5cf7d4cab1b1a625779a417ee987ee290ad0c5e2d",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x000000000000000000000000029603931809d430ae47d2f55212cc0e89dbfd52"
+        },
+        {
+          "key": "pool.factory",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x029603931809d430ae47d2f55212cc0e89dbfd52",
+              "data": "0xc45a0155"
+            },
+            {
+              "blockHash": "0xe44bbe038512c14e347057d5cf7d4cab1b1a625779a417ee987ee290ad0c5e2d",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000000227628f3f023bb0b980b67d528571c95c6dac1c"
+        },
+        {
+          "key": "pool.token0",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x029603931809d430ae47d2f55212cc0e89dbfd52",
+              "data": "0x0dfe1681"
+            },
+            {
+              "blockHash": "0xe44bbe038512c14e347057d5cf7d4cab1b1a625779a417ee987ee290ad0c5e2d",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000000f47e03a0383396635846f8495003fc478b71bca"
+        },
+        {
+          "key": "pool.token1",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x029603931809d430ae47d2f55212cc0e89dbfd52",
+              "data": "0xd21220a7"
+            },
+            {
+              "blockHash": "0xe44bbe038512c14e347057d5cf7d4cab1b1a625779a417ee987ee290ad0c5e2d",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000009142fa65aaef921aea2127e88758adee0510a0f0"
+        },
+        {
+          "key": "pool.fee",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x029603931809d430ae47d2f55212cc0e89dbfd52",
+              "data": "0xddca3f43"
+            },
+            {
+              "blockHash": "0xe44bbe038512c14e347057d5cf7d4cab1b1a625779a417ee987ee290ad0c5e2d",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x00000000000000000000000000000000000000000000000000000000000001f4"
+        },
+        {
+          "key": "pool.liquidity",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x029603931809d430ae47d2f55212cc0e89dbfd52",
+              "data": "0x1a686502"
+            },
+            {
+              "blockHash": "0xe44bbe038512c14e347057d5cf7d4cab1b1a625779a417ee987ee290ad0c5e2d",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x00000000000000000000000000000000000000000000a968664f85dc42b17f72"
+        },
+        {
+          "key": "pool.slot0",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x029603931809d430ae47d2f55212cc0e89dbfd52",
+              "data": "0x3850c7bd"
+            },
+            {
+              "blockHash": "0xe44bbe038512c14e347057d5cf7d4cab1b1a625779a417ee987ee290ad0c5e2d",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x000000000000000000000000000000000000008d876dcd410d07de0eb171de0300000000000000000000000000000000000000000000000000000000000182ef00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001"
+        },
+        {
+          "key": "tokenIn.decimals",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x0f47e03a0383396635846f8495003fc478b71bca",
+              "data": "0x313ce567"
+            },
+            {
+              "blockHash": "0xe44bbe038512c14e347057d5cf7d4cab1b1a625779a417ee987ee290ad0c5e2d",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000012"
+        },
+        {
+          "key": "tokenOut.decimals",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x9142fa65aaef921aea2127e88758adee0510a0f0",
+              "data": "0x313ce567"
+            },
+            {
+              "blockHash": "0xe44bbe038512c14e347057d5cf7d4cab1b1a625779a417ee987ee290ad0c5e2d",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000012"
+        },
+        {
+          "key": "quote.1e18",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0xed1f6473345f45b75f8179591dd5ba1888cf2fb3",
+              "data": "0xc6a5026a0000000000000000000000000f47e03a0383396635846f8495003fc478b71bca0000000000000000000000009142fa65aaef921aea2127e88758adee0510a0f00000000000000000000000000000000000000000000000000de0b6b3a764000000000000000000000000000000000000000000000000000000000000000001f40000000000000000000000000000000000000000000000000000000000000000"
+            },
+            {
+              "blockHash": "0xe44bbe038512c14e347057d5cf7d4cab1b1a625779a417ee987ee290ad0c5e2d",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x00000000000000000000000000000000000000000000043d1e6910d3c8d0b301000000000000000000000000000000000000008d810607482a9f28f20ebe4976000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000191a5"
+        },
+        {
+          "key": "pool.tokenInBalance",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x0f47e03a0383396635846f8495003fc478b71bca",
+              "data": "0x70a08231000000000000000000000000029603931809d430ae47d2f55212cc0e89dbfd52"
+            },
+            {
+              "blockHash": "0xe44bbe038512c14e347057d5cf7d4cab1b1a625779a417ee987ee290ad0c5e2d",
+              "requireCanonical": true
+            }
+          ],
+          "error": "RPC_TIMEOUT"
+        },
+        {
+          "key": "pool.tokenOutBalance",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x9142fa65aaef921aea2127e88758adee0510a0f0",
+              "data": "0x70a08231000000000000000000000000029603931809d430ae47d2f55212cc0e89dbfd52"
+            },
+            {
+              "blockHash": "0xe44bbe038512c14e347057d5cf7d4cab1b1a625779a417ee987ee290ad0c5e2d",
+              "requireCanonical": true
+            }
+          ],
+          "error": "RPC_BUDGET_EXHAUSTED"
+        },
+        {
+          "key": "canonical",
+          "method": "eth_getBlockByNumber",
+          "params": [
+            "0xb8336e",
+            false
+          ],
+          "error": "RPC_BUDGET_EXHAUSTED"
+        },
+        {
+          "key": "chainAfter",
+          "method": "eth_chainId",
+          "params": [],
+          "error": "RPC_BUDGET_EXHAUSTED"
+        }
+      ],
+      "block": {
+        "number": "0xb8336e",
+        "hash": "0xe44bbe038512c14e347057d5cf7d4cab1b1a625779a417ee987ee290ad0c5e2d",
+        "timestamp": "0x6aece448"
+      }
+    },
+    "alternativeFactoryDiscovery": {
+      "kind": "LIVE_READ_ONLY_POOL_DISCOVERY",
+      "acquiredAt": "2026-11-05T20:19:22.062Z",
+      "provider": "https://sepolia.gateway.tenderly.co",
+      "observations": [
+        {
+          "key": "chain",
+          "method": "eth_chainId",
+          "params": [],
+          "result": "0xaa36a7"
+        },
+        {
+          "key": "block",
+          "method": "eth_getBlockByNumber",
+          "params": [
+            "latest",
+            false
+          ],
+          "result": {
+            "number": "0xb8337a",
+            "hash": "0xb4a2852ade6c9325ebd033079310e04c5be5c57b12ee43a711cd4c1c6acf3d8b",
+            "timestamp": "0x6aece4d8"
+          }
+        },
+        {
+          "key": "factory.pool.500",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x0227628f3f023bb0b980b67d528571c95c6dac1c",
+              "data": "0x1698ee820000000000000000000000001c7d4b196cb0c7b01d743fbc6116a902379c7238000000000000000000000000fff9976782d46cc05630d1f6ebab18b2324d6b1400000000000000000000000000000000000000000000000000000000000001f4"
+            },
+            {
+              "blockHash": "0xb4a2852ade6c9325ebd033079310e04c5be5c57b12ee43a711cd4c1c6acf3d8b",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000003289680dd4d6c10bb19b899729cda5eef58aeff1"
+        },
+        {
+          "key": "factory.pool.3000",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x0227628f3f023bb0b980b67d528571c95c6dac1c",
+              "data": "0x1698ee820000000000000000000000001c7d4b196cb0c7b01d743fbc6116a902379c7238000000000000000000000000fff9976782d46cc05630d1f6ebab18b2324d6b140000000000000000000000000000000000000000000000000000000000000bb8"
+            },
+            {
+              "blockHash": "0xb4a2852ade6c9325ebd033079310e04c5be5c57b12ee43a711cd4c1c6acf3d8b",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000006ce0896eae6d4bd668fde41bb784548fb8f59b50"
+        },
+        {
+          "key": "canonical",
+          "method": "eth_getBlockByNumber",
+          "params": [
+            "0xb8337a",
+            false
+          ],
+          "result": {
+            "number": "0xb8337a",
+            "hash": "0xb4a2852ade6c9325ebd033079310e04c5be5c57b12ee43a711cd4c1c6acf3d8b",
+            "timestamp": "0x6aece4d8"
+          }
+        }
+      ]
+    },
+    "precommitPrimaryComplete": {
+      "probeSourceSha256": "7d5435afeb9c12945074de19d788eb5178a72a8de39edf1281fad672a667e56e",
+      "provider": "https://sepolia.gateway.tenderly.co",
+      "kind": "SEPOLIA_READ_ONLY_FEASIBILITY",
+      "acquiredAt": "2026-11-05T20:20:10.037Z",
+      "sourceTrust": "RPC_PROVIDER_DEPENDENT",
+      "candidateStatus": "OBSERVED",
+      "readiness": "NOT_ESTABLISHED",
+      "deployment": {
+        "status": "OBSERVED_MATCH",
+        "chainId": 11155111,
+        "router": "0x3bfa4769fb09eefc5a80d6e87c3b9c650f7ae48e",
+        "factory": "0x0227628f3f023bb0b980b67d528571c95c6dac1c"
+      },
+      "pool": {
+        "status": "OBSERVED_MATCH",
+        "pool": "0x029603931809d430ae47d2f55212cc0e89dbfd52",
+        "tokenIn": "0x0f47e03a0383396635846f8495003fc478b71bca",
+        "tokenOut": "0x9142fa65aaef921aea2127e88758adee0510a0f0",
+        "fee": 500,
+        "amountInRaw": "1000000000000000000",
+        "factorySelectedPool": "0x029603931809d430ae47d2f55212cc0e89dbfd52"
+      },
+      "liquidity": {
+        "status": "OBSERVED_NONZERO",
+        "activeRaw": "800005769246931921502066",
+        "slot0": {
+          "sqrtPriceX96Raw": "11213084133036597495817993051651",
+          "tick": 99055,
+          "observationIndex": "0",
+          "observationCardinality": "1",
+          "observationCardinalityNext": "1",
+          "feeProtocol": "0",
+          "unlocked": true
+        }
+      },
+      "block": {
+        "hash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+        "number": "0xb8337d",
+        "timestampRaw": "1793910012"
+      },
+      "quote": {
+        "status": "QUOTED",
+        "quoter": "0xed1f6473345f45b75f8179591dd5ba1888cf2fb3",
+        "amountInRaw": "1000000000000000000",
+        "kind": "READ_ONLY_QUOTER_SIMULATION",
+        "amountOutRaw": "20016908621170349224705",
+        "sqrtPriceX96AfterRaw": "11211101768720944974215830718838",
+        "initializedTicksCrossed": "0",
+        "swapGasEstimateRaw": "102821"
+      },
+      "tokenAccess": {
+        "status": "UNVERIFIED",
+        "semantics": "UNVERIFIED"
+      },
+      "walletFunding": {
+        "status": "UNVERIFIED"
+      },
+      "historicalRpc": {
+        "hashBoundState": "OBSERVED_AT_CAPTURE_BLOCK",
+        "fullCollectorPath": "NOT_TESTED"
+      },
+      "observations": [
+        {
+          "key": "chain.initial",
+          "method": "eth_chainId",
+          "params": [],
+          "result": "0xaa36a7"
+        },
+        {
+          "key": "block.initial",
+          "method": "eth_getBlockByNumber",
+          "params": [
+            "latest",
+            false
+          ],
+          "result": {
+            "hash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+            "number": "0xb8337d",
+            "timestampRaw": "1793910012"
+          }
+        },
+        {
+          "key": "router.code",
+          "method": "eth_getCode",
+          "params": [
+            "0x3bfa4769fb09eefc5a80d6e87c3b9c650f7ae48e",
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 24497,
+            "sha256": "e18dacff07368baa9974b34f1039c31726d374cd0838c7969232b9f287590562"
+          }
+        },
+        {
+          "key": "factory.code",
+          "method": "eth_getCode",
+          "params": [
+            "0x0227628f3f023bb0b980b67d528571c95c6dac1c",
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 24535,
+            "sha256": "f4e0ac5ddb8b0ed6b47df04645557d13af2a8b7a1bc9583acd08b0788440928b"
+          }
+        },
+        {
+          "key": "tokenIn.code",
+          "method": "eth_getCode",
+          "params": [
+            "0x0f47e03a0383396635846f8495003fc478b71bca",
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 4380,
+            "sha256": "8d5ab55c4e3ee83c5058ad5912de9ca449035c2e99a462a335ba92cdbb29e71c"
+          }
+        },
+        {
+          "key": "tokenOut.code",
+          "method": "eth_getCode",
+          "params": [
+            "0x9142fa65aaef921aea2127e88758adee0510a0f0",
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 4380,
+            "sha256": "a5a02890e3f35fc56e61694f7836a606841ed62bb4f6b7a5affa007c2914b214"
+          }
+        },
+        {
+          "key": "router.factory",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x3bfa4769fb09eefc5a80d6e87c3b9c650f7ae48e",
+              "data": "0xc45a0155"
+            },
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000000227628f3f023bb0b980b67d528571c95c6dac1c"
+        },
+        {
+          "key": "factory.pool",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x0227628f3f023bb0b980b67d528571c95c6dac1c",
+              "data": "0x1698ee820000000000000000000000000f47e03a0383396635846f8495003fc478b71bca0000000000000000000000009142fa65aaef921aea2127e88758adee0510a0f000000000000000000000000000000000000000000000000000000000000001f4"
+            },
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x000000000000000000000000029603931809d430ae47d2f55212cc0e89dbfd52"
+        },
+        {
+          "key": "pool.code",
+          "method": "eth_getCode",
+          "params": [
+            "0x029603931809d430ae47d2f55212cc0e89dbfd52",
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 22142,
+            "sha256": "8d590aada1c3c21dbdbc2754bf67ae6979502acacc02462995e9157dc2a20f0d"
+          }
+        },
+        {
+          "key": "pool.factory",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x029603931809d430ae47d2f55212cc0e89dbfd52",
+              "data": "0xc45a0155"
+            },
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000000227628f3f023bb0b980b67d528571c95c6dac1c"
+        },
+        {
+          "key": "pool.token0",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x029603931809d430ae47d2f55212cc0e89dbfd52",
+              "data": "0x0dfe1681"
+            },
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000000f47e03a0383396635846f8495003fc478b71bca"
+        },
+        {
+          "key": "pool.token1",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x029603931809d430ae47d2f55212cc0e89dbfd52",
+              "data": "0xd21220a7"
+            },
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000009142fa65aaef921aea2127e88758adee0510a0f0"
+        },
+        {
+          "key": "pool.fee",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x029603931809d430ae47d2f55212cc0e89dbfd52",
+              "data": "0xddca3f43"
+            },
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x00000000000000000000000000000000000000000000000000000000000001f4"
+        },
+        {
+          "key": "pool.liquidity",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x029603931809d430ae47d2f55212cc0e89dbfd52",
+              "data": "0x1a686502"
+            },
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x00000000000000000000000000000000000000000000a968664f85dc42b17f72"
+        },
+        {
+          "key": "pool.slot0",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x029603931809d430ae47d2f55212cc0e89dbfd52",
+              "data": "0x3850c7bd"
+            },
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x000000000000000000000000000000000000008d876dcd410d07de0eb171de0300000000000000000000000000000000000000000000000000000000000182ef00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001"
+        },
+        {
+          "key": "quoter.code",
+          "method": "eth_getCode",
+          "params": [
+            "0xed1f6473345f45b75f8179591dd5ba1888cf2fb3",
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 8273,
+            "sha256": "41807167ee6769e9848dc88cc44931db2c9d9f3fe320f8c10e5a588722f4496b"
+          }
+        },
+        {
+          "key": "quoter.factory",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0xed1f6473345f45b75f8179591dd5ba1888cf2fb3",
+              "data": "0xc45a0155"
+            },
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000000227628f3f023bb0b980b67d528571c95c6dac1c"
+        },
+        {
+          "key": "quoter.quote",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0xed1f6473345f45b75f8179591dd5ba1888cf2fb3",
+              "data": "0xc6a5026a0000000000000000000000000f47e03a0383396635846f8495003fc478b71bca0000000000000000000000009142fa65aaef921aea2127e88758adee0510a0f00000000000000000000000000000000000000000000000000de0b6b3a764000000000000000000000000000000000000000000000000000000000000000001f40000000000000000000000000000000000000000000000000000000000000000"
+            },
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x00000000000000000000000000000000000000000000043d1e6910d3c8d0b301000000000000000000000000000000000000008d810607482a9f28f20ebe4976000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000191a5"
+        },
+        {
+          "key": "block.final",
+          "method": "eth_getBlockByNumber",
+          "params": [
+            "0xb8337d",
+            false
+          ],
+          "result": {
+            "hash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+            "number": "0xb8337d",
+            "timestampRaw": "1793910012"
+          }
+        },
+        {
+          "key": "chain.final",
+          "method": "eth_chainId",
+          "params": [],
+          "result": "0xaa36a7"
+        }
+      ],
+      "errors": [],
+      "requestCount": 20,
+      "unresolved": [
+        "Token transfer semantics and legitimate acquisition are not established by code or metadata.",
+        "No owner wallet, token balance, allowance, or gas funding has been established.",
+        "Liquidity and a QuoterV2 quote do not establish future execution, a supported receipt, or complete router gas cost.",
+        "A complete receipt and all twelve historical collector observations remain necessary after a future transaction.",
+        "No pre-execution policy has been published. Wallet actions require separate owner authorization."
+      ],
+      "sourceRevision": null,
+      "sourceProvenance": "PRECOMMIT_PROTOTYPE_IDENTIFIED_BY_SCRIPT_SHA256",
+      "note": "Captured before quoted-price range hardening; exact RPC requests/results retained. This is not labeled a run of the final committed script."
+    },
+    "precommitAlternativeComplete": {
+      "probeSourceSha256": "7d5435afeb9c12945074de19d788eb5178a72a8de39edf1281fad672a667e56e",
+      "provider": "https://sepolia.gateway.tenderly.co",
+      "kind": "SEPOLIA_READ_ONLY_FEASIBILITY",
+      "acquiredAt": "2026-11-05T20:20:10.047Z",
+      "sourceTrust": "RPC_PROVIDER_DEPENDENT",
+      "candidateStatus": "OBSERVED",
+      "readiness": "NOT_ESTABLISHED",
+      "deployment": {
+        "status": "OBSERVED_MATCH",
+        "chainId": 11155111,
+        "router": "0x3bfa4769fb09eefc5a80d6e87c3b9c650f7ae48e",
+        "factory": "0x0227628f3f023bb0b980b67d528571c95c6dac1c"
+      },
+      "pool": {
+        "status": "OBSERVED_MATCH",
+        "pool": "0x3289680dd4d6c10bb19b899729cda5eef58aeff1",
+        "tokenIn": "0x1c7d4b196cb0c7b01d743fbc6116a902379c7238",
+        "tokenOut": "0xfff9976782d46cc05630d1f6ebab18b2324d6b14",
+        "fee": 500,
+        "amountInRaw": "1000000",
+        "factorySelectedPool": "0x3289680dd4d6c10bb19b899729cda5eef58aeff1"
+      },
+      "liquidity": {
+        "status": "OBSERVED_NONZERO",
+        "activeRaw": "16015164533241097",
+        "slot0": {
+          "sqrtPriceX96Raw": "488066059377187592329714233123365",
+          "tick": 174526,
+          "observationIndex": "489",
+          "observationCardinality": "900",
+          "observationCardinalityNext": "900",
+          "feeProtocol": "0",
+          "unlocked": true
+        }
+      },
+      "block": {
+        "hash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+        "number": "0xb8337d",
+        "timestampRaw": "1793910012"
+      },
+      "quote": {
+        "status": "QUOTED",
+        "quoter": "0xed1f6473345f45b75f8179591dd5ba1888cf2fb3",
+        "amountInRaw": "1000000",
+        "kind": "READ_ONLY_QUOTER_SIMULATION",
+        "amountOutRaw": "37929811014366",
+        "sqrtPriceX96AfterRaw": "488065871735704113083189771918613",
+        "initializedTicksCrossed": "0",
+        "swapGasEstimateRaw": "95430"
+      },
+      "tokenAccess": {
+        "status": "UNVERIFIED",
+        "semantics": "UNVERIFIED"
+      },
+      "walletFunding": {
+        "status": "UNVERIFIED"
+      },
+      "historicalRpc": {
+        "hashBoundState": "OBSERVED_AT_CAPTURE_BLOCK",
+        "fullCollectorPath": "NOT_TESTED"
+      },
+      "observations": [
+        {
+          "key": "chain.initial",
+          "method": "eth_chainId",
+          "params": [],
+          "result": "0xaa36a7"
+        },
+        {
+          "key": "block.initial",
+          "method": "eth_getBlockByNumber",
+          "params": [
+            "latest",
+            false
+          ],
+          "result": {
+            "hash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+            "number": "0xb8337d",
+            "timestampRaw": "1793910012"
+          }
+        },
+        {
+          "key": "router.code",
+          "method": "eth_getCode",
+          "params": [
+            "0x3bfa4769fb09eefc5a80d6e87c3b9c650f7ae48e",
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 24497,
+            "sha256": "e18dacff07368baa9974b34f1039c31726d374cd0838c7969232b9f287590562"
+          }
+        },
+        {
+          "key": "factory.code",
+          "method": "eth_getCode",
+          "params": [
+            "0x0227628f3f023bb0b980b67d528571c95c6dac1c",
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 24535,
+            "sha256": "f4e0ac5ddb8b0ed6b47df04645557d13af2a8b7a1bc9583acd08b0788440928b"
+          }
+        },
+        {
+          "key": "tokenIn.code",
+          "method": "eth_getCode",
+          "params": [
+            "0x1c7d4b196cb0c7b01d743fbc6116a902379c7238",
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 1798,
+            "sha256": "846efa39d1689bdcffea1cdabe788d0b6f81050c0667ad6444e722aed27f7e86"
+          }
+        },
+        {
+          "key": "tokenOut.code",
+          "method": "eth_getCode",
+          "params": [
+            "0xfff9976782d46cc05630d1f6ebab18b2324d6b14",
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 3124,
+            "sha256": "9bbda01ae25d1f2b4171918cc6280a5769d6d6fc5500ed01e2143697902df4e1"
+          }
+        },
+        {
+          "key": "router.factory",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x3bfa4769fb09eefc5a80d6e87c3b9c650f7ae48e",
+              "data": "0xc45a0155"
+            },
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000000227628f3f023bb0b980b67d528571c95c6dac1c"
+        },
+        {
+          "key": "factory.pool",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x0227628f3f023bb0b980b67d528571c95c6dac1c",
+              "data": "0x1698ee820000000000000000000000001c7d4b196cb0c7b01d743fbc6116a902379c7238000000000000000000000000fff9976782d46cc05630d1f6ebab18b2324d6b1400000000000000000000000000000000000000000000000000000000000001f4"
+            },
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000003289680dd4d6c10bb19b899729cda5eef58aeff1"
+        },
+        {
+          "key": "pool.code",
+          "method": "eth_getCode",
+          "params": [
+            "0x3289680dd4d6c10bb19b899729cda5eef58aeff1",
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 22142,
+            "sha256": "599dcec0f812863fc9160404704f8d9d789431d62eb7e561fe22cdf48fbc376e"
+          }
+        },
+        {
+          "key": "pool.factory",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x3289680dd4d6c10bb19b899729cda5eef58aeff1",
+              "data": "0xc45a0155"
+            },
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000000227628f3f023bb0b980b67d528571c95c6dac1c"
+        },
+        {
+          "key": "pool.token0",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x3289680dd4d6c10bb19b899729cda5eef58aeff1",
+              "data": "0x0dfe1681"
+            },
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000001c7d4b196cb0c7b01d743fbc6116a902379c7238"
+        },
+        {
+          "key": "pool.token1",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x3289680dd4d6c10bb19b899729cda5eef58aeff1",
+              "data": "0xd21220a7"
+            },
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x000000000000000000000000fff9976782d46cc05630d1f6ebab18b2324d6b14"
+        },
+        {
+          "key": "pool.fee",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x3289680dd4d6c10bb19b899729cda5eef58aeff1",
+              "data": "0xddca3f43"
+            },
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x00000000000000000000000000000000000000000000000000000000000001f4"
+        },
+        {
+          "key": "pool.liquidity",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x3289680dd4d6c10bb19b899729cda5eef58aeff1",
+              "data": "0x1a686502"
+            },
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000000000000000000000000000000038e5b51105f509"
+        },
+        {
+          "key": "pool.slot0",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x3289680dd4d6c10bb19b899729cda5eef58aeff1",
+              "data": "0x3850c7bd"
+            },
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000000000000000001810427df6434cae8f5ea9722225000000000000000000000000000000000000000000000000000000000002a9be00000000000000000000000000000000000000000000000000000000000001e90000000000000000000000000000000000000000000000000000000000000384000000000000000000000000000000000000000000000000000000000000038400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001"
+        },
+        {
+          "key": "quoter.code",
+          "method": "eth_getCode",
+          "params": [
+            "0xed1f6473345f45b75f8179591dd5ba1888cf2fb3",
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 8273,
+            "sha256": "41807167ee6769e9848dc88cc44931db2c9d9f3fe320f8c10e5a588722f4496b"
+          }
+        },
+        {
+          "key": "quoter.factory",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0xed1f6473345f45b75f8179591dd5ba1888cf2fb3",
+              "data": "0xc45a0155"
+            },
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000000227628f3f023bb0b980b67d528571c95c6dac1c"
+        },
+        {
+          "key": "quoter.quote",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0xed1f6473345f45b75f8179591dd5ba1888cf2fb3",
+              "data": "0xc6a5026a0000000000000000000000001c7d4b196cb0c7b01d743fbc6116a902379c7238000000000000000000000000fff9976782d46cc05630d1f6ebab18b2324d6b1400000000000000000000000000000000000000000000000000000000000f424000000000000000000000000000000000000000000000000000000000000001f40000000000000000000000000000000000000000000000000000000000000000"
+            },
+            {
+              "blockHash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000000000000000000000000000000000227f38e972de000000000000000000000000000000000000181041e2bfa219036c360bcc5d15000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000174c6"
+        },
+        {
+          "key": "block.final",
+          "method": "eth_getBlockByNumber",
+          "params": [
+            "0xb8337d",
+            false
+          ],
+          "result": {
+            "hash": "0xa66ccae4fd8140aeab9d014a1bbd3012e8a38f3a73fd6b6b4e88dc34f02525b1",
+            "number": "0xb8337d",
+            "timestampRaw": "1793910012"
+          }
+        },
+        {
+          "key": "chain.final",
+          "method": "eth_chainId",
+          "params": [],
+          "result": "0xaa36a7"
+        }
+      ],
+      "errors": [],
+      "requestCount": 20,
+      "unresolved": [
+        "Token transfer semantics and legitimate acquisition are not established by code or metadata.",
+        "No owner wallet, token balance, allowance, or gas funding has been established.",
+        "Liquidity and a QuoterV2 quote do not establish future execution, a supported receipt, or complete router gas cost.",
+        "A complete receipt and all twelve historical collector observations remain necessary after a future transaction.",
+        "No pre-execution policy has been published. Wallet actions require separate owner authorization."
+      ],
+      "sourceRevision": null,
+      "sourceProvenance": "PRECOMMIT_PROTOTYPE_IDENTIFIED_BY_SCRIPT_SHA256",
+      "note": "Captured before quoted-price range hardening; exact RPC requests/results retained. This is not labeled a run of the final committed script."
+    },
+    "committedPrimaryIncomplete": {
+      "sourceRevision": "605bb9e95b439cc15a415a7ea9dfe42d7edc4550",
+      "probeSourceSha256": "3a810316866d1b6948e7982b128c348fe3cbbac1e1c30ba044bce3c92cf86234",
+      "provider": "https://sepolia.gateway.tenderly.co",
+      "kind": "SEPOLIA_READ_ONLY_FEASIBILITY",
+      "acquiredAt": "2026-11-05T20:25:07.566Z",
+      "sourceTrust": "RPC_PROVIDER_DEPENDENT",
+      "candidateStatus": "INCOMPLETE",
+      "readiness": "NOT_ESTABLISHED",
+      "deployment": {
+        "status": "OBSERVED_MATCH",
+        "chainId": 11155111,
+        "router": "0x3bfa4769fb09eefc5a80d6e87c3b9c650f7ae48e",
+        "factory": "0x0227628f3f023bb0b980b67d528571c95c6dac1c"
+      },
+      "pool": {
+        "status": "OBSERVED_MATCH",
+        "pool": "0x029603931809d430ae47d2f55212cc0e89dbfd52",
+        "tokenIn": "0x0f47e03a0383396635846f8495003fc478b71bca",
+        "tokenOut": "0x9142fa65aaef921aea2127e88758adee0510a0f0",
+        "fee": 500,
+        "amountInRaw": "1000000000000000000",
+        "factorySelectedPool": "0x029603931809d430ae47d2f55212cc0e89dbfd52"
+      },
+      "liquidity": {
+        "status": "UNVERIFIED",
+        "activeRaw": null,
+        "slot0": {
+          "sqrtPriceX96Raw": "11213084133036597495817993051651",
+          "tick": 99055,
+          "observationIndex": "0",
+          "observationCardinality": "1",
+          "observationCardinalityNext": "1",
+          "feeProtocol": "0",
+          "unlocked": true
+        }
+      },
+      "block": {
+        "hash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+        "number": "0xb83395",
+        "timestampRaw": "1793910312"
+      },
+      "quote": {
+        "status": "UNVERIFIED",
+        "quoter": "0xed1f6473345f45b75f8179591dd5ba1888cf2fb3",
+        "amountInRaw": "1000000000000000000",
+        "kind": "READ_ONLY_QUOTER_SIMULATION"
+      },
+      "tokenAccess": {
+        "status": "UNVERIFIED",
+        "semantics": "UNVERIFIED"
+      },
+      "walletFunding": {
+        "status": "UNVERIFIED"
+      },
+      "historicalRpc": {
+        "hashBoundState": "UNVERIFIED",
+        "fullCollectorPath": "NOT_TESTED"
+      },
+      "observations": [
+        {
+          "key": "chain.initial",
+          "method": "eth_chainId",
+          "params": [],
+          "result": "0xaa36a7"
+        },
+        {
+          "key": "block.initial",
+          "method": "eth_getBlockByNumber",
+          "params": [
+            "latest",
+            false
+          ],
+          "result": {
+            "hash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+            "number": "0xb83395",
+            "timestampRaw": "1793910312"
+          }
+        },
+        {
+          "key": "router.code",
+          "method": "eth_getCode",
+          "params": [
+            "0x3bfa4769fb09eefc5a80d6e87c3b9c650f7ae48e",
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 24497,
+            "sha256": "e18dacff07368baa9974b34f1039c31726d374cd0838c7969232b9f287590562"
+          }
+        },
+        {
+          "key": "factory.code",
+          "method": "eth_getCode",
+          "params": [
+            "0x0227628f3f023bb0b980b67d528571c95c6dac1c",
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 24535,
+            "sha256": "f4e0ac5ddb8b0ed6b47df04645557d13af2a8b7a1bc9583acd08b0788440928b"
+          }
+        },
+        {
+          "key": "tokenIn.code",
+          "method": "eth_getCode",
+          "params": [
+            "0x0f47e03a0383396635846f8495003fc478b71bca",
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 4380,
+            "sha256": "8d5ab55c4e3ee83c5058ad5912de9ca449035c2e99a462a335ba92cdbb29e71c"
+          }
+        },
+        {
+          "key": "tokenOut.code",
+          "method": "eth_getCode",
+          "params": [
+            "0x9142fa65aaef921aea2127e88758adee0510a0f0",
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 4380,
+            "sha256": "a5a02890e3f35fc56e61694f7836a606841ed62bb4f6b7a5affa007c2914b214"
+          }
+        },
+        {
+          "key": "router.factory",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x3bfa4769fb09eefc5a80d6e87c3b9c650f7ae48e",
+              "data": "0xc45a0155"
+            },
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000000227628f3f023bb0b980b67d528571c95c6dac1c"
+        },
+        {
+          "key": "factory.pool",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x0227628f3f023bb0b980b67d528571c95c6dac1c",
+              "data": "0x1698ee820000000000000000000000000f47e03a0383396635846f8495003fc478b71bca0000000000000000000000009142fa65aaef921aea2127e88758adee0510a0f000000000000000000000000000000000000000000000000000000000000001f4"
+            },
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x000000000000000000000000029603931809d430ae47d2f55212cc0e89dbfd52"
+        },
+        {
+          "key": "pool.code",
+          "method": "eth_getCode",
+          "params": [
+            "0x029603931809d430ae47d2f55212cc0e89dbfd52",
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 22142,
+            "sha256": "8d590aada1c3c21dbdbc2754bf67ae6979502acacc02462995e9157dc2a20f0d"
+          }
+        },
+        {
+          "key": "pool.factory",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x029603931809d430ae47d2f55212cc0e89dbfd52",
+              "data": "0xc45a0155"
+            },
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000000227628f3f023bb0b980b67d528571c95c6dac1c"
+        },
+        {
+          "key": "pool.token0",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x029603931809d430ae47d2f55212cc0e89dbfd52",
+              "data": "0x0dfe1681"
+            },
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000000f47e03a0383396635846f8495003fc478b71bca"
+        },
+        {
+          "key": "pool.token1",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x029603931809d430ae47d2f55212cc0e89dbfd52",
+              "data": "0xd21220a7"
+            },
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000009142fa65aaef921aea2127e88758adee0510a0f0"
+        },
+        {
+          "key": "pool.fee",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x029603931809d430ae47d2f55212cc0e89dbfd52",
+              "data": "0xddca3f43"
+            },
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x00000000000000000000000000000000000000000000000000000000000001f4"
+        },
+        {
+          "key": "pool.liquidity",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x029603931809d430ae47d2f55212cc0e89dbfd52",
+              "data": "0x1a686502"
+            },
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "error": "RPC_HTTP_ERROR"
+        },
+        {
+          "key": "pool.slot0",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x029603931809d430ae47d2f55212cc0e89dbfd52",
+              "data": "0x3850c7bd"
+            },
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x000000000000000000000000000000000000008d876dcd410d07de0eb171de0300000000000000000000000000000000000000000000000000000000000182ef00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001"
+        },
+        {
+          "key": "quoter.code",
+          "method": "eth_getCode",
+          "params": [
+            "0xed1f6473345f45b75f8179591dd5ba1888cf2fb3",
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "error": "RPC_HTTP_ERROR"
+        },
+        {
+          "key": "quoter.factory",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0xed1f6473345f45b75f8179591dd5ba1888cf2fb3",
+              "data": "0xc45a0155"
+            },
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000000227628f3f023bb0b980b67d528571c95c6dac1c"
+        },
+        {
+          "key": "block.final",
+          "method": "eth_getBlockByNumber",
+          "params": [
+            "0xb83395",
+            false
+          ],
+          "error": "RPC_HTTP_ERROR"
+        },
+        {
+          "key": "chain.final",
+          "method": "eth_chainId",
+          "params": [],
+          "error": "RPC_HTTP_ERROR"
+        }
+      ],
+      "errors": [
+        {
+          "stage": "quoter.code",
+          "code": "RPC_HTTP_ERROR"
+        },
+        {
+          "stage": "pool.liquidity",
+          "code": "RPC_HTTP_ERROR"
+        },
+        {
+          "stage": "chain.final",
+          "code": "RPC_HTTP_ERROR"
+        },
+        {
+          "stage": "block.final",
+          "code": "RPC_HTTP_ERROR"
+        }
+      ],
+      "requestCount": 19,
+      "unresolved": [
+        "Token transfer semantics and legitimate acquisition are not established by code or metadata.",
+        "No owner wallet, token balance, allowance, or gas funding has been established.",
+        "Liquidity and a QuoterV2 quote do not establish future execution, a supported receipt, or complete router gas cost.",
+        "A complete receipt and all twelve historical collector observations remain necessary after a future transaction.",
+        "No pre-execution policy has been published. Wallet actions require separate owner authorization."
+      ],
+      "sourceRevisionLocation": "LOCAL_EXECUTION_CHECKOUT",
+      "publishedSourceRevision": "f24584bc8512626afe436af58163790b48062364",
+      "identicalSourceTree": "e4ba295c82518e492178899f73ad1606f969ba6e"
+    },
+    "committedAlternativeComplete": {
+      "sourceRevision": "605bb9e95b439cc15a415a7ea9dfe42d7edc4550",
+      "probeSourceSha256": "3a810316866d1b6948e7982b128c348fe3cbbac1e1c30ba044bce3c92cf86234",
+      "provider": "https://sepolia.gateway.tenderly.co",
+      "kind": "SEPOLIA_READ_ONLY_FEASIBILITY",
+      "acquiredAt": "2026-11-05T20:25:07.579Z",
+      "sourceTrust": "RPC_PROVIDER_DEPENDENT",
+      "candidateStatus": "OBSERVED",
+      "readiness": "NOT_ESTABLISHED",
+      "deployment": {
+        "status": "OBSERVED_MATCH",
+        "chainId": 11155111,
+        "router": "0x3bfa4769fb09eefc5a80d6e87c3b9c650f7ae48e",
+        "factory": "0x0227628f3f023bb0b980b67d528571c95c6dac1c"
+      },
+      "pool": {
+        "status": "OBSERVED_MATCH",
+        "pool": "0x3289680dd4d6c10bb19b899729cda5eef58aeff1",
+        "tokenIn": "0x1c7d4b196cb0c7b01d743fbc6116a902379c7238",
+        "tokenOut": "0xfff9976782d46cc05630d1f6ebab18b2324d6b14",
+        "fee": 500,
+        "amountInRaw": "1000000",
+        "factorySelectedPool": "0x3289680dd4d6c10bb19b899729cda5eef58aeff1"
+      },
+      "liquidity": {
+        "status": "OBSERVED_NONZERO",
+        "activeRaw": "16015164533241097",
+        "slot0": {
+          "sqrtPriceX96Raw": "488066059377187592329714233123365",
+          "tick": 174526,
+          "observationIndex": "489",
+          "observationCardinality": "900",
+          "observationCardinalityNext": "900",
+          "feeProtocol": "0",
+          "unlocked": true
+        }
+      },
+      "block": {
+        "hash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+        "number": "0xb83395",
+        "timestampRaw": "1793910312"
+      },
+      "quote": {
+        "status": "QUOTED",
+        "quoter": "0xed1f6473345f45b75f8179591dd5ba1888cf2fb3",
+        "amountInRaw": "1000000",
+        "kind": "READ_ONLY_QUOTER_SIMULATION",
+        "amountOutRaw": "37929811014366",
+        "sqrtPriceX96AfterRaw": "488065871735704113083189771918613",
+        "initializedTicksCrossed": "0",
+        "swapGasEstimateRaw": "95430"
+      },
+      "tokenAccess": {
+        "status": "UNVERIFIED",
+        "semantics": "UNVERIFIED"
+      },
+      "walletFunding": {
+        "status": "UNVERIFIED"
+      },
+      "historicalRpc": {
+        "hashBoundState": "OBSERVED_AT_CAPTURE_BLOCK",
+        "fullCollectorPath": "NOT_TESTED"
+      },
+      "observations": [
+        {
+          "key": "chain.initial",
+          "method": "eth_chainId",
+          "params": [],
+          "result": "0xaa36a7"
+        },
+        {
+          "key": "block.initial",
+          "method": "eth_getBlockByNumber",
+          "params": [
+            "latest",
+            false
+          ],
+          "result": {
+            "hash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+            "number": "0xb83395",
+            "timestampRaw": "1793910312"
+          }
+        },
+        {
+          "key": "router.code",
+          "method": "eth_getCode",
+          "params": [
+            "0x3bfa4769fb09eefc5a80d6e87c3b9c650f7ae48e",
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 24497,
+            "sha256": "e18dacff07368baa9974b34f1039c31726d374cd0838c7969232b9f287590562"
+          }
+        },
+        {
+          "key": "factory.code",
+          "method": "eth_getCode",
+          "params": [
+            "0x0227628f3f023bb0b980b67d528571c95c6dac1c",
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 24535,
+            "sha256": "f4e0ac5ddb8b0ed6b47df04645557d13af2a8b7a1bc9583acd08b0788440928b"
+          }
+        },
+        {
+          "key": "tokenIn.code",
+          "method": "eth_getCode",
+          "params": [
+            "0x1c7d4b196cb0c7b01d743fbc6116a902379c7238",
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 1798,
+            "sha256": "846efa39d1689bdcffea1cdabe788d0b6f81050c0667ad6444e722aed27f7e86"
+          }
+        },
+        {
+          "key": "tokenOut.code",
+          "method": "eth_getCode",
+          "params": [
+            "0xfff9976782d46cc05630d1f6ebab18b2324d6b14",
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 3124,
+            "sha256": "9bbda01ae25d1f2b4171918cc6280a5769d6d6fc5500ed01e2143697902df4e1"
+          }
+        },
+        {
+          "key": "router.factory",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x3bfa4769fb09eefc5a80d6e87c3b9c650f7ae48e",
+              "data": "0xc45a0155"
+            },
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000000227628f3f023bb0b980b67d528571c95c6dac1c"
+        },
+        {
+          "key": "factory.pool",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x0227628f3f023bb0b980b67d528571c95c6dac1c",
+              "data": "0x1698ee820000000000000000000000001c7d4b196cb0c7b01d743fbc6116a902379c7238000000000000000000000000fff9976782d46cc05630d1f6ebab18b2324d6b1400000000000000000000000000000000000000000000000000000000000001f4"
+            },
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000003289680dd4d6c10bb19b899729cda5eef58aeff1"
+        },
+        {
+          "key": "pool.code",
+          "method": "eth_getCode",
+          "params": [
+            "0x3289680dd4d6c10bb19b899729cda5eef58aeff1",
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 22142,
+            "sha256": "599dcec0f812863fc9160404704f8d9d789431d62eb7e561fe22cdf48fbc376e"
+          }
+        },
+        {
+          "key": "pool.factory",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x3289680dd4d6c10bb19b899729cda5eef58aeff1",
+              "data": "0xc45a0155"
+            },
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000000227628f3f023bb0b980b67d528571c95c6dac1c"
+        },
+        {
+          "key": "pool.token0",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x3289680dd4d6c10bb19b899729cda5eef58aeff1",
+              "data": "0x0dfe1681"
+            },
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000001c7d4b196cb0c7b01d743fbc6116a902379c7238"
+        },
+        {
+          "key": "pool.token1",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x3289680dd4d6c10bb19b899729cda5eef58aeff1",
+              "data": "0xd21220a7"
+            },
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x000000000000000000000000fff9976782d46cc05630d1f6ebab18b2324d6b14"
+        },
+        {
+          "key": "pool.fee",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x3289680dd4d6c10bb19b899729cda5eef58aeff1",
+              "data": "0xddca3f43"
+            },
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x00000000000000000000000000000000000000000000000000000000000001f4"
+        },
+        {
+          "key": "pool.liquidity",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x3289680dd4d6c10bb19b899729cda5eef58aeff1",
+              "data": "0x1a686502"
+            },
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000000000000000000000000000000038e5b51105f509"
+        },
+        {
+          "key": "pool.slot0",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x3289680dd4d6c10bb19b899729cda5eef58aeff1",
+              "data": "0x3850c7bd"
+            },
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000000000000000001810427df6434cae8f5ea9722225000000000000000000000000000000000000000000000000000000000002a9be00000000000000000000000000000000000000000000000000000000000001e90000000000000000000000000000000000000000000000000000000000000384000000000000000000000000000000000000000000000000000000000000038400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001"
+        },
+        {
+          "key": "quoter.code",
+          "method": "eth_getCode",
+          "params": [
+            "0xed1f6473345f45b75f8179591dd5ba1888cf2fb3",
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": {
+            "bytes": 8273,
+            "sha256": "41807167ee6769e9848dc88cc44931db2c9d9f3fe320f8c10e5a588722f4496b"
+          }
+        },
+        {
+          "key": "quoter.factory",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0xed1f6473345f45b75f8179591dd5ba1888cf2fb3",
+              "data": "0xc45a0155"
+            },
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000000227628f3f023bb0b980b67d528571c95c6dac1c"
+        },
+        {
+          "key": "quoter.quote",
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0xed1f6473345f45b75f8179591dd5ba1888cf2fb3",
+              "data": "0xc6a5026a0000000000000000000000001c7d4b196cb0c7b01d743fbc6116a902379c7238000000000000000000000000fff9976782d46cc05630d1f6ebab18b2324d6b1400000000000000000000000000000000000000000000000000000000000f424000000000000000000000000000000000000000000000000000000000000001f40000000000000000000000000000000000000000000000000000000000000000"
+            },
+            {
+              "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+              "requireCanonical": true
+            }
+          ],
+          "result": "0x0000000000000000000000000000000000000000000000000000227f38e972de000000000000000000000000000000000000181041e2bfa219036c360bcc5d15000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000174c6"
+        },
+        {
+          "key": "block.final",
+          "method": "eth_getBlockByNumber",
+          "params": [
+            "0xb83395",
+            false
+          ],
+          "result": {
+            "hash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+            "number": "0xb83395",
+            "timestampRaw": "1793910312"
+          }
+        },
+        {
+          "key": "chain.final",
+          "method": "eth_chainId",
+          "params": [],
+          "result": "0xaa36a7"
+        }
+      ],
+      "errors": [],
+      "requestCount": 20,
+      "unresolved": [
+        "Token transfer semantics and legitimate acquisition are not established by code or metadata.",
+        "No owner wallet, token balance, allowance, or gas funding has been established.",
+        "Liquidity and a QuoterV2 quote do not establish future execution, a supported receipt, or complete router gas cost.",
+        "A complete receipt and all twelve historical collector observations remain necessary after a future transaction.",
+        "No pre-execution policy has been published. Wallet actions require separate owner authorization."
+      ],
+      "sourceRevisionLocation": "LOCAL_EXECUTION_CHECKOUT",
+      "publishedSourceRevision": "f24584bc8512626afe436af58163790b48062364",
+      "identicalSourceTree": "e4ba295c82518e492178899f73ad1606f969ba6e"
+    }
+  },
+  "tokenMetadataSupplement": {
+    "kind": "LIVE_TOKEN_METADATA_SUPPLEMENT_NOT_SEMANTICS_PROOF",
+    "acquiredAt": "2026-11-05T20:26:57.047Z",
+    "provider": "https://sepolia.gateway.tenderly.co",
+    "block": {
+      "hash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+      "number": "0xb83395",
+      "timestampRaw": "1793910312"
+    },
+    "observations": [
+      {
+        "key": "tokenOut.decimals",
+        "method": "eth_call",
+        "params": [
+          {
+            "to": "0xfff9976782d46cc05630d1f6ebab18b2324d6b14",
+            "data": "0x313ce567"
+          },
+          {
+            "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+            "requireCanonical": true
+          }
+        ],
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000012"
+      },
+      {
+        "key": "tokenIn.decimals",
+        "method": "eth_call",
+        "params": [
+          {
+            "to": "0x1c7d4b196cb0c7b01d743fbc6116a902379c7238",
+            "data": "0x313ce567"
+          },
+          {
+            "blockHash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+            "requireCanonical": true
+          }
+        ],
+        "result": "0x0000000000000000000000000000000000000000000000000000000000000006"
+      },
+      {
+        "key": "chain",
+        "method": "eth_chainId",
+        "params": [],
+        "result": "0xaa36a7"
+      },
+      {
+        "key": "canonical",
+        "method": "eth_getBlockByNumber",
+        "params": [
+          "0xb83395",
+          false
+        ],
+        "result": {
+          "number": "0xb83395",
+          "hash": "0x5f5a2934c8ffd028a1ae64f79879d8e5ba7c0853a996a3f92ca80a3c95e00e7e",
+          "timestamp": "0x6aece628"
+        }
+      }
+    ]
+  },
+  "historicalCollectorCheck": {
+    "sourceRevision": "09bfe5d0352276267476d5050bc996a3d0f09513",
+    "acquiredAt": "2026-11-05T20:19:22.233Z",
+    "transactionHash": "0x608ca58e7d01dbe0c7fe48af8c0bb9f2bddcf07ccc36f5c28d033bc8d198d5e9",
+    "blockNumber": "0x7556c3",
+    "blockHash": "0x6526359f4e3c5e1db4d70ecef4510b8f510fd1e05e3dce986a9de32bd7fa7a34",
+    "canonicalBlockHash": "0x6526359f4e3c5e1db4d70ecef4510b8f510fd1e05e3dce986a9de32bd7fa7a34",
+    "rpcChainId": "0xaa36a7",
+    "stateObservationCount": 12,
+    "collectionErrors": [],
+    "states": [
+      {
+        "key": "sender.code",
+        "method": "eth_getCode",
+        "params": [
+          "0x3f82931394a11582e89366fb837e53d5d0baa62a",
+          {
+            "blockHash": "0x6526359f4e3c5e1db4d70ecef4510b8f510fd1e05e3dce986a9de32bd7fa7a34",
+            "requireCanonical": true
+          }
+        ],
+        "result": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "key": "router.code",
+        "method": "eth_getCode",
+        "params": [
+          "0x3bfa4769fb09eefc5a80d6e87c3b9c650f7ae48e",
+          {
+            "blockHash": "0x6526359f4e3c5e1db4d70ecef4510b8f510fd1e05e3dce986a9de32bd7fa7a34",
+            "requireCanonical": true
+          }
+        ],
+        "result": {
+          "bytes": 24497,
+          "sha256": "e18dacff07368baa9974b34f1039c31726d374cd0838c7969232b9f287590562"
+        }
+      },
+      {
+        "key": "factory.code",
+        "method": "eth_getCode",
+        "params": [
+          "0x0227628f3f023bb0b980b67d528571c95c6dac1c",
+          {
+            "blockHash": "0x6526359f4e3c5e1db4d70ecef4510b8f510fd1e05e3dce986a9de32bd7fa7a34",
+            "requireCanonical": true
+          }
+        ],
+        "result": {
+          "bytes": 24535,
+          "sha256": "f4e0ac5ddb8b0ed6b47df04645557d13af2a8b7a1bc9583acd08b0788440928b"
+        }
+      },
+      {
+        "key": "tokenIn.code",
+        "method": "eth_getCode",
+        "params": [
+          "0x0f47e03a0383396635846f8495003fc478b71bca",
+          {
+            "blockHash": "0x6526359f4e3c5e1db4d70ecef4510b8f510fd1e05e3dce986a9de32bd7fa7a34",
+            "requireCanonical": true
+          }
+        ],
+        "result": {
+          "bytes": 4380,
+          "sha256": "8d5ab55c4e3ee83c5058ad5912de9ca449035c2e99a462a335ba92cdbb29e71c"
+        }
+      },
+      {
+        "key": "tokenOut.code",
+        "method": "eth_getCode",
+        "params": [
+          "0x9142fa65aaef921aea2127e88758adee0510a0f0",
+          {
+            "blockHash": "0x6526359f4e3c5e1db4d70ecef4510b8f510fd1e05e3dce986a9de32bd7fa7a34",
+            "requireCanonical": true
+          }
+        ],
+        "result": {
+          "bytes": 4380,
+          "sha256": "a5a02890e3f35fc56e61694f7836a606841ed62bb4f6b7a5affa007c2914b214"
+        }
+      },
+      {
+        "key": "router.factory",
+        "method": "eth_call",
+        "params": [
+          {
+            "data": "0xc45a0155",
+            "to": "0x3bfa4769fb09eefc5a80d6e87c3b9c650f7ae48e"
+          },
+          {
+            "blockHash": "0x6526359f4e3c5e1db4d70ecef4510b8f510fd1e05e3dce986a9de32bd7fa7a34",
+            "requireCanonical": true
+          }
+        ],
+        "result": "0x0000000000000000000000000227628f3f023bb0b980b67d528571c95c6dac1c"
+      },
+      {
+        "key": "factory.pool",
+        "method": "eth_call",
+        "params": [
+          {
+            "data": "0x1698ee820000000000000000000000000f47e03a0383396635846f8495003fc478b71bca0000000000000000000000009142fa65aaef921aea2127e88758adee0510a0f000000000000000000000000000000000000000000000000000000000000001f4",
+            "to": "0x0227628f3f023bb0b980b67d528571c95c6dac1c"
+          },
+          {
+            "blockHash": "0x6526359f4e3c5e1db4d70ecef4510b8f510fd1e05e3dce986a9de32bd7fa7a34",
+            "requireCanonical": true
+          }
+        ],
+        "result": "0x000000000000000000000000029603931809d430ae47d2f55212cc0e89dbfd52"
+      },
+      {
+        "key": "pool.code",
+        "method": "eth_getCode",
+        "params": [
+          "0x029603931809d430ae47d2f55212cc0e89dbfd52",
+          {
+            "blockHash": "0x6526359f4e3c5e1db4d70ecef4510b8f510fd1e05e3dce986a9de32bd7fa7a34",
+            "requireCanonical": true
+          }
+        ],
+        "result": {
+          "bytes": 22142,
+          "sha256": "8d590aada1c3c21dbdbc2754bf67ae6979502acacc02462995e9157dc2a20f0d"
+        }
+      },
+      {
+        "key": "pool.factory",
+        "method": "eth_call",
+        "params": [
+          {
+            "data": "0xc45a0155",
+            "to": "0x029603931809d430ae47d2f55212cc0e89dbfd52"
+          },
+          {
+            "blockHash": "0x6526359f4e3c5e1db4d70ecef4510b8f510fd1e05e3dce986a9de32bd7fa7a34",
+            "requireCanonical": true
+          }
+        ],
+        "result": "0x0000000000000000000000000227628f3f023bb0b980b67d528571c95c6dac1c"
+      },
+      {
+        "key": "pool.token0",
+        "method": "eth_call",
+        "params": [
+          {
+            "data": "0x0dfe1681",
+            "to": "0x029603931809d430ae47d2f55212cc0e89dbfd52"
+          },
+          {
+            "blockHash": "0x6526359f4e3c5e1db4d70ecef4510b8f510fd1e05e3dce986a9de32bd7fa7a34",
+            "requireCanonical": true
+          }
+        ],
+        "result": "0x0000000000000000000000000f47e03a0383396635846f8495003fc478b71bca"
+      },
+      {
+        "key": "pool.token1",
+        "method": "eth_call",
+        "params": [
+          {
+            "data": "0xd21220a7",
+            "to": "0x029603931809d430ae47d2f55212cc0e89dbfd52"
+          },
+          {
+            "blockHash": "0x6526359f4e3c5e1db4d70ecef4510b8f510fd1e05e3dce986a9de32bd7fa7a34",
+            "requireCanonical": true
+          }
+        ],
+        "result": "0x0000000000000000000000009142fa65aaef921aea2127e88758adee0510a0f0"
+      },
+      {
+        "key": "pool.fee",
+        "method": "eth_call",
+        "params": [
+          {
+            "data": "0xddca3f43",
+            "to": "0x029603931809d430ae47d2f55212cc0e89dbfd52"
+          },
+          {
+            "blockHash": "0x6526359f4e3c5e1db4d70ecef4510b8f510fd1e05e3dce986a9de32bd7fa7a34",
+            "requireCanonical": true
+          }
+        ],
+        "result": "0x00000000000000000000000000000000000000000000000000000000000001f4"
+      }
+    ],
+    "report": {
+      "execution": "SUCCEEDED",
+      "support": "SUPPORTED",
+      "coverage": "COMPLETE",
+      "verdict": "PASS",
+      "policySource": "SUPPLIED_RETROSPECTIVE",
+      "evidenceDigest": "0xd170ac971902427d8939803ddd596837a9be5d44e4671727db354164db631441",
+      "policyDigest": "0xad5807237c0f0c157b513bf3df554ecba13dcded0601d7540f0a836cc55fbc86"
+    },
+    "retainedBaseEvidence": "examples/sepolia/evidence.json",
+    "retainedBaseFileSha256": "d57013b097c323271d25a021f6244e79a00ec72853dd6aed0828f2a481fe0c36",
+    "freshEvidenceDigest": "0xd170ac971902427d8939803ddd596837a9be5d44e4671727db354164db631441",
+    "freshEvidenceFileSha256": "2078ba99fde60e437acc8c0765853e9ea208b81bb7f39b1096e9d61056ccc2c5",
+    "freshEvidenceBytes": 180583,
+    "normalizedPayloadComparison": "IDENTICAL_EXCEPT_ACQUIRED_AT_AND_DIGEST",
+    "reconstruction": "Copy retained base evidence, replace acquiredAt with this capture timestamp, recompute sealEvidence digest, serialize canonicalJson plus newline; verify freshEvidenceDigest and freshEvidenceFileSha256. This reconstructs the recorded capture and is not a new RPC acquisition."
+  },
+  "localValidation": {
+    "node": "v24.22.1",
+    "commands": [
+      "npm ci --ignore-scripts --no-audit --no-fund",
+      "npm run verify",
+      "npm run demo"
+    ],
+    "typecheck": "PASS",
+    "nodeTests": {
+      "total": 133,
+      "passed": 133,
+      "failed": 0,
+      "newSyntheticProbeTests": 16
+    },
+    "historicalOfflineDemo": {
+      "pass": 0,
+      "violation": 2,
+      "reserveUnknown": 3
+    },
+    "scriptSha256": "3a810316866d1b6948e7982b128c348fe3cbbac1e1c30ba044bce3c92cf86234",
+    "verificationLogSha256": "925c85c7484867d1f778f10a8e5c354ac757a415d3c7a774598f0642787f641e",
+    "demoLogSha256": "6ff479248fe72466bb94d97f3323be78c505c10401a7718b2d9995aeb3a8b791",
+    "note": "Local validation; final GitHub Actions revision and job logs are recorded in the PR delivery record."
+  },
+  "localProbeRevision": "605bb9e95b439cc15a415a7ea9dfe42d7edc4550",
+  "publicationProvenance": {
+    "method": "CONNECTED_GITHUB_GIT_API",
+    "reason": "Shell git push lacked authentication; connected GitHub write access was available.",
+    "localReportRevision": "94834847159606e2ed40f2c0a6acb018dbca81eb",
+    "publishedReportRevision": "98804365aba73a38e2114c78160199601b7aaae3",
+    "identicalReportTree": "df747db48cb9020b05ee645d177ba39ffca7cbaa",
+    "localProbeRevision": "605bb9e95b439cc15a415a7ea9dfe42d7edc4550",
+    "publishedProbeRevision": "f24584bc8512626afe436af58163790b48062364",
+    "identicalProbeTree": "e4ba295c82518e492178899f73ad1606f969ba6e",
+    "note": "Commit metadata changes hashes; compared Git trees and script bytes are identical. Actual capture sourceRevision values remain untouched. Publication is later than capture and is not policy prepublication."
+  }
+}
