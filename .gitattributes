@@ -1,0 +1,2 @@
+# Retained capture byte hashes must survive Git for Windows autocrlf checkout.
+examples/sepolia/*.json text eol=lf

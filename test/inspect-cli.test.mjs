@@ -7,7 +7,7 @@ import {spawnSync} from 'node:child_process';
 import {transactionHash, policyFixture} from './helpers/uniswap-fixture.mjs';
 
 const cli = resolve('bin/aftercheck.mjs');
-const preload = resolve('test/helpers/simulated-rpc-preload.mjs');
+const preload = new URL('./helpers/simulated-rpc-preload.mjs', import.meta.url).href;
 const endpoint = 'https://simulated-rpc.invalid/KEY_DO_NOT_PRINT';
 const json = value => JSON.stringify(value);
 function run(policyPath,out,scenario='complete',hash=transactionHash,endpointOverride=endpoint) {

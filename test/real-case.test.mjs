@@ -123,7 +123,7 @@ test('Original real bundle replays all three CLI outcomes with network entry poi
       ['pass', 'PASS', 0, 'COMPLETE'], ['violation', 'VIOLATION', 2, 'COMPLETE'], ['reserve', 'UNKNOWN', 3, 'PARTIAL']
     ]) {
       const out = join(dir, name);
-      const result = spawnSync(process.execPath, ['--import', fileURLToPath(new URL('../scripts/offline-guard.mjs', import.meta.url)),
+      const result = spawnSync(process.execPath, ['--import', new URL('../scripts/offline-guard.mjs', import.meta.url).href,
         fileURLToPath(new URL('../bin/aftercheck.mjs', import.meta.url)), 'verify',
         fileURLToPath(example('evidence.json')), fileURLToPath(example(`policy-${name}.json`)), out],
       {encoding: 'utf8', timeout: 10_000, env: {...process.env, AFTERCHECK_RPC_URL: 'https://unreachable.invalid/unused'}});

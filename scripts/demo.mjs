@@ -8,7 +8,8 @@ import {readJsonFile} from '../src/io.ts';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const evidence = join(root, 'examples/sepolia/evidence.json');
 const cli = join(root, 'bin/aftercheck.mjs');
-const guard = join(root, 'scripts/offline-guard.mjs');
+// --import expects an ESM specifier, including a file URL on Windows.
+const guard = new URL('./offline-guard.mjs', import.meta.url).href;
 const cases = [
   {name: 'pass', code: 0, verdict: 'PASS'},
   {name: 'violation', code: 2, verdict: 'VIOLATION'},

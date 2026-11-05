@@ -13,26 +13,31 @@
     button,input,textarea { font:inherit; }
     button,input,textarea,summary { accent-color:var(--accent); }
     button,summary,input[type=file] { cursor:pointer; }
-    button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible,pre:focus-visible { outline:3px solid #117a9b; outline-offset:4px; }
+    :focus-visible { outline:3px solid #117a9b; outline-offset:4px; }
     [hidden] { display:none !important; }
     .wrap { width:min(1100px,calc(100% - 40px)); margin:0 auto; }
+    .skip-link { position:absolute; left:20px; top:-100px; z-index:2; padding:10px 16px; background:#fff; color:var(--ink); }
+    .skip-link:focus { top:10px; }
     header { border-bottom:1px solid var(--line); background:var(--card); }
     .topbar { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:19px 0; }
     .brand { display:flex; align-items:center; gap:10px; font-size:21px; font-weight:760; letter-spacing:-.7px; }
     .brand-mark { display:grid; place-items:center; width:30px; height:30px; border:2px solid var(--accent); border-radius:7px; color:var(--accent); font-size:18px; letter-spacing:0; }
     .local-tag { color:var(--muted); font-size:11px; font-weight:750; letter-spacing:1.2px; text-align:right; }
-    main { padding:35px 0 52px; }
+    main { padding:28px 0 52px; }
     .eyebrow { margin:0 0 6px; color:var(--accent); font-size:12px; font-weight:760; letter-spacing:1.5px; text-transform:uppercase; }
     h1 { margin:0; font-size:clamp(29px,5vw,42px); line-height:1.14; font-weight:720; letter-spacing:-1.4px; }
     .intro { margin:12px 0 24px; max-width:790px; color:var(--muted); }
     .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:23px; }
+    .import-panel > summary { width:100%; color:var(--ink); font-size:15px; }
+    .import-panel[open] > summary { margin-bottom:20px; }
+    .import-panel > summary small { display:block; margin:4px 0 0 18px; color:var(--muted); font-weight:400; font-size:12px; }
     .import-row { display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap; }
     .import-row p { margin:4px 0 0; color:var(--muted); font-size:14px; }
     .import-label { font-weight:700; }
     input[type=file] { max-width:100%; width:340px; font-size:13px; color:var(--muted); }
     input[type=file]::file-selector-button { border:1px solid var(--accent); border-radius:6px; padding:11px 15px; margin-right:12px; color:#fff; background:var(--accent); font-weight:650; cursor:pointer; }
     details.paste { margin-top:18px; padding-top:13px; border-top:1px solid var(--line); }
-    summary { color:var(--muted); font-size:14px; font-weight:650; width:fit-content; }
+    summary { color:var(--ink); font-size:14px; font-weight:650; width:fit-content; min-height:44px; padding:10px 0; }
     textarea { display:block; width:100%; min-height:140px; resize:vertical; border:1px solid var(--line); border-radius:6px; background:#fbfcfa; padding:12px; margin:10px 0; font:13px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace; }
     .paste-label { display:block; margin-top:12px; color:var(--muted); font-size:13px; }
     button { border:1px solid var(--line); background:#fff; border-radius:6px; color:var(--ink); padding:9px 13px; min-height:42px; font-weight:650; font-size:13px; }
@@ -44,16 +49,29 @@
     .empty { margin:25px 0 0; padding:26px 20px; text-align:center; border:1px dashed #b9c8bd; border-radius:10px; }
     .empty strong { display:block; font-weight:650; }
     .empty p { margin:7px auto 0; max-width:650px; color:var(--muted); font-size:14px; }
-    .report { margin-top:24px; }
+    .report { margin-top:20px; }
     .display-only { padding:12px 16px; background:#eaf0ec; border-radius:7px; color:#3b5148; font-size:13px; }
     .display-only strong { color:var(--ink); }
-    .report-head { margin:22px 0 16px; display:flex; justify-content:space-between; gap:16px; align-items:flex-start; flex-wrap:wrap; }
+    .report-head { margin:16px 0; display:flex; justify-content:space-between; gap:12px; align-items:center; flex-wrap:wrap; }
     h2 { margin:0; font-size:24px; letter-spacing:-.5px; line-height:1.25; }
-    .report-subtitle { margin:8px 0 0; font-size:14px; color:var(--muted); max-width:740px; }
+    .report-subtitle { margin:18px 0 0; font-size:18px; line-height:1.5; font-weight:600; max-width:850px; overflow-wrap:anywhere; }
     .actions { display:flex; gap:8px; flex-wrap:wrap; }
-    .status-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+    .outcome { border:1px solid var(--line); border-radius:12px; padding:24px; background:#fff; scroll-margin-top:16px; }
+    .outcome:focus { outline:3px solid #117a9b; outline-offset:4px; }
+    .outcome-grid { display:grid; grid-template-columns:1fr 1.2fr; gap:14px; }
+    .outcome-card { border:1px solid var(--line); border-radius:8px; padding:20px; min-width:0; background:#f5f7f5; }
+    .outcome-label { display:block; margin:0 0 10px; color:var(--muted); font-size:12px; font-weight:750; letter-spacing:1px; text-transform:uppercase; }
+    .outcome-card p { margin:10px 0 0; color:var(--muted); font-size:13px; }
+    .outcome-card .badge { padding:0; background:transparent; font-size:clamp(23px,4.5vw,34px); font-weight:750; letter-spacing:-1px; }
+    .policy-card { border-top:4px solid var(--unknown); background:var(--unknown-bg); }
+    .policy-card[data-tone=pass] { border-top-color:var(--pass); background:var(--pass-bg); }
+    .policy-card[data-tone=violation] { border-top-color:var(--violation); background:var(--violation-bg); }
+    .policy-card .outcome-label,.policy-card p { color:var(--ink); }
+    .primary-requirement { margin:12px 0 0; padding:12px 14px; border-left:3px solid var(--unknown); background:#f7f9f7; font-size:14px; overflow-wrap:anywhere; }
+    .primary-requirement[data-tone=violation] { border-left-color:var(--violation); }
+    .status-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:20px; }
     .status-card { border:1px solid var(--line); background:var(--card); border-radius:9px; padding:16px; min-width:0; }
-    .status-card .label { color:var(--muted); font-size:12px; display:block; margin-bottom:10px; }
+    .status-card .label { color:var(--muted); font-size:12px; font-weight:650; display:block; margin-bottom:10px; }
     .status-card small { display:block; margin-top:8px; color:var(--muted); font-size:12px; line-height:1.45; }
     .badge { display:inline-block; padding:5px 8px; border-radius:4px; font:700 12px/1.35 ui-monospace,SFMono-Regular,Consolas,monospace; letter-spacing:.1px; overflow-wrap:anywhere; max-width:100%; color:#365147; background:#e9efeb; }
     .badge[data-tone=pass] { color:var(--pass); background:var(--pass-bg); }
@@ -66,6 +84,32 @@
     .evidence-banner code { display:inline-block; margin-top:6px; font-size:12px; }
     .section-grid { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:16px; }
     .section { margin-top:16px; }
+    .section-grid > * { min-width:0; }
+    .policy-context { margin:14px 0 0; color:var(--muted); font-size:13px; }
+    .business-note { margin:16px 0 0; font-size:14px; color:var(--muted); }
+    .origin-note { margin:0 0 14px; font-size:12px; font-weight:700; color:var(--muted); }
+    .origin-note[data-synthetic=true] { color:#634006; background:var(--unknown-bg); padding:10px 12px; border-radius:5px; }
+    .attention { border-left:4px solid var(--unknown); }
+    .attention[data-tone=violation] { border-left-color:var(--violation); }
+    .check-id { display:block; font-size:12px; font-weight:500; color:var(--muted); margin-top:3px; }
+    .check .check-meaning { color:var(--ink); font-size:14px; }
+    .check details { margin-top:6px; }
+    .check details summary { font-size:12px; min-height:36px; padding:7px 0; }
+    .check[data-result=VIOLATION] .check-heading strong { color:var(--violation); }
+    .check[data-result=UNKNOWN] .check-heading strong { color:var(--unknown); }
+    .check-count { display:block; color:var(--muted); font-size:12px; font-weight:400; margin-top:4px; }
+    .amount-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+    .amount-grid > div { min-width:0; border:1px solid var(--line); border-radius:7px; padding:15px; background:#f8faf8; }
+    .amount-grid dt { color:var(--ink); font-size:13px; }
+    .amount-value { font-size:clamp(14px,1.4vw,17px); font-weight:650; margin:8px 0; }
+    .amount-token { color:var(--muted); font-size:11px; line-height:1.6; }
+    .amount-caption { color:var(--muted); font:12px/1.5 system-ui,sans-serif; }
+    .threshold-note { color:var(--muted); font-size:13px; margin:16px 0 0; }
+    .guidance { margin:0; padding-left:22px; }
+    .guidance li { padding-left:3px; margin:10px 0; font-size:14px; overflow-wrap:anywhere; }
+    .guidance li:first-child { margin-top:0; }
+    details.card > summary { width:100%; font-size:16px; }
+    details.card[open] > summary { margin-bottom:16px; }
     h3 { font-size:16px; margin:0 0 15px; letter-spacing:-.15px; }
     .section-note { font-size:13px; color:var(--muted); margin:-7px 0 17px; }
     dl { margin:0; }
@@ -90,39 +134,65 @@
     pre { margin:13px 0 0; padding:15px; border:1px solid var(--line); border-radius:7px; max-height:400px; overflow:auto; color:#2f4c3f; background:#f7faf7; font:12px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace; white-space:pre-wrap; overflow-wrap:anywhere; }
     footer { border-top:1px solid var(--line); margin-top:28px; padding-top:16px; color:var(--muted); font-size:12px; }
     code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; overflow-wrap:anywhere; }
-    @media(max-width:760px) { .status-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .section-grid { grid-template-columns:1fr; gap:0; } .card { padding:19px; } .import-row { gap:15px; } .topbar { padding:15px 0; } main { padding-top:26px; } }
-    @media(max-width:420px) { .wrap { width:calc(100% - 24px); } .local-tag { font-size:10px; letter-spacing:.6px; max-width:95px; } .status-card { padding:12px; } .badge { font-size:11px; } .actions { width:100%; } .actions button { flex:1; } }
+    main[data-loaded=true] .intro { display:none; }
+    main[data-loaded=true] h1 { font-size:26px; margin-bottom:18px; letter-spacing:-.7px; }
+    @media(max-width:760px) { .section-grid,.amount-grid { grid-template-columns:1fr; gap:12px; } .section-grid { gap:0; } .card { padding:19px; } .import-row { gap:15px; } .topbar { padding:15px 0; } main { padding-top:24px; } .outcome { padding:18px; } .amount-value { font-size:17px; } }
+    @media(max-width:520px) { .outcome-grid { grid-template-columns:1fr; gap:10px; } .outcome-card { padding:14px; } .outcome-card .badge { font-size:28px; } .outcome-label { margin-bottom:5px; } .outcome-card p { margin-top:6px; } .report-subtitle { font-size:16px; margin-top:14px; } .status-card { padding:12px; } }
+    @media(max-width:420px) { .wrap { width:calc(100% - 24px); } .local-tag { font-size:10px; letter-spacing:.6px; max-width:95px; } .badge { font-size:11px; } .actions { width:100%; } .actions button { flex:1; } }
   </style>
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to report inspector</a>
   <header><div class="wrap topbar"><div class="brand"><span class="brand-mark" aria-hidden="true">✓</span>Aftercheck</div><span class="local-tag">LOCAL FILES · NO NETWORK</span></div></header>
-  <main class="wrap">
+  <main class="wrap" id="main" tabindex="-1">
     <p class="eyebrow">Local report inspector</p>
-    <h1>Inspect a swap outcome.</h1>
-    <p class="intro">Open the JSON report produced by Aftercheck. See what executed, which checks passed, and where the evidence stops.</p>
-    <section class="card" aria-label="Open a saved report">
+    <h1>Did the swap meet your policy?</h1>
+    <p class="intro">A transaction can succeed while a financial requirement fails. Open a saved Aftercheck report to see what executed, which requirements held, and what remains unknown.</p>
+    <details class="card import-panel" id="import-panel" open>
+      <summary>Open or replace a saved report<small>Local JSON file or pasted report · no upload</small></summary>
       <div class="import-row"><div><label class="import-label" for="report-file">Open a report</label><p>aftercheck.report.v1 · JSON · maximum 2 MiB</p></div><input id="report-file" type="file" accept=".json,application/json" aria-describedby="import-status"></div>
       <details class="paste"><summary>Or paste report JSON</summary><label for="report-text" class="paste-label">Report JSON is processed on this device.</label><textarea id="report-text" spellcheck="false" placeholder="Paste an Aftercheck report here"></textarea><button type="button" id="open-text" class="button-primary">Inspect pasted report</button></details>
-      <p id="import-status" class="import-status" role="status">Files stay on this device. No wallet connection is needed.</p>
-    </section>
+    </details>
+    <p id="import-status" class="import-status" role="status" aria-atomic="true">Files stay on this device. No wallet connection is needed.</p>
     <div id="import-error" class="error" role="alert" hidden></div>
     <div id="empty-state" class="empty"><strong>Your saved report appears here.</strong><p>First collect evidence and run Aftercheck’s verifier. This inspector displays the saved result; it does not perform new blockchain checks.</p></div>
     <noscript><p class="error">JavaScript is needed to read a local report. This file contains all of its scripts and styles.</p></noscript>
     <article id="report" class="report" hidden aria-label="Imported report">
-      <div class="display-only"><strong>Imported report · display only.</strong> The results below come from the supplied file. This viewer does not recompute financial checks, authenticate evidence, or independently verify the chain.</div>
-      <div class="report-head"><div><p class="eyebrow">Saved policy result</p><h2 id="report-title"></h2><p id="report-subtitle" class="report-subtitle"></p></div><div class="actions"><button type="button" id="download-report">Download report JSON</button><button type="button" id="clear-report">Clear report</button></div></div>
-      <div class="status-grid" aria-label="Separate result dimensions">
-        <section class="status-card"><span class="label">01 / Execution</span><span class="badge" id="execution"></span><small>Did the transaction execute?</small></section>
-        <section class="status-card"><span class="label">02 / Protocol support</span><span class="badge" id="support"></span><small>Is this operation in the report’s supported scope?</small></section>
-        <section class="status-card"><span class="label">03 / Evidence coverage</span><span class="badge" id="coverage"></span><small>Are the required observations available and consistent?</small></section>
-        <section class="status-card"><span class="label">04 / Policy verdict</span><span class="badge" id="verdict"></span><small>Did the declared financial rules hold?</small></section>
-      </div>
+      <div class="report-head"><p class="eyebrow">Saved outcome review</p><div class="actions"><button type="button" id="download-report">Download report JSON</button><button type="button" id="clear-report">Clear report</button></div></div>
+      <section id="outcome-summary" class="outcome" tabindex="-1" aria-label="Execution and financial policy result">
+        <p id="outcome-origin" class="origin-note"></p>
+        <div class="outcome-grid">
+          <section class="outcome-card" data-dimension="execution" aria-labelledby="execution-label"><h2 id="execution-label" class="outcome-label">Onchain execution</h2><span class="badge" id="execution"></span><p id="execution-description"></p></section>
+          <section id="policy-card" class="outcome-card policy-card" data-dimension="verdict" aria-labelledby="policy-label"><span id="policy-label" class="outcome-label">Financial policy</span><h2 id="report-title"><span class="badge" id="verdict"></span></h2><p id="verdict-scope"></p></section>
+        </div>
+        <p id="report-subtitle" class="report-subtitle"></p>
+        <p id="primary-requirement" class="primary-requirement" hidden></p>
+        <div class="status-grid" aria-label="Support and evidence dimensions">
+          <section class="status-card" data-dimension="support" aria-labelledby="support-label"><span class="label" id="support-label">Protocol support</span><span class="badge" id="support"></span><small id="support-description"></small></section>
+          <section class="status-card" data-dimension="coverage" aria-labelledby="coverage-label"><span class="label" id="coverage-label">Evidence coverage</span><span class="badge" id="coverage"></span><small id="coverage-description"></small></section>
+        </div>
+        <p id="policy-context" class="policy-context"></p>
+      </section>
+      <p class="business-note"><strong>Why this matters.</strong> A receipt records EVM execution status. Your financial policy sets separate requirements for who pays, who receives, which tokens move, and the amounts. Aftercheck’s verifier compares supported observations with that supplied policy.</p>
+      <div class="display-only"><strong>Imported report · display only.</strong> The results come from the supplied file. This viewer does not recompute financial checks, authenticate evidence, or independently verify the chain.</div>
       <aside id="evidence-banner" class="evidence-banner"><strong id="evidence-title"></strong><code id="evidence-class"></code><p id="evidence-description"></p></aside>
+      <section id="attention-section" class="card section attention" hidden><h3 id="attention-title">Requirements to investigate</h3><ol id="attention-checks" class="checks"></ol></section>
+      <section id="observed-amounts" class="card section" hidden>
+        <h3>Observed swap amounts</h3>
+        <p class="section-note">Exact raw token units from the saved report. No decimal conversion, market valuation, or account-balance reconstruction.</p>
+        <dl class="amount-grid">
+          <div><dt>Observed input · raw units</dt><dd id="amount-in" class="amount-value"></dd><dd id="input-token" class="amount-token"></dd></div>
+          <div><dt>Observed output · raw units</dt><dd id="amount-out" class="amount-value"></dd><dd id="output-token" class="amount-token"></dd></div>
+          <div><dt>Router minimum output · raw units</dt><dd id="router-minimum" class="amount-value"></dd><dd class="amount-caption">Transaction setting for the output token. It may differ from the supplied policy’s minimum.</dd></div>
+        </dl>
+      </section>
+      <p id="policy-threshold-note" class="threshold-note">Policy limits and expected addresses are not provided as structured fields in this report. Consult the original supplied policy; saved verifier reasons remain available with each check. A router minimum is a transaction setting and does not substitute for the supplied policy’s minReceivedRaw.</p>
+      <section class="card section"><h3>Before another operation</h3><ol id="guidance" class="guidance"></ol><p class="threshold-note">Aftercheck cannot reverse this transaction, recover assets, or automatically change future operations.</p></section>
       <div class="section-grid">
-        <section class="card section"><h3>Financial checks</h3><ol id="checks" class="checks"></ol><p id="no-checks" class="no-checks" hidden>No individual financial checks were established in this report.</p></section>
-        <section class="card section"><h3>Transaction &amp; evidence identity</h3><p class="section-note">Identifiers are read from the report and are not independently authenticated here.</p><dl id="identity"></dl></section>
+        <details id="checks-details" class="card section"><summary>All financial checks<span id="check-count" class="check-count"></span></summary><ol id="checks" class="checks"></ol><p id="no-checks" class="no-checks" hidden>No individual financial checks were established in this report.</p></details>
+        <details id="identity-details" class="card section"><summary>Transaction &amp; evidence identity</summary><p class="section-note">Identifiers are read from the report and are not independently authenticated here.</p><dl id="identity"></dl></details>
       </div>
-      <section id="protocol-section" class="card section" hidden><h3>Receipt observations</h3><p class="section-note">These are receipt-emitted amounts under the report’s plain-token assumption. Raw amounts do not establish account balances, token behavior, or economic value.</p><dl id="protocol"></dl></section>
+      <details id="protocol-section" class="card section" hidden><summary>Receipt observations &amp; token identities</summary><p class="section-note">These are receipt-emitted amounts under the report’s plain-token assumption. Raw amounts do not establish account balances, token behavior, or economic value.</p><dl id="protocol"></dl></details>
       <section class="card section"><h3>Scope &amp; trust limitations</h3><ul id="limitations" class="limitations"></ul></section>
       <details class="card raw"><summary>Raw report JSON</summary><pre id="raw-report" tabindex="0"></pre></details>
     </article>
@@ -287,6 +357,81 @@
       return Object.freeze({MAX_BYTES, parseReport, evidenceDescription});
     })();
   </script>
+  <script id="report-presentation">
+    'use strict';
+    // Interpret saved statuses only. Never evaluate a policy or recover omitted values here.
+    const AftercheckPresentation = (() => {
+      const checks = {
+        owner: {label:'Owner / payer', violation:'The observed payer differs from the owner required by the supplied policy.'},
+        recipient: {label:'Recipient', violation:'The observed recipient differs from the recipient required by the supplied policy.'},
+        tokenPair: {label:'Token pair', violation:'The observed token pair differs from the pair required by the supplied policy.'},
+        maxInputRaw: {label:'Maximum input', violation:'The observed swap input exceeds the supplied policy’s maximum input.'},
+        minReceivedRaw: {label:'Minimum received', violation:'The observed swap output is below the supplied policy’s minimum received.'},
+        reserveFloorRaw: {label:'Remaining reserve', violation:'The saved report marks the reserve requirement as violated.'}
+      };
+      const definition = id => Object.hasOwn(checks, id) ? checks[id] : {label:id};
+      function checkMeaning(check) {
+        const item = definition(check.id);
+        if (check.result === 'VIOLATION') return item.violation || 'The saved report marks this financial requirement as violated. Review its verifier reason.';
+        if (check.result === 'UNKNOWN') return check.id === 'reserveFloorRaw'
+          ? 'Receipt-emitted amounts do not prove the wallet’s token reserve immediately after this transaction.'
+          : 'The available evidence cannot establish whether this financial requirement was satisfied.';
+        return 'The saved report marks this check as passed within its supported scope.';
+      }
+      function outcome(report) {
+        const synthetic = AftercheckReports.evidenceDescription(report).synthetic;
+        const violations = report.checks.filter(check => check.result === 'VIOLATION');
+        const unknowns = report.checks.filter(check => check.result === 'UNKNOWN');
+        const primary = violations[0] || unknowns[0];
+        const subject = synthetic ? 'The simulated operation' : 'The transaction';
+        let summary = 'The available evidence cannot establish whether the supplied financial policy was satisfied.';
+        if (report.verdict === 'PASS') summary = subject + ' completed and the supplied financial checks passed within the supported scope.';
+        if (report.verdict === 'VIOLATION') summary = subject + ' completed, but the supplied financial policy was violated.';
+        if (report.verdict === 'UNKNOWN' && report.execution === 'SUCCEEDED' && unknowns.some(check => check.id === 'reserveFloorRaw')) summary = subject + ' completed, but the available evidence cannot establish whether the reserve requirement was satisfied.';
+        const executionDescriptions = {
+          SUCCEEDED: synthetic ? 'The fixture records successful execution. This is a test result.' : 'The saved receipt records successful EVM execution.',
+          REVERTED: 'The report records a reverted transaction. Successful swap effects are not established.',
+          PENDING: 'The report records a pending transaction. Completed effects are not established.',
+          UNKNOWN: 'The report cannot establish the transaction’s execution status.'
+        };
+        return {
+          synthetic, summary, primary,
+          origin: synthetic ? 'SYNTHETIC / SIMULATED EVIDENCE · no public-chain outcome established' : report.chainId !== undefined && BigInt(report.chainId) === 11155111n ? 'Ethereum Sepolia · testnet observations supplied by the report' : 'Saved evidence · provenance supplied by the report',
+          executionLabel: synthetic ? 'Simulated execution' : 'Onchain execution',
+          executionDescription: executionDescriptions[report.execution],
+          verdictScope: report.verdict === 'PASS' ? 'Only the supported declared checks passed.' : report.verdict === 'VIOLATION' ? 'At least one requirement failed.' + (unknowns.length ? ' Other requirements remain UNKNOWN.' : '') : 'The financial outcome remains unestablished.',
+          supportDescription: report.support === 'SUPPORTED_TEST_PROFILE' ? 'Supported test profile only; no public-chain result is established.' : report.support === 'SUPPORTED' ? 'The operation is within the saved report’s supported scope.' : 'The report does not establish a supported operation.',
+          coverageDescription: report.coverage === 'COMPLETE' ? 'Required observations were available for the reported checks. This does not prove full account state.' : report.coverage === 'PARTIAL' ? 'Required observations are missing or a requirement cannot be established in this scope.' : 'Observations conflict. Resolve the inconsistencies before relying on a policy conclusion.',
+          policyContext: report.policySource === 'SUPPLIED_RETROSPECTIVE' ? 'Retrospective policy: supplied for review after execution. It does not establish the original sender’s instructions.' : 'The report does not state when the policy was supplied. Original sender intent is not established.'
+        };
+      }
+      function guidance(report) {
+        const actions = [];
+        const violations = report.checks.filter(check => check.result === 'VIOLATION');
+        const unknowns = report.checks.filter(check => check.result === 'UNKNOWN');
+        const reviews = {
+          owner:'Review payer selection and the original supplied policy’s owner before constructing another transaction.',
+          recipient:'Review recipient configuration against the original supplied policy’s expectedRecipient before another operation.',
+          tokenPair:'Compare input and output token addresses with the original supplied policy. Review route construction for the intended pair.',
+          maxInputRaw:'Compare the exact observed input with the original supplied policy’s maxInputRaw. Review the transaction’s input amount and its construction before repeating it.',
+          minReceivedRaw:'Compare the exact observed output with the original supplied policy’s minReceivedRaw and the router minimum output. Review whether transaction construction enforces the intended minimum.',
+          reserveFloorRaw:'Review the original supplied reserveFloorRaw requirement and the evidence behind the reported violation. This viewer cannot establish a reserve balance.'
+        };
+        if (report.verdict === 'PASS') actions.push('Retain the original supplied policy, evidence bundle and report together. This PASS covers only the supported declared checks.', 'Review the scope and trust limitations before relying on this result for another operation.');
+        for (const check of violations) actions.push(Object.hasOwn(reviews, check.id) ? reviews[check.id] : 'Review the original requirement “' + check.id + '” and its saved verifier reason before another operation.');
+        if (violations.length) actions.push('Consider pausing dependent automation for review. Correct policy enforcement before future transactions; this viewer does not pause or change it.');
+        if (report.verdict === 'UNKNOWN' || unknowns.length) {
+          if (unknowns.some(check => check.id === 'reserveFloorRaw')) actions.push('Obtain independent evidence of the input-token reserve immediately after the target transaction. Receipt logs and block-end balances cannot establish this transaction boundary.');
+          if (report.coverage === 'CONFLICTED') actions.push('Resolve conflicting transaction, block or event observations before rerunning the verifier. Preserve the conflicting evidence for review.');
+          if (report.support === 'UNSUPPORTED') actions.push('Confirm the actual transaction route and the verifier’s supported scope. This inspector cannot add support for an unsupported operation.');
+          if (!unknowns.length || unknowns.some(check => check.id !== 'reserveFloorRaw')) actions.push('Inspect the missing or unsupported evidence in the saved reasons and limitations. If appropriate historical observations are available, collect them and rerun the verifier locally.');
+          actions.push('Keep unresolved requirements UNKNOWN in downstream decisions. The available evidence cannot certify a financially safe outcome.');
+        }
+        return actions;
+      }
+      return Object.freeze({outcome, guidance, checkMeaning, checkLabel:id => definition(id).label});
+    })();
+  </script>
   <script id="inspector-ui">
     'use strict';
     (() => {
@@ -299,12 +444,19 @@
       function badge(target, value) { target.textContent = value; target.dataset.tone = tone(value); }
       function resetDisplay() {
         currentSource = null;
+        element('main').dataset.loaded = 'false';
+        element('import-panel').open = true;
         element('report').hidden = true;
         element('empty-state').hidden = false;
         element('import-error').hidden = true;
         element('import-error').textContent = '';
-        for (const id of ['checks', 'identity', 'protocol', 'limitations']) element(id).replaceChildren();
-        for (const id of ['report-title', 'report-subtitle', 'execution', 'support', 'coverage', 'verdict', 'raw-report', 'evidence-title', 'evidence-class', 'evidence-description']) element(id).textContent = '';
+        for (const id of ['checks', 'identity', 'protocol', 'limitations', 'attention-checks', 'guidance']) element(id).replaceChildren();
+        for (const id of ['report-subtitle', 'execution', 'support', 'coverage', 'verdict', 'raw-report', 'evidence-title', 'evidence-class', 'evidence-description', 'execution-description', 'verdict-scope', 'support-description', 'coverage-description', 'primary-requirement', 'policy-context', 'outcome-origin', 'check-count', 'amount-in', 'amount-out', 'router-minimum', 'input-token', 'output-token']) element(id).textContent = '';
+        element('primary-requirement').hidden = true;
+        element('attention-section').hidden = true;
+        element('observed-amounts').hidden = true;
+        for (const id of ['checks-details','identity-details','protocol-section']) element(id).open = false;
+        document.querySelector('.raw').open = false;
       }
       function showError(error) {
         resetDisplay();
@@ -318,12 +470,38 @@
         const content = document.createElement('dd'); content.textContent = value === null ? 'UNKNOWN / not established' : typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value);
         wrapper.append(title, content); container.append(wrapper);
       }
+      function renderCheck(container, check, expanded) {
+        const item = document.createElement('li'); item.className = 'check';
+        item.dataset.checkId = check.id; item.dataset.result = check.result;
+        const heading = document.createElement('div'); heading.className = 'check-heading';
+        const name = document.createElement('strong'); name.textContent = AftercheckPresentation.checkLabel(check.id);
+        const id = document.createElement('code'); id.className = 'check-id'; id.textContent = check.id; name.append(id);
+        const result = document.createElement('span'); result.className = 'badge'; badge(result, check.result);
+        const meaning = document.createElement('p'); meaning.className = 'check-meaning'; meaning.textContent = AftercheckPresentation.checkMeaning(check);
+        const details = document.createElement('details'); details.open = expanded;
+        const summary = document.createElement('summary'); summary.textContent = 'Saved verifier reason';
+        const reason = document.createElement('p'); reason.className = 'check-reason'; reason.textContent = check.reason;
+        details.append(summary, reason); heading.append(name, result); item.append(heading, meaning, details); container.append(item);
+      }
       function render(report, source, sourceName) {
         resetDisplay();
         currentSource = source;
-        element('report-title').textContent = report.verdict;
-        const summaries = {PASS:'The saved report says all required checks passed within its declared scope.', VIOLATION:'The saved report contains at least one supported policy violation. Other checks may remain unknown.', UNKNOWN:'The saved report cannot establish that the declared policy was satisfied. Inspect missing evidence and scope below.'};
-        element('report-subtitle').textContent = summaries[report.verdict];
+        const interpretation = AftercheckPresentation.outcome(report);
+        element('report-subtitle').textContent = interpretation.summary;
+        element('outcome-origin').textContent = interpretation.origin;
+        element('outcome-origin').dataset.synthetic = String(interpretation.synthetic);
+        element('execution-label').textContent = interpretation.executionLabel;
+        for (const [id, key] of [['execution-description','executionDescription'],['verdict-scope','verdictScope'],['support-description','supportDescription'],['coverage-description','coverageDescription'],['policy-context','policyContext']]) element(id).textContent = interpretation[key];
+        element('policy-card').dataset.tone = tone(report.verdict);
+        if (interpretation.primary) {
+          const check = interpretation.primary;
+          const name = document.createElement('strong'); name.textContent = AftercheckPresentation.checkLabel(check.id) + ' ';
+          const id = document.createElement('code'); id.textContent = '(' + check.id + ')';
+          const meaning = document.createElement('span'); meaning.textContent = ': ' + check.result + '. ' + AftercheckPresentation.checkMeaning(check);
+          element('primary-requirement').append(name, id, meaning);
+          element('primary-requirement').dataset.tone = tone(check.result);
+          element('primary-requirement').hidden = false;
+        }
         for (const field of ['execution', 'support', 'coverage', 'verdict']) badge(element(field), report[field]);
         const evidence = AftercheckReports.evidenceDescription(report);
         element('evidence-banner').dataset.synthetic = String(evidence.synthetic);
@@ -339,17 +517,19 @@
           for (const field of ['router','factory','pool']) row(identity, labelFor(field), report.protocol[field]);
         }
         row(identity, 'Report schema', report.schemaVersion);
-        for (const check of report.checks) {
-          const item = document.createElement('li'); item.className = 'check';
-          const heading = document.createElement('div'); heading.className = 'check-heading';
-          const name = document.createElement('strong'); name.textContent = labelFor(check.id);
-          const result = document.createElement('span'); result.className = 'badge'; badge(result, check.result);
-          const reason = document.createElement('p'); reason.textContent = check.reason;
-          heading.append(name, result); item.append(heading, reason); element('checks').append(item);
-        }
+        for (const check of report.checks) renderCheck(element('checks'), check, true);
+        const attention = [...report.checks.filter(check => check.result === 'VIOLATION'), ...report.checks.filter(check => check.result === 'UNKNOWN')];
+        for (const check of attention) renderCheck(element('attention-checks'), check, true);
+        element('attention-section').hidden = attention.length === 0;
+        element('attention-section').dataset.tone = tone(report.verdict);
+        const counts = ['PASS','VIOLATION','UNKNOWN'].map(result => report.checks.filter(check => check.result === result).length);
+        element('check-count').textContent = counts[0] + ' passed · ' + counts[1] + ' violated · ' + counts[2] + ' unknown';
+        for (const action of AftercheckPresentation.guidance(report)) { const item = document.createElement('li'); item.textContent = action; element('guidance').append(item); }
         element('no-checks').hidden = report.checks.length !== 0;
         element('protocol-section').hidden = report.protocol === undefined;
         if (report.protocol) {
+          element('observed-amounts').hidden = false;
+          for (const [id, field] of [['amount-in','amountInRaw'],['amount-out','amountOutRaw'],['router-minimum','amountOutMinimumRaw'],['input-token','tokenIn'],['output-token','tokenOut']]) element(id).textContent = report.protocol[field];
           for (const field of ['amountInRaw','amountOutRaw','amountOutMinimumRaw','owner','recipient','tokenIn','tokenOut','fee','profile']) row(element('protocol'), labelFor(field), report.protocol[field]);
           for (const [field,label] of [['outputTransfer','Output Transfer log index'],['inputTransfer','Input Transfer log index'],['swap','Swap log index']]) row(element('protocol'), label, report.protocol.logIndices[field]);
         }
@@ -358,7 +538,11 @@
         element('raw-report').textContent = JSON.stringify(report, null, 2);
         element('empty-state').hidden = true;
         element('report').hidden = false;
-        element('import-status').textContent = 'Loaded locally: ' + sourceName + '. This is a display of the saved result.';
+        element('main').dataset.loaded = 'true';
+        element('import-panel').open = false;
+        element('import-status').textContent = 'Loaded locally: ' + sourceName + '. ' + interpretation.executionLabel + ': ' + report.execution + '. Financial policy: ' + report.verdict + '. Saved result, display only.';
+        element('outcome-summary').focus({preventScroll:true});
+        element('outcome-summary').scrollIntoView({block:'start'});
       }
       function importText(source, sourceName) {
         const report = AftercheckReports.parseReport(source);
@@ -375,12 +559,12 @@
           const source = new TextDecoder('utf-8', {fatal:true}).decode(await file.arrayBuffer());
           if (revision !== importRevision) return;
           importText(source, file.name);
-        } catch (error) { if (revision === importRevision) showError(error); }
+        } catch (error) { if (revision === importRevision) { showError(error); fileInput.focus(); } }
         finally { if (revision === importRevision) fileInput.value = ''; }
       });
       element('open-text').addEventListener('click', () => {
         ++importRevision; resetDisplay(); fileInput.value = '';
-        try { importText(textInput.value, 'pasted JSON'); } catch (error) { showError(error); }
+        try { importText(textInput.value, 'pasted JSON'); } catch (error) { showError(error); textInput.focus(); }
       });
       element('clear-report').addEventListener('click', () => {
         ++importRevision; resetDisplay(); fileInput.value = ''; textInput.value = '';
