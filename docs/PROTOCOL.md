@@ -71,3 +71,5 @@ No parent/end-block balance subtraction, wallet signing, token approvals, transa
 ## Independent test expectations
 
 Tests use literal public ABI selectors and event topics, manually constructed two's-complement values, both token directions, exact decimal thresholds beyond JavaScript's safe-integer range, and individually corrupted identities. The tests cover the implemented evidence boundary; a passing fixture suite is not evidence that a real swap occurred or that the application has been audited.
+
+The separate [historical Sepolia example](../examples/sepolia/README.md) retains an unchanged genuine RPC capture and a separate incomplete provider attempt. Its [real-case tests](../test/real-case.test.mjs) compare literal transaction identities, calldata, raw logs and quantities independently recorded from the explorer before the successful capture, then exercise the three offline CLI outcomes. These checks add real captured observations to the synthetic regression suite; they retain the same RPC trust and receipt-scoped claim boundary described above.
