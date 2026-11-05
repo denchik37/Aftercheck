@@ -23,9 +23,12 @@ The original synthetic example remains available with `npm run cli -- examples/s
 Configure `AFTERCHECK_RPC_URL` in your local environment. Keep keyed provider URLs out of shared files and command history.
 
 ```bash
+npm run cli -- inspect <transaction-hash> <your-policy.json> output/inspection
 npm run cli -- collect <transaction-hash> output/capture
 npm run cli -- verify output/capture/evidence.json <your-policy.json> output/replay
 ```
+
+`inspect` performs one read-only collection and immediate policy evaluation using the same single provider. It publishes a coherent evidence/policy/JSON/Markdown set and returns exit code **0/2/3** for PASS/VIOLATION/UNKNOWN. A policy with the wrong chain or invalid input is rejected before RPC reads; incomplete historical observations cannot produce PASS. For a known public example, use the retained retrospective policy `examples/sepolia/policy-pass.json` with transaction hash `0x608ca58e7d01dbe0c7fe48af8c0bb9f2bddcf07ccc36f5c28d033bc8d198d5e9`. A network read is not required for subsequent offline `verify`.
 
 `collect` reads an existing Ethereum Sepolia transaction, its receipt and block, plus EIP-1898 block-hash-bound contract observations. Missing historical calls remain explicit incomplete evidence; there is no latest-state fallback. Collection success is not a policy verdict.
 
