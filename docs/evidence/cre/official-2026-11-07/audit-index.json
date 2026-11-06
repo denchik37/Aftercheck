@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "aftercheck.cre-operator-evidence-index.v1",
+  "classification": "CRE_CLI_SIMULATION",
+  "origin": "OWNER_PROVIDED_WINDOWS_CLI_EXECUTION_REVIEWED_OFFLINE",
+  "archive": {
+    "name": "cre-evidence-resume-20261107-033923-ca8892.zip",
+    "sha256": "3aefbda5ed2899cfd3b41bee257505f362a1f72efec51ca95bdc12b4d5ad4c45",
+    "bytes": 34752,
+    "entries": 28,
+    "uncompressedBytes": 66743
+  },
+  "executionSourceRevision": "1ad2dd1ba629bd0751748a7451619cfe8c5d488d",
+  "toolchain": {
+    "creCli": "1.39.0",
+    "sdk": "1.23.0",
+    "bun": "1.4.4",
+    "chain": "Ethereum Sepolia",
+    "chainId": "11155111",
+    "chainSelector": "16015286601757825753"
+  },
+  "target": {
+    "transaction": "0x608ca58e7d01dbe0c7fe48af8c0bb9f2bddcf07ccc36f5c28d033bc8d198d5e9",
+    "blockNumber": "7689923",
+    "blockHash": "0x6526359f4e3c5e1db4d70ecef4510b8f510fd1e05e3dce986a9de32bd7fa7a34",
+    "factory": "0x0227628f3f023bb0b980b67d528571c95c6dac1c",
+    "recordedPool": "0x029603931809d430ae47d2f55212cc0e89dbfd52",
+    "evidenceDigest": "0x41c8cd52735e76a759e3d93103f4cd6a77d0630f09593e5c9ca0612794880093"
+  },
+  "core": {
+    "json": "1e3c850acc01b3d5d49f5b4905240d7d6d2dd8095abf7013014e692336cbf5a9",
+    "markdown": "9aa47a1bb58f54c215e254592033f560d2d010ed1e12d76755bb9c2383fdd724",
+    "semanticDigest": "0x3a1d35084aabd0aaf524bb5a136bcf3eac818300b87b711168ec3459e0bcd326",
+    "verdict": "PASS"
+  },
+  "cases": {
+    "reference": {
+      "status": "MATCH",
+      "httpFetch": "VERIFIED",
+      "scenario": "REFERENCE",
+      "startedAt": "2026-11-06T22:09:34.049Z",
+      "finishedAt": "2026-11-06T22:09:46.490Z",
+      "manifestDigest": "0x76b8666d4d9d7d91ef45bf110f6af1628114303c007da08ee59830d6b4aa72ad",
+      "resultSemanticSha256": "0xb2e30a1d69de00973742f4134e1cf2200601c6bfdb5e6e90c2bac845de8cf1e4",
+      "files": {
+        "result": "541a225ce683a41cf38beeda6ae22ad075a1dc073e6761ceaff8607e961b4052",
+        "execution": "537276c7def582b529a56fbc19f25cd0751b41c8d63c8ee361f358492f9e8f19",
+        "stdout": "0d07183a99d2424430e58da3956d9d90620ac238ffe37aa20e936230fc6431b8",
+        "stderr": "55a7bd7ecd3f0bb41850357c92d0276ff648714e70d51303f9b9b27227ca0d3e"
+      },
+      "consumption": {
+        "corroborationJsonSha256": "55b43cbfd3525076ddbde690764b867b08c3b748ae62e97e25d1f636e1d44699",
+        "corroborationMarkdownSha256": "108d685dd3777ecd0f7855f3dfd606ee2ee4066238644c0621e626e2cc4e82de"
+      },
+      "expectedConsumerExit": 0
+    },
+    "mismatch": {
+      "status": "MISMATCH",
+      "httpFetch": "VERIFIED",
+      "scenario": "INTENTIONAL_MISMATCH",
+      "startedAt": "2026-11-06T22:09:47.365Z",
+      "finishedAt": "2026-11-06T22:09:58.486Z",
+      "manifestDigest": "0x03a312fef6bd38858f63e098b817f1afa73022d4333e41a8e1daac09b6110f2f",
+      "resultSemanticSha256": "0xc7c8c75cd3aba96888b9a741d73e2adaebb052fabf667faae08d82003fb9d591",
+      "files": {
+        "result": "501fa0d518a25671321f90594c03fcde4c26adf84a4b9e43f69cc7ebf899af4a",
+        "execution": "4b55025abd50eb9b3dcf22379acf8e7cb985250c3c978ae9171ccdeea401347a",
+        "stdout": "170048b725d65eee6839f7b165b6150f17165c052f7f3c2291e10417f6e0fd14",
+        "stderr": "55a7bd7ecd3f0bb41850357c92d0276ff648714e70d51303f9b9b27227ca0d3e"
+      },
+      "consumption": {
+        "corroborationJsonSha256": "6fbf8d6c4fa25456fb9d8f5b5fbc5f8c24a10c4e74173850b00fee27982d187b",
+        "corroborationMarkdownSha256": "9a211248569f61c44382af8a0d636c6a5c2d9c62e47598d538fd748642df5e56"
+      },
+      "expectedConsumerExit": 2
+    },
+    "unavailable": {
+      "status": "UNAVAILABLE",
+      "httpFetch": "UNAVAILABLE",
+      "scenario": "REFERENCE",
+      "startedAt": "2026-11-06T22:09:59.197Z",
+      "finishedAt": "2026-11-06T22:10:09.457Z",
+      "manifestDigest": "0x76b8666d4d9d7d91ef45bf110f6af1628114303c007da08ee59830d6b4aa72ad",
+      "resultSemanticSha256": "0x28fbff99d1120eacfc95150ff52a222f1474ed69c519cce2a509bb8cd9921624",
+      "files": {
+        "result": "dce1e321429a4aa12e0ae48118770486605c7e0bbf5feb6eacb1ae40f23c854e",
+        "execution": "6baacefab86436897cd713b9c99bab07fbb143c1fd49bd4c77ee85ddc9ccfae2",
+        "stdout": "ba594adec4ba2ea6916f82855e54878858378d46770380fe82a4d40d18c2276f",
+        "stderr": "55a7bd7ecd3f0bb41850357c92d0276ff648714e70d51303f9b9b27227ca0d3e"
+      },
+      "consumption": {
+        "corroborationJsonSha256": "a19e756621d73b378f20705d1abd999df3e6f15015a543ce1a02f3ea57b78dc4",
+        "corroborationMarkdownSha256": "e37c88bd849f1bc33c84daec75372bc163c90edb13e326fd11c8e3966b442ffc"
+      },
+      "expectedConsumerExit": 3
+    }
+  },
+  "checks": [
+    "archive ZIP CRC and bounded non-traversing entries",
+    "manual inspection plus automated no-secret/personal-file scan",
+    "per-case executed CLI exit zero; status and exact source match",
+    "canonical result SHA-256 matches execution record",
+    "sanitized stdout and stderr SHA-256 match execution record",
+    "result integrity and exact published source file hash match owner archive",
+    "replayed core report bytes identical in all three cases",
+    "appendix full externalCorroboration equals imported result",
+    "positive and deliberate-mismatch EVM block header and pool identity agree",
+    "unavailable HTTP manifest does not invent blockchain evidence"
+  ],
+  "limitations": [
+    "Source is an owner-provided CLI artifact audited offline; it is not a Chainlink-signed or DON-signed attestation.",
+    "These checks do not represent a second independent official simulator execution.",
+    "The numbered historical EVM call and separately fetched header are not a block-hash-bound state proof.",
+    "CRE reads use the same Tenderly public Sepolia provider as the retained original capture.",
+    "Core policy supplied retrospectively; the transaction is a historical third-party swap, not a newly executed Aftercheck transaction.",
+    "No transaction-boundary reserve balance, original financial intent, or production protection is proven."
+  ]
+}

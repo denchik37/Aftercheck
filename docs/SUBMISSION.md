@@ -64,17 +64,23 @@ The [event video guidance](https://ethglobal.com/events/mumbai/info/details) and
 
 ## Sponsor and owner checklist
 
-- **Chainlink CRE: implemented; official execution qualification remains conditional.**
-  The owner superseded the internal deadline gate and authorized completion.
-  Present the optional manifest-to-pool comparison and Aftercheck appendix using
-  its actual execution classification. Select the third partner as qualified
-  only after a successful official CLI simulation is retained; a WASM build,
-  `RPC_REHEARSAL` or unit test does not establish that requirement. See the
-  [integration guide](CRE_INTEGRATION.md), [readiness evidence](READINESS.md) and
-  [decision history](CRE_DECISION.md). No external form or partner selection was changed.
+- **Chainlink — Best workflow with CRE: technical criteria demonstrated with
+  official local simulation.** On 7 November 2026 IST, authenticated CRE CLI
+  1.39.0 plus SDK 1.23.0 executed **MATCH, intentionally altered MISMATCH and
+  missing-manifest UNAVAILABLE** against the fixed Sepolia manifest/Uniswap
+  factory profile. Aftercheck consumed all three results, exposing the external
+  corroboration separately while retaining its core financial-policy PASS.
+  See [full reviewed source-bound results and sanitized logs](evidence/cre/official-2026-11-07/README.md),
+  [audit index](evidence/cre/official-2026-11-07/audit-index.json),
+  [technical integration](CRE_INTEGRATION.md) and
+  [partner-specific submission copy](CRE_SUBMISSION.md).
+  Select Chainlink as the **third partner** only if Classic participation and
+  the use/disclosure of any pre-event project-specific design inputs satisfy
+  the organizer's rules. No Chainlink deployment, DON attestation, accepted
+  prize or partner-dashboard selection is implied.
 - **Uniswap:** retain the public MIT-licensed repository, actual protocol evidence, source locations in the README and [`FEEDBACK.md`](../FEEDBACK.md); submit the [Developer Feedback Form](https://developers.uniswap.org/hackathon-feedback) with the FEEDBACK URL. Form completion is pending. [Requirements](https://ethglobal.com/events/mumbai/prizes/uniswap-foundation).
 - **EF Best CROPS App, conditional:** the README must have a section titled `CROPS` explaining dependencies, reproducibility, third-party exposure and trust assumptions. Retain a video of the lead property surviving dependency loss. The client has no analytics, signing or account system; RPC collection reveals requests and network metadata to the chosen provider. Qualification is unconfirmed. [Requirements](https://ethglobal.com/events/mumbai/prizes/ethereum-foundation).
-- **Final submission:** owner action, still pending. Official deadline: **7 November 2026, 09:00 IST**; aim to finish the package by **05:00 IST**. Confirm any organizer updates and submit through the Hacker Dashboard. [Event details](https://ethglobal.com/events/mumbai/info/details).
+- **Final submission:** owner action, still pending. The [current official ETHGlobal guide](https://ethglobal.com/events/mumbai/info/details) states **Sunday, 8 November 2026, 09:00 IST** (not the superseded 7 November planning date). Submit from the Hacker Dashboard with up to **three partners**, a public GitHub repository and a human-narrated **2–4 minute, ≥720p** video; obtain confirmation before cutoff. Existing static-site acceptance does not imply a video or partner form was submitted.
 
 The supported operation excludes multicall, Universal Router, multi-hop and delegated/native-value routes. Reserve checks remain UNKNOWN. RPC observations and bytecode presence do not prove arbitrary token balance semantics. No new swap, contract deployment, financial protection, independent audit or sponsor acceptance is claimed.
 
@@ -82,9 +88,23 @@ The supported operation excludes multicall, Universal Router, multi-hop and dele
 
 After the core receipt-policy and offline demonstrations, show the separate pool-identity appendix. Identify the original recorded pool, the comparison expectation, the historical block and the result status. Run the intentional mismatch to make the discrepancy visible while the core policy verdict remains unchanged. Explain that the EVM call is bound to a block number with a separately compared header; the same Tenderly provider does not establish independent-source authenticity.
 
-If official simulation is authenticated and succeeds, name the actual CLI/SDK versions and source-bound run. Otherwise show `RPC_REHEARSAL` only where a real rehearsal record exists and explicitly state that official CRE execution remains pending. Keep this segment short enough for the event's current video guidance; the pre-existing primary demonstration remains the lead story.
+Show the actual authenticated **CRE_CLI_SIMULATION** results and cite the
+7 November source revision and retained logs; do not show the earlier
+`RPC_REHEARSAL` as if it were CRE. Keep this segment brief within the event's
+2–4-minute video limit. A `MATCH` is protocol-identity corroboration, not
+transaction-boundary reserve proof. Chainlink requires no deployment for the
+selected CRE category.
 
-**Current truthful sponsor copy:** “Aftercheck adds an optional Chainlink CRE workflow that combines a revision-pinned public evidence manifest with a historical Sepolia Uniswap factory read. Its separate report appendix exposes MATCH, MISMATCH, UNAVAILABLE and UNSUPPORTED without changing the financial-policy verdict. The official SDK workflow compiles to WASM. Live Node HTTP/RPC rehearsal produced MATCH, intentional MISMATCH and fetch-failure UNAVAILABLE, and Aftercheck consumed those results. Official CLI simulation is currently blocked by account authentication, so sponsor execution qualification remains incomplete.”
+**Current truthful Chainlink sponsor copy (7 November 2026 IST):**
+“Aftercheck uses a Chainlink CRE workflow to fetch a revision-pinned public
+evidence manifest and read a historical Uniswap v3 factory on Ethereum Sepolia.
+It compares the actual `getPool` observation with the manifest, checks the
+numbered block header separately, and appends an independent result to the
+Aftercheck financial report. The authenticated CRE CLI simulation (v1.39.0,
+SDK v1.23.0) produced MATCH, deliberately altered MISMATCH and
+HTTP-unavailable results. Aftercheck consumed all three without changing the
+core policy verdict. It is a local simulation, not a deployed DON or state
+proof; the read is number-bound and uses the same RPC provider as the capture.”
 
 For a reproducible presentation without live endpoint or account dependencies,
 run `npm run cre:demo`. It replays the retained real RPC observations, visibly

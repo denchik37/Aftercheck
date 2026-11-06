@@ -1,0 +1,103 @@
+name: Review retained official CRE simulator evidence
+on:
+  push:
+    branches: [main]
+    paths:
+      - docs/evidence/cre/official-2026-11-07/**
+      - .github/workflows/cre-evidence.yml
+      - scripts/cre-consume.mjs
+  pull_request:
+    paths:
+      - docs/evidence/cre/official-2026-11-07/**
+      - .github/workflows/cre-evidence.yml
+      - scripts/cre-consume.mjs
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-evidence-replay:
+    name: Validate retained CRE results and independent Aftercheck consumption
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: '24'
+      - name: Install locked core dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Recheck committed simulator artifacts and replay their consumption offline
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, pathlib, subprocess
+          source=pathlib.Path('docs/evidence/cre/official-2026-11-07')
+          index=json.loads((source/'audit-index.json').read_text())
+          assert index['schemaVersion']=='aftercheck.cre-operator-evidence-index.v1'
+          assert index['classification']=='CRE_CLI_SIMULATION'
+          revision=index['executionSourceRevision']
+          assert revision=='1ad2dd1ba629bd0751748a7451619cfe8c5d488d'
+          out=pathlib.Path('output/cre-official-retained-replay')
+          out.mkdir(parents=True, exist_ok=True)
+          for case,details in index['cases'].items():
+              assert case in ('reference','mismatch','unavailable')
+              directory=source/case
+              for field,filename in [('result','result.json'),('execution','execution.json'),('stdout','stdout.log'),('stderr','stderr.log')]:
+                  actual=hashlib.sha256((directory/filename).read_bytes()).hexdigest()
+                  assert actual==details['files'][field], (case,filename,actual)
+              result_bytes=(directory/'result.json').read_bytes()
+              assert result_bytes.endswith(b'\n')
+              assert hashlib.sha256(result_bytes[:-1]).hexdigest()==details['resultSemanticSha256'][2:]
+              result=json.loads(result_bytes)
+              execution=json.loads((directory/'execution.json').read_text())
+              assert result['status']==execution['comparisonStatus']==details['status']
+              assert result['manifest']['scenario']==details['scenario']
+              assert result['observation']['manifestFetch']==details['httpFetch']
+              assert execution['outcome']=='VALIDATED_SIMULATOR_RESULT'
+              assert execution['attemptedMode']=='CRE_CLI_SIMULATION'
+              assert execution['exitCode']==0 and execution['phase']=='COMPLETE'
+              assert execution['sourceRevision']==revision==result['metadata']['workflowRevision']
+              assert result['metadata']['executionMode']=='CRE_CLI_SIMULATION'
+              assert result['metadata']['cliVersion']=='1.39.0'
+              assert result['metadata']['sdkVersion']=='1.23.0'
+              assert execution['metadata']==result['metadata']
+              assert execution['resultSha256']==details['resultSemanticSha256']
+              assert execution['logs']['stdoutSha256'][2:]==details['files']['stdout']
+              assert execution['logs']['stderrSha256'][2:]==details['files']['stderr']
+              assert result['manifest']['manifestDigest']==details['manifestDigest']
+              manifest='intentional-mismatch' if case=='mismatch' else 'reference'
+              args=['node','--disable-warning=ExperimentalWarning','--experimental-strip-types','scripts/cre-consume.mjs',
+                    'examples/sepolia/evidence.json','examples/sepolia/policy-pass.json',
+                    f'integrations/cre/public/{manifest}.json',str(directory/'result.json'),str(out/case)]
+              p=subprocess.run(args, text=True, capture_output=True, timeout=60)
+              (out/f'{case}-consumption.txt').write_text(p.stdout+'\n'+p.stderr)
+              assert p.returncode==details['expectedConsumerExit'],(case,p.returncode,p.stdout,p.stderr)
+              report=json.loads((out/case/'core/report.json').read_text())
+              assert report['verdict']==index['core']['verdict']=='PASS'
+              assert report['execution']=='SUCCEEDED'
+              assert report['coverage']=='COMPLETE'
+              appendix=json.loads((out/case/'corroboration/report.json').read_text())
+              assert appendix['coreOutcome']['policyVerdict']=='PASS'
+              assert appendix['financialPolicyVerdict']=='UNCHANGED'
+              assert appendix['externalCorroboration']==result
+              hashes={'core/report.json':index['core']['json'],
+                      'core/report.md':index['core']['markdown'],
+                      'corroboration/report.json':details['consumption']['corroborationJsonSha256'],
+                      'corroboration/report.md':details['consumption']['corroborationMarkdownSha256']}
+              for path,expected in hashes.items():
+                  actual=hashlib.sha256((out/case/path).read_bytes()).hexdigest()
+                  assert actual==expected,(case,path,actual,expected)
+              print(f'RETAINED_CLI_EVIDENCE_AND_OFFLINE_CONSUMPTION_OK {case} {details["status"]}; source {revision}')
+          print('PASS: all 3 source-bound operator simulator records and exact byte-replayed Aftercheck exports')
+          print('CAVEAT: this CI replays retained operator results offline; it does NOT re-run authenticated CRE CLI.')
+          PY
+      - name: Preserve offline evidence and re-consumption report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: official-cre-retained-consumption-${{ github.run_id }}-${{ github.run_attempt }}
+          path: output/cre-official-retained-replay/
+          if-no-files-found: warn
+          retention-days: 30

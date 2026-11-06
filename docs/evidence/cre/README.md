@@ -1,4 +1,54 @@
-# CRE delivery evidence — 6 November 2026
+# Chainlink CRE delivery evidence — current checkpoint (7 November 2026 IST)
+
+**CRE READY — LOCAL SIMULATION VERIFIED.** A privately authenticated operator
+executed the official Chainlink CRE CLI v1.39.0 at source
+`1ad2dd1ba629bd0751748a7451619cfe8c5d488d`. The uploaded, independently
+reviewed archive contains **three successful official simulator executions**:
+`MATCH` for the historical Sepolia pool, intentional `MISMATCH` for a deliberately
+modified expected pool, and `UNAVAILABLE` for an absent public manifest.
+Aftercheck consumed all three result files; the financial-policy verdict
+remained PASS. The archive is **operator-provided local simulation evidence**,
+not an authenticated Chainlink or DON attestation.
+
+- **[Published official simulator outputs and sanitized CLI logs](official-2026-11-07/README.md)**
+- **[File integrity, source and exact re-consumption SHA-256 index](official-2026-11-07/audit-index.json)**
+- **[CRE integration and local reproduction instructions](../../CRE_INTEGRATION.md)**
+- **[Sponsor-specific submission copy and demonstration steps](../../CRE_SUBMISSION.md)**
+
+The original uploaded archive's SHA-256 is
+`3aefbda5ed2899cfd3b41bee257505f362a1f72efec51ca95bdc12b4d5ad4c45`.
+The three public `execution.json` files each report `exitCode=0`, `phase=COMPLETE`,
+`outcome=VALIDATED_SIMULATOR_RESULT` and source revision `1ad2dd1`.
+The exact source and archived companion report digests are documented.
+Later Windows CI proved Python-free offline ZIP replay; **that CI does not
+execute the authenticated simulator**.
+
+### Current sponsor checklist (technical demonstration, not eligibility award)
+
+| Control | Status | Evidence |
+|---|---|---|
+| CRE01 — external API + blockchain orchestration | **PASS** | Public HTTPS manifest and CRE historical Sepolia factory `getPool`, source-bound actual MATCH |
+| CRE02 — official CLI execution | **PASS** | Validated `CRE_CLI_SIMULATION` MATCH, MISMATCH, UNAVAILABLE; CLI logs and execution records |
+| CRE03 — meaningful application consumption | **PASS** | Three consumed reports; external status separately visible; core policy unchanged |
+| CRE04 — reproducibility | **PASS within local simulator scope** | Locked SDK/CLI, immutable manifest, exact digests, public code, commands, retained outputs |
+| CRE05 — accurate claims | **PASS** | Simulation not deployed DON, number-bound call plus header not hash-bound proof, same provider, retrospective policy |
+
+**Technical recommendation:** include Chainlink's **Best workflow with CRE**
+as the third selected partner. **Separate owner/organizer gate:** confirm
+Classic-track provenance/AI disclosure and use the actual ETHGlobal dashboard;
+technical evidence alone does not establish participation or prize eligibility.
+The current official submission deadline is **Sunday, 8 November 2026,
+09:00 IST** ([official event guide](https://ethglobal.com/events/mumbai/info/details)).
+No external partner form or final hackathon submission is claimed as completed.
+
+---
+
+## Historical checkpoint — 6 November 2026 (superseded by the verified run above)
+
+The following dated log remains an accurate account of the *earlier* missing
+authentication/qualification evidence. Its former BLOCKED statements are **not**
+the current CRE readiness verdict.
+
 
 **CRE IMPLEMENTED — QUALIFICATION INCOMPLETE.** The official SDK workflow builds
 to WASM and the complete public-manifest → real historical RPC comparison →
@@ -9,7 +59,7 @@ successful official simulation or deployed DON execution is claimed.
 The owner superseded the internal deadline gate. This package supports the
 presentation and continued integration work with the achieved status shown.
 
-## Read the current results
+## Read results at that earlier checkpoint
 
 | Case | Actual result | Inspectable records |
 |---|---|---|
@@ -52,7 +102,7 @@ OF RETAINED RPC_REHEARSAL**; it does not obtain fresh data or run CRE. The
 [ordinary core demo log](core/demo.txt) retains the original receipt-scoped
 PASS / VIOLATION / UNKNOWN demonstration.
 
-## Sponsor matrix
+## Historical sponsor matrix at that earlier checkpoint
 
 | Requirement | Status | Exact evidence and remaining gap |
 |---|---|---|
@@ -108,7 +158,7 @@ during execution. No SDK executable or compiled binary is redistributed here.
   MISMATCH. The earlier [reference MATCH](prior-attempts/rpc-reference-8s/execution.json)
   and [404 UNAVAILABLE](prior-attempts/http-unavailable-8s/execution.json) are also retained.
 
-## Remaining work
+## Remaining work at that earlier checkpoint (now resolved by later official simulation)
 
 1. Authenticate the official CLI with `cre login` on its execution machine, or
    privately configure an eligible `CRE_API_KEY` for the prepared Actions path.

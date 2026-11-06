@@ -1,4 +1,33 @@
-# Chainlink CRE decision — integration continues
+# Chainlink CRE decision — technical integration verified
+
+## 7 November 2026 — third-partner technical qualification gate passed
+
+Authenticated **CRE CLI 1.39.0 / SDK 1.23.0** produced a genuine local
+simulation `MATCH` against the public Sepolia factory pool at source
+`1ad2dd1ba629bd0751748a7451619cfe8c5d488d`. An intentionally
+modified expected pool produced `MISMATCH`, and an unavailable external
+manifest produced `UNAVAILABLE`. Aftercheck consumed all three genuine
+simulator results without altering the original policy verdict. The complete
+[reviewed execution results, sanitized CLI logs and byte-hash evidence](evidence/cre/official-2026-11-07/README.md)
+are now public.
+
+**Decision:** select Chainlink `Best workflow with CRE` as the third sponsor
+target *on technical merits*, subject to the separate Classic-track provenance,
+AI-disclosure and actual dashboard selection gates. Local simulation is enough
+for the sponsor's CRE execution requirement; it is not a deployed DON or
+financial-state attestation. The same underlying Tenderly public provider was
+used for the retained capture, and the historic contract read is bound to block
+number plus a separately fetched header, not EIP-1898 hash-pinned state.
+
+The currently published [event guide](https://ethglobal.com/events/mumbai/info/details)
+gives **Sunday 8 November 2026 09:00 IST** as the final submission deadline;
+earlier records mentioning 7 November are historical planning snapshots, not
+the current decision. No external ETHGlobal submission has been confirmed.
+
+---
+
+## Historical 6 November decision and implementation state
+
 
 **6 November 2026: the owner explicitly superseded the internal deadline gate and authorized completing the CRE integration.** Presentation preparation governs how the integration is demonstrated. Incomplete challenge qualification is recorded honestly and does not stop the authorized engineering work.
 
