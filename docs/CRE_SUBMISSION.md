@@ -52,19 +52,17 @@ npm run cre:consume -- examples/sepolia/evidence.json examples/sepolia/policy-pa
 
 The two other scenario commands are in [`CRE_INTEGRATION.md`](CRE_INTEGRATION.md). The actual previously recorded source-bound results may also be consumed **offline** from [`evidence/cre/official-2026-11-07`](evidence/cre/official-2026-11-07/README.md) without CRE credentials; this is a replay of **authentic recorded simulator output**, **not** a new simulator run. `npm run cre:demo`, separately, replays **older RPC_REHEARSAL** data and must be labelled that way.
 
-## Human-narrated main-video segment (30–40 seconds)
+## Human-narrated main-video segment — final 18-second insert
 
-Fit this into the main **2–4 minute, ≥720p** ETHGlobal video, prioritizing the core Uniswap and offline-replay story. The event guide explicitly **prohibits AI voiceover/text-to-speech**, and asks for spoken human narration with normal playback speed. Do not replace real CLI footage with a doctored mockup.
+Use the [**single 2:58 ETHGlobal master-video direction**](ETHGLOBAL_SUBMISSION_HANDOFF.md#one-final-master-video--target-258-not-separate-sponsor-videos) instead of adding another standalone partner video. After the real offline CLI replay, allocate **2:36–2:54** to Chainlink:
 
-| Approx. segment | Visual proof | Human narration cue |
-|---|---|---|
-| 0–8 sec | Historical transaction and Aftercheck PASS/VIOLATION/UNKNOWN (already in core video) | “A successful swap still needs a separate financial-policy check.” |
-| 8–18 sec | Show CRE workflow source: HTTP manifest → Sepolia `factory.getPool` → comparison | “CRE independently retrieves the public evidence manifest and checks the recorded Uniswap pool through a historical EVM read.” |
-| 18–28 sec | Show source-bound official CLI output `CRE_CLI_SIMULATION / MATCH`, `execution.json` and result | “Our official CRE CLI simulation returned MATCH for this historical pool.” |
-| 28–36 sec | Show intentional MISMATCH and UNAVAILABLE; core PASS unchanged in appendices | “Changing the expected pool surfaces a mismatch; an unavailable manifest stays unavailable. Neither silently rewrites the original verdict.” |
-| 36–40 sec | Limitations / public repo | “This is local simulation and protocol-identity corroboration—not a DON attestation or balance proof.” |
+- **2:36–2:40:** actual CRE source/diagram: immutable public HTTPS manifest → Sepolia factory `getPool`.
+- **2:40–2:49:** recorded official `CRE_CLI_SIMULATION` output: reference `MATCH`, deliberate `MISMATCH`, missing-manifest `UNAVAILABLE`. Show unchanged original core `PASS`.
+- **2:49–2:54:** title card/label: **Local CRE CLI simulation · not DON deployment or wallet-balance proof**. Evidence: [7 November simulator logs](evidence/cre/official-2026-11-07/README.md).
 
-The existing attached project videos and any separately recorded CLI footage have **not** been reviewed here. Do not assert that a final video has already been assembled or uploaded.
+**Human narration (approximately 36 words):** “Chainlink CRE fetches public evidence and reads the historical Uniswap pool. Our official simulation returned MATCH, deliberate MISMATCH, and UNAVAILABLE for a missing manifest. The core policy verdict stays unchanged.”
+
+Use natural-speed footage and the presenter's genuine voice; the [ETHGlobal video guide](https://ethglobal.com/events/mumbai/info/details) prohibits AI voiceovers. This is an *editing directive*, not a claim that a final MP4 exists or has been uploaded.
 
 ## Chainlink partner submission checklist
 
