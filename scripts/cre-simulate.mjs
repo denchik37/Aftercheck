@@ -19,7 +19,8 @@ export const RESULT_MARKER = 'AFTERCHECK_CRE_RESULT=';
 const MAX_LOG_BYTES = 2_000_000;
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
 const SOURCE_PATHS = ['integrations/cre', 'scripts/cre-simulate.mjs'];
-const GENERATED_FILES = ['workflow/main.js', 'workflow/main.wasm', 'workflow/build/workflow.js', 'workflow/build/workflow.wasm'];
+// Only explicit, CLI-owned generated paths may be present during source rechecks.
+const GENERATED_FILES = ['workflow/main.js', 'workflow/main.wasm', 'workflow/build/workflow.js', 'workflow/build/workflow.wasm', 'workflow/.cre_build_tmp.js'];
 const REQUIRED_SOURCE = [
   'integrations/cre/shared.ts', 'integrations/cre/config.ts', 'integrations/cre/project.yaml',
   'integrations/cre/workflow/main.ts', 'integrations/cre/workflow/workflow.yaml',
