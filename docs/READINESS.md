@@ -1,9 +1,50 @@
 # Readiness checkpoint
 
-## Browser verifier implementation — 6 November 2026
+## Browser verifier public HTTPS acceptance — 7 November 2026 IST
 
-**Current release status: implementation and browser acceptance complete at the
-pinned checkpoint below; the new verifier is not deployed.**
+**PUBLIC ACCEPTANCE: PASS for merged source `f4fac3b8b7a3680aaef362c76de39e3d1df65fdd`.**
+The existing production URL [aftercheck-g4nsb.ondigitalocean.app](https://aftercheck-g4nsb.ondigitalocean.app/)
+served the reviewed HTML, all static modules, bundled genuine evidence, and the
+saved-report fallback byte-for-byte. Independent
+[GitHub production run 42280622631](https://github.com/denchik37/aftercheck/actions/runs/42280622631) checked out **the exact deployed
+source** `f4fac3b8b7a3680aaef362c76de39e3d1df65fdd` from a clean tree, validated the deterministic browser build,
+and passed **47 public HTTPS/source/browser checks**. Its **18 actual browser
+exports** independently replayed through the CLI with identical JSON, Markdown,
+policy and verdict bytes for PASS, VIOLATION, UNKNOWN and mixed requirements.
+The [retained artifact](https://github.com/denchik37/aftercheck/actions/runs/42280622631/artifacts/13535895576) contains the full test report,
+27 actual public screenshots, 18 downloaded ZIPs, and replay logs. ZIP SHA-256:
+`34914b79cc985870ab6f5e726810fedb7eef9ae246859f28fbe809d134ff97ca`.
+
+| Production acceptance | Result / evidence |
+|---|---|
+| Public root and assets | **PASS**; root 200, 14,476 bytes, SHA-256 `8035f9496fb064c9959365c8ec041bcb722a52f13f6a34266d50ae40036ecc5a`; all reviewed assets exactly matched the pinned checkout |
+| HTTPS/TLS | **PASS**; HTTP redirect and ordinary certificate verification, TLS **1.3** on desktop 1280×900, mobile 390×844 and narrow 320×844 |
+| Financial interaction | **PASS**; supported retained Sepolia case, exact readable amounts, responsive user-policy edits, independent execution and verdict, PASS → VIOLATION → reserve UNKNOWN |
+| Export and local reproduction | **PASS**; 18 authentic public-browser ZIP exports with canonical offline CLI parity and exits 0/2/3 where applicable |
+| Privacy and hostile inputs | **PASS**; zero local-evaluation network requests, zero page errors/dialogs, invalid and corrupt imports clear stale results |
+| Visual review | **PASS**; 27 archived public screenshots, including desktop and mobile financial outcomes and export tab |
+| Provider deployment ID / SHA | **UNVERIFIED in this access context**; the owner reported successful manual deployment and displayed `f4fac3b` prefix, but no new full provider deployment ID or provider-authenticated SHA was retrieved |
+| Rollback availability | **UNVERIFIED**; historic deployment `a0318069-e0fd-4616-a3da-4c8d703feaf7` is the documented earlier candidate, but retention in the provider UI has not been rechecked |
+
+The production acceptance was triggered by a **branch-scoped, CI-only test workflow**
+at `verify/production-f4fac3` commit
+`674015ef1ef2197826b4f5dd1313b31ad6767739`, because the connected GitHub
+tools cannot dispatch `workflow_dispatch`. That workflow explicitly checked out
+`f4fac3b8b7a3680aaef362c76de39e3d1df65fdd`; it made no changes to `main`, the live DigitalOcean app or its
+production code. The standard `Production verifier` workflow remains available
+for future authorized manual runs.
+
+**Scope:** This is public-site and browser behavior acceptance against reviewed
+source, not an attestation signed by DigitalOcean or proof of blockchain consensus,
+token balances, original financial-mandate authorization or real-funds protection.
+The next optional operator evidence is the new provider deployment ID, actual
+displayed source and retention of the earlier rollback entry.
+
+## Historical browser verifier implementation checkpoint — 6 November 2026
+
+**Historical state at this 6 November checkpoint:** implementation and local
+browser acceptance were complete, but the new verifier had not yet been deployed.
+The later successful public acceptance is recorded above.
 [Push Verify 42260012899](https://github.com/denchik37/aftercheck/actions/runs/42260012899)
 and [PR Verify 42260023168](https://github.com/denchik37/aftercheck/actions/runs/42260023168)
 both passed their test and browser jobs for feature source
@@ -63,7 +104,7 @@ presented as validation of the correction.
 | Public release | Existing static website remains available with the prior saved-report viewer | [Historical production run 42234449518](https://github.com/denchik37/aftercheck/actions/runs/42234449518); unchanged root bytes observed in this session | New verifier not live; authenticated provider access unavailable |
 | Rollback and cost | Prior recorded deployment `a0318069-e0fd-4616-a3da-4c8d703feaf7` / source `d5414cb…`; existing static-only configuration and manual deployment retained | [Deployment record](DIGITALOCEAN_DEPLOYMENT.md) | Current provider state, retained rollback availability and account estimate not reauthenticated; no rollback executed |
 
-### Exact remaining release steps
+### Original predeployment steps (historical; superseded by the 7 November public acceptance)
 
 The implementation checkpoint has completed mandatory CI and visual review.
 Any later documentation or integration revision must pass the required checks
