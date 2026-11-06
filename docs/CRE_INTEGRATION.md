@@ -121,6 +121,18 @@ after execution, binds the local manifest bytes to their Git object, and records
 the actual source revision. Use a clean checkout with the manifest publication
 commit available; Actions uses `fetch-depth: 0`.
 
+On Windows, CRE CLI 1.39.0 can leave `integrations/cre/workflow/.cre_build_tmp.js`
+after invoking the official simulator. The exact generated path is ignored and
+explicitly permitted by the source-integrity guard; other unexpected generated
+or untracked source remains rejected. A previously stopped Windows run can
+resume without cloning or reinstalling by downloading
+[`scripts/cre-windows-resume.ps1`](../scripts/cre-windows-resume.ps1) and running
+it with `-WorkDir <existing-Aftercheck-checkout>`. The runner fast-forwards
+`main`, requires previously installed locked dependencies and built WASM,
+uses local CLI authentication, and writes each new attempt into a fresh
+`output/cre/resume-*` evidence directory. It never treats an earlier failed
+post-check as a verified simulator result.
+
 ## Authentication and official simulation
 
 Authenticate on the same machine running the CLI:
