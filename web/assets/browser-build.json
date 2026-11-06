@@ -1,6 +1,6 @@
 {
   "schemaVersion": "aftercheck.browser-build.v1",
-  "sourceDigest": "c4b1f7925a5308d4427ea92161d2800d6e94f011958b02baf059e489c8d675c7",
+  "sourceDigest": "e10bd20375263954c51712e46c807414f1170bc7002fcb37437e8e5ab85704f0",
   "typescript": "5.9.3",
   "generatorDigest": "9ea8135bfb4bf360f05c947b423cf70ee243f4ed9b7ab73de09fdc4665188b12",
   "sources": [
@@ -18,7 +18,7 @@
     },
     {
       "path": "src/browser-workspace.ts",
-      "sha256": "a401baa2bbf92f68b793c4298227f6af68cc90ec14460b15d21d1a342d7cfe7e"
+      "sha256": "a6bd9a046807c49861241c157e20e129beba00cfa60dd944aa06c04a95cfbdd4"
     },
     {
       "path": "src/evidence-core.ts",
@@ -71,8 +71,8 @@
     },
     {
       "path": "assets/browser-workspace.js",
-      "bytes": 37410,
-      "sha256": "ce1750f3f025741a309673db5949ac7b40df04d7779ff9f6bfc3e5ed1ded7672"
+      "bytes": 37481,
+      "sha256": "19dd9fdd76e512e43ea05e156d5fff26c2144090a1c3b74c582742b271eb90d3"
     },
     {
       "path": "assets/evidence-core.js",

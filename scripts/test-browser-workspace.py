@@ -240,6 +240,8 @@ def run_workspace(page, context, phase, out, device, evidence_bytes, checked, sc
 
     def export(name, result):
         tab("Export")
+        if name == "pass":
+            screenshot("export")
         with page.expect_download(timeout=10_000) as pending:
             page.locator("#download-package").click()
         path = out / f"{device}-{name}.zip"

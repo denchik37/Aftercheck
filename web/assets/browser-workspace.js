@@ -370,7 +370,7 @@ function renderReport(current, currentPolicy) {
     const summary = current.verdict === 'PASS'
         ? 'All requested checks pass under this retained evidence and supplied policy.'
         : current.verdict === 'VIOLATION'
-            ? 'At least one requirement is violated. Separate UNKNOWN checks remain unresolved.'
+            ? 'At least one requirement is violated.' + (current.checks.some(check => check.result === 'UNKNOWN') ? ' Separate UNKNOWN checks remain unresolved.' : '')
             : 'The evidence cannot establish every requested requirement.';
     setText('verdict-note', summary);
     setText('progress', 'Current requirements evaluated locally. No fresh blockchain inspection occurred.');
