@@ -1,4 +1,4 @@
-name: Windows CRE runner syntax
+name: Windows CRE and offline ZIP verification
 on:
   push:
     branches: [main]
@@ -6,11 +6,13 @@ on:
       - scripts/cre-windows-runner.ps1
       - scripts/cre-windows-resume.ps1
       - .github/workflows/windows-cre-runner.yml
+      - test/browser-export.test.mjs
   pull_request:
     paths:
       - scripts/cre-windows-runner.ps1
       - scripts/cre-windows-resume.ps1
       - .github/workflows/windows-cre-runner.yml
+      - test/browser-export.test.mjs
 permissions:
   contents: read
 jobs:
@@ -52,3 +54,13 @@ jobs:
               Write-Host "VALID: $scriptName"
           }
           Write-Host 'PowerShell 7: runner syntax valid'
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: '24'
+      - name: Verify portable browser ZIP export and offline CLI replay on Windows
+        shell: powershell
+        run: |
+          npm.cmd ci --ignore-scripts --no-audit --no-fund
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node.exe --disable-warning=ExperimentalWarning --experimental-strip-types --test test/browser-export.test.mjs
+          exit $LASTEXITCODE

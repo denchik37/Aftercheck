@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {mkdtempSync, readFileSync, writeFileSync, rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join, resolve} from 'node:path';
-import {fileURLToPath} from 'node:url';
+import {fileURLToPath, pathToFileURL} from 'node:url';
 import {spawnSync} from 'node:child_process';
 import {createVerificationPackage, createStoreZip, MAX_EXPORT_FILE_BYTES, MAX_EXPORT_TOTAL_BYTES} from '../src/browser-export.ts';
 import {verifyEvidenceAsync} from '../src/browser-engine.ts';
@@ -91,6 +91,43 @@ test('ZIP rejects paths, unexpected filenames, oversize UTF-8 content and lossy 
   assert.throws(() => createStoreZip({'evidence.json': 'x'.repeat(MAX_EXPORT_TOTAL_BYTES / 2), 'report.json': 'x'.repeat(MAX_EXPORT_TOTAL_BYTES / 2), 'report.md': 'x'}), /SIZE/);
 });
 
+/**
+ * Independently unpack browser-produced ZIPs without requiring Python on Windows.
+ * The Windows .NET ZipArchive implementation verifies entry count and stored
+ * lengths before extracting; the test compares every extracted byte with the
+ * browser export and independently runs the offline CLI afterward.
+ * Paths are passed through environment variables to avoid shell interpolation.
+ */
+function independentlyExtractZip(zipPath, folder) {
+  if (process.platform === 'win32') {
+    const script = [
+      "$ErrorActionPreference = 'Stop'",
+      'Add-Type -AssemblyName System.IO.Compression',
+      'Add-Type -AssemblyName System.IO.Compression.FileSystem',
+      '$zip = [System.IO.Compression.ZipFile]::OpenRead($env:AFTERCHECK_TEST_ZIP_PATH)',
+      'try {',
+      "  if ($zip.Entries.Count -ne 6) { throw 'ZIP_ENTRY_COUNT' }",
+      '  foreach ($entry in $zip.Entries) {',
+      "    if ($entry.CompressedLength -ne $entry.Length) { throw 'ZIP_NOT_STORED' }",
+      '  }',
+      '} finally { $zip.Dispose() }',
+      '[System.IO.Compression.ZipFile]::ExtractToDirectory($env:AFTERCHECK_TEST_ZIP_PATH, $env:AFTERCHECK_TEST_EXTRACT_DIR)',
+    ].join('\n');
+    return spawnSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', script], {
+      encoding: 'utf8', timeout: 15_000,
+      env: {...process.env, AFTERCHECK_TEST_ZIP_PATH: zipPath, AFTERCHECK_TEST_EXTRACT_DIR: folder},
+    });
+  }
+  return spawnSync('python3', ['-c', [
+    'import zipfile,sys',
+    'with zipfile.ZipFile(sys.argv[1]) as z:',
+    ' assert z.testzip() is None',
+    ' assert len(z.namelist()) == 6',
+    ' assert all(i.compress_type == zipfile.ZIP_STORED for i in z.infolist())',
+    ' z.extractall(sys.argv[2])'
+  ].join('\n'), zipPath, folder], {encoding: 'utf8', timeout: 15_000});
+}
+
 for (const [name, expectedCode, expectedVerdict] of [['pass', 0, 'PASS'], ['output-threshold', 2, 'VIOLATION'], ['violation', 2, 'VIOLATION'], ['reserve', 3, 'UNKNOWN']]) {
   test(`independent ZIP extraction and offline CLI reproduce browser ${name} package byte-for-byte`, async () => {
     const folder = mkdtempSync(join(tmpdir(), 'aftercheck-browser-export-'));
@@ -100,17 +137,10 @@ for (const [name, expectedCode, expectedVerdict] of [['pass', 0, 'PASS'], ['outp
       const exported = await createVerificationPackage({evidenceText, policy: supplied, report, displayDecimals: {input: 18, output: 18}});
       const zipPath = join(folder, 'verification.zip');
       writeFileSync(zipPath, exported.zip);
-      const unzip = spawnSync(process.platform === 'win32' ? 'python' : 'python3', ['-c', [
-        'import zipfile,sys',
-        'with zipfile.ZipFile(sys.argv[1]) as z:',
-        ' assert z.testzip() is None',
-        ' assert len(z.namelist()) == 6',
-        ' assert all(i.compress_type == zipfile.ZIP_STORED for i in z.infolist())',
-        ' z.extractall(sys.argv[2])'
-      ].join('\n'), zipPath, folder], {encoding: 'utf8', timeout: 15_000});
-      assert.equal(unzip.status, 0, unzip.stderr);
+      const unzip = independentlyExtractZip(zipPath, folder);
+      assert.equal(unzip.status, 0, (unzip.stderr ?? '') + (unzip.stdout ?? '') + (unzip.error?.message ?? ''));
       for (const [file, text] of Object.entries(exported.files)) assert.equal(readFileSync(join(folder, file), 'utf8'), text);
-      const replay = spawnSync(process.execPath, ['--experimental-strip-types', '--import', resolve(root, 'scripts/offline-guard.mjs'), resolve(root, 'bin/aftercheck.mjs'), 'verify', join(folder, 'evidence.json'), join(folder, 'policy.json'), join(folder, 'replay')], {cwd: root, encoding: 'utf8', timeout: 15_000});
+      const replay = spawnSync(process.execPath, ['--experimental-strip-types', '--import', pathToFileURL(resolve(root, 'scripts/offline-guard.mjs')).href, resolve(root, 'bin/aftercheck.mjs'), 'verify', join(folder, 'evidence.json'), join(folder, 'policy.json'), join(folder, 'replay')], {cwd: root, encoding: 'utf8', timeout: 15_000});
       assert.equal(replay.status, expectedCode, replay.stderr + replay.stdout);
       assert.equal(JSON.parse(readFileSync(join(folder, 'replay/report.json'), 'utf8')).verdict, expectedVerdict);
       assert.equal(readFileSync(join(folder, 'replay/report.json'), 'utf8'), exported.files['report.json']);
