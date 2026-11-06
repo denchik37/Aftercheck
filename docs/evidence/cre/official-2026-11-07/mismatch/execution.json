@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "aftercheck.cre-execution.v1",
+  "attemptedMode": "CRE_CLI_SIMULATION",
+  "startedAt": "2026-11-06T22:09:47.365Z",
+  "finishedAt": "2026-11-06T22:09:58.486Z",
+  "sourceRevision": "1ad2dd1ba629bd0751748a7451619cfe8c5d488d",
+  "publicSource": {
+    "url": "https://raw.githubusercontent.com/denchik37/aftercheck/2b86229b8db8e4cf2217de73aa4ab4d9ef9f8a4d/integrations/cre/public/intentional-mismatch.json",
+    "revision": "2b86229b8db8e4cf2217de73aa4ab4d9ef9f8a4d",
+    "path": "integrations/cre/public/intentional-mismatch.json",
+    "unavailableExpected": false,
+    "scenario": "intentional-mismatch",
+    "localBytesSha256": "0x63b0b06f69540e7a2ce0aee232f7c208a68dd41a038ea9f8f7d49d470cf671c1",
+    "manifestDigest": "0x03a312fef6bd38858f63e098b817f1afa73022d4333e41a8e1daac09b6110f2f"
+  },
+  "metadata": {
+    "executionMode": "CRE_CLI_SIMULATION",
+    "workflowRevision": "1ad2dd1ba629bd0751748a7451619cfe8c5d488d",
+    "cliVersion": "1.39.0",
+    "sdkVersion": "1.23.0",
+    "rpcProvider": "TENDERLY_PUBLIC_SEPOLIA"
+  },
+  "configDigest": "0x59cb96b37b93f448e3f660a3823457638e642ec519e1a55bf2b4eef4037a0782",
+  "toolVersions": {
+    "cli": "1.39.0",
+    "sdk": "1.23.0",
+    "bun": "1.4.4"
+  },
+  "command": [
+    "cre",
+    "workflow",
+    "simulate",
+    "workflow",
+    "--project-root",
+    ".",
+    "--target",
+    "sepolia",
+    "--non-interactive",
+    "--trigger-index",
+    "0"
+  ],
+  "workingDirectory": "integrations/cre",
+  "commandPathRepresentation": "Reproducible relative paths; the child process uses the corresponding absolute project root.",
+  "exitCode": 0,
+  "signal": null,
+  "phase": "COMPLETE",
+  "outcome": "VALIDATED_SIMULATOR_RESULT",
+  "failureReason": null,
+  "comparisonStatus": "MISMATCH",
+  "resultSha256": "0xc7c8c75cd3aba96888b9a741d73e2adaebb052fabf667faae08d82003fb9d591",
+  "logs": {
+    "sanitized": true,
+    "stdoutSha256": "0x170048b725d65eee6839f7b165b6150f17165c052f7f3c2291e10417f6e0fd14",
+    "stderrSha256": "0x55a7bd7ecd3f0bb41850357c92d0276ff648714e70d51303f9b9b27227ca0d3e"
+  },
+  "limitations": [
+    "This local execution record is not an authenticated Chainlink or DON attestation.",
+    "A successful compiler or ordinary RPC rehearsal does not satisfy CRE simulation execution.",
+    "A valid UNAVAILABLE result records failure to obtain corroborating evidence; it is not a successful MATCH."
+  ]
+}
