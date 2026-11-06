@@ -1,5 +1,36 @@
 # Readiness checkpoint
 
+## Current audited status — 6 November 2026
+
+Initial audit source: **`4130c2af7e6b096b8394f423f7e56ecc75da87ab`**, current `main`
+when the logs below were inspected. The subsequent deployment-documentation merge
+`e8c36203c2d8f096d46dac2980b6cd14c408b18e` supplies the separate authenticated
+provider record preserved later in this document. These are pinned checkpoints;
+a later documentation revision needs its own CI result.
+
+| Feature / requirement | Actual executed evidence | Source revision | Remaining risk |
+|---|---|---|---|
+| Core verifier and deterministic regression | [Verify 42234382492](https://github.com/denchik37/aftercheck/actions/runs/42234382492): TypeScript check; **197/197 Node tests**, zero failures | `4130c2a` | Receipt/RPC assumptions and reserve UNKNOWN remain |
+| Offline CLI demonstration | Same run: PASS / VIOLATION / UNKNOWN with exits **0 / 2 / 3**; retained public-report consistency check passed | `4130c2a` | Historical third-party testnet evidence and retrospective policies |
+| Offline inspector | Same run: **75/75 browser cases**, zero requests, page errors or dialogs | `4130c2a` | Saved-report display; no refreshed chain authentication |
+| Local HTTP delivery and privacy | Same run: **44/44 checks**, including **36 browser checks** | `4130c2a` | Local mode alone does not establish public hosting |
+| Public HTTPS viewer | [Production run 42234449518](https://github.com/denchik37/aftercheck/actions/runs/42234449518): **45/45 checks**, including **36 browser checks**, against [the public viewer](https://aftercheck-g4nsb.ondigitalocean.app/) | Expected clean checkout **`d5414cb43c6d31cc66afd070d14dca4ab9921a75`**; workflow run HEAD `4130c2a` | Public bytes alone do not authenticate provider identity; the separate operator record appears below |
+| Optional Chainlink CRE | **Not implemented; omitted at the decision gate**. No CLI simulation or consumption evidence | Audited tree `4130c2a` | CRE01–CRE05 are not qualified; see [CRE_DECISION.md](CRE_DECISION.md) |
+
+Both Verify job logs and the production job log were inspected. The production
+harness deliberately leaves `deploymentIdentityVerified` false. Its expected
+source is distinct from the revision hosting the workflow. The inspected public
+web assets are identical between these two revisions; this does not identify a
+provider deployment. The later operator record supplies its own provider and
+screenshot observations; this log audit did not repeat those UI inspections.
+
+The official deadline remains **7 November 2026, 09:00 IST** in both public event
+guides. The optional CRE D−14h gate was **6 November, 19:00 IST**, already passed at
+the audit. Preserve the primary demonstration and submission time; do not infer a
+CRE success from the core or browser results.
+
+## Historical implementation checkpoint — 5 November 2026
+
 **5 November 2026 · functional implementation merged through PR #7, main `8bfedc72f5f03d64a003ed27fd1a41768e880bd8`.** The passing PR #7 workflow below tested merge revision `40ee01b30505ba8163c7e18011b2a8cb5e4878b3` for head `678cf4344d22af89f0d1114d97bd3c62500b2784`. This is a pinned engineering checkpoint, not a claim of production readiness.
 
 The narrow vertical slice is implemented and verified: real historical Sepolia receipt → independent protocol observations → exact receipt amounts → retrospective policy → portable reports → offline CLI replay → browser inspection. TypeScript checking, **109 unit/integration tests**, the three committed demo outcomes, and **28 browser cases using the real capture** passed. Reserve state, arbitrary token balance semantics, consensus and finality remain outside the claim.
