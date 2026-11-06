@@ -56,3 +56,7 @@ ETHGlobal disclosure.
 The 6 November section above describes an earlier, incomplete scope checkpoint.
 Its past-tense omission decision was explicitly overridden; the later
 implementation and verification are recorded here and in actual Git history.
+
+## 7 November 2026 — final submission copy and editing direction
+
+ChatGPT reviewed current public ETHGlobal submission/partner requirements and the already verified Aftercheck repository, then assisted in drafting `docs/ETHGLOBAL_SUBMISSION_HANDOFF.md` and updating the README, submission, CRE, and readiness references. The planned 2:58 master is editorial guidance using user-prepared real footage and human narration; **no new video was rendered, uploaded or submitted** in this documentation update. This does not establish independent human audit or resolve the Classic prior-design eligibility question.

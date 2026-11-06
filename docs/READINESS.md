@@ -1,5 +1,22 @@
 # Readiness checkpoint
 
+## ETHGlobal submission handoff — 7 November 2026 IST
+
+| Deliverable | Actual state | Evidence / next owner checkpoint |
+|---|---|---|
+| Core verifier and static browser demo | **VERIFIED at their recorded source revisions** | [README](../README.md), public acceptance below; do not claim the deployed site displays the CRE appendix |
+| Chainlink CRE HTTP + historical EVM workflow | **VERIFIED official local simulator** | [source-bound 1ad2dd1b logs and results](evidence/cre/official-2026-11-07/README.md), separate from DON deployment |
+| Partner-specific application consumption | **VERIFIED in recorded run** | MATCH, deliberate MISMATCH, UNAVAILABLE with core PASS unchanged |
+| Submission copy and three-sponsor source pointers | **PREPARED, not submitted** | [Final handoff](ETHGLOBAL_SUBMISSION_HANDOFF.md); maximum three partners |
+| Final human-voiced 2:58 MP4 | **NOT ASSEMBLED / NOT UPLOADED in this session** | Existing intro and browser footage are referenced in the [video direction](ETHGLOBAL_SUBMISSION_HANDOFF.md#one-final-master-video--target-258-not-separate-sponsor-videos); actual final CLI screencast/video assets were not attached here |
+| Uniswap Developer Feedback Form | **NOT CONFIRMED** | Owner submits public `FEEDBACK.md` link and retains confirmation |
+| Classic pre-event design provenance / participation | **UNRESOLVED** | Accurate handling of 28 October project-specific plans under [official rules](https://ethglobal.com/events/mumbai/info/details); no automatic eligibility claim |
+| ETHGlobal Hacker Dashboard submission, video and partner selections | **NOT CONFIRMED** | Owner checks dashboard, submits, and records submission confirmation |
+| Official submission deadline | **8 November 2026, 09:00 IST** | [Current ETHGlobal Mumbai guide](https://ethglobal.com/events/mumbai/info/details), superseding the older 7 November planning snapshot |
+
+Submission readiness is a separate status from engineering readiness. Neither a green GitHub Actions job nor a successful CRE simulator replaces the judge video or final Dashboard confirmation.
+
+
 ## Chainlink CRE sponsor technical readiness — 7 November 2026 IST
 
 **CRE READY — VERIFIED local CLI simulation, but no live DON deployment or
