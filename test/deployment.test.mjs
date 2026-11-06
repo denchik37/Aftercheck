@@ -78,13 +78,14 @@ test('DigitalOcean launch files describe the same static-only manual release', (
     assert.match(spec, /static_sites:/);
     assert.match(spec, /name: inspector/);
     assert.match(spec, /branch: main/);
-    assert.match(spec, /deploy_on_push: false/);
     assert.match(spec, /source_dir: web/);
     assert.match(spec, /output_dir: \./);
     assert.match(spec, /index_document: inspector\.html/);
     assert.doesNotMatch(spec, /^\s*(services|workers|jobs|functions|databases):/m);
   }
+  assert.match(appSpec, /deploy_on_push: false/);
   assert.match(appSpec, /repo: denchik37\/aftercheck/);
   assert.match(deployTemplate, /^spec:/);
+  assert.doesNotMatch(deployTemplate, /deploy_on_push:/);
   assert.match(deployTemplate, /repo_clone_url: https:\/\/github\.com\/denchik37\/aftercheck\.git/);
 });

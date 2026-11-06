@@ -6,7 +6,6 @@ spec:
       git:
         repo_clone_url: https://github.com/denchik37/aftercheck.git
         branch: main
-        deploy_on_push: false
       source_dir: web
       output_dir: .
       index_document: inspector.html
