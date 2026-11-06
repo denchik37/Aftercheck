@@ -24,3 +24,26 @@ and review. This update affects `README.md`, `docs/CRE_DECISION.md`,
 The update records the decision to omit optional CRE work after the deadline-derived
 gate. It adds no CRE workflow, dependency or simulator result, and does not establish
 independent human review, accepted participation or sponsor qualification.
+
+## 6–7 November 2026 — later CRE authorization and implementation (superseding the earlier omission decision)
+
+After the earlier documentation decision, the owner explicitly overrode its internal
+CRE cutoff and authorized the optional integration to proceed. The earlier section
+records a genuine historical decision; it is **not** the current implementation
+state. ChatGPT assisted with the official CRE SDK workflow and read-only
+HTTP/EVM capability integration, revision-pinned manifest handling, comparison
+and bounded result serialization, Aftercheck's separate CRE result consumer,
+validation tests, CI scripts, local Windows execution instructions and
+reproducibility documentation. The relevant public implementation and evidence
+are under `integrations/cre/`, `docs/CRE_INTEGRATION.md`, `docs/evidence/cre/`,
+and the ordinary Git commit/CI history.
+
+The SDK WASM build, ordinary RPC rehearsal, offline appendix consumption and CI
+checks have distinct execution meanings. At the observed `main` revision
+`1ad2dd1ba629bd0751748a7451619cfe8c5d488d`, the official
+[CRE simulation workflow](https://github.com/denchik37/aftercheck/actions/runs/42300693047)
+completed its authentication availability check with **no configured CRE API key**;
+the official CLI simulation and corresponding result-consumption steps were
+**skipped**, not passed. This disclosure does not claim qualified Chainlink
+sponsor execution, independent human auditing or original authorship of public
+third-party dependencies.
