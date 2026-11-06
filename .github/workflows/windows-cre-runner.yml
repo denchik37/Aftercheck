@@ -31,7 +31,7 @@ jobs:
               $parseErrors = $null
               [System.Management.Automation.Language.Parser]::ParseFile($scriptPath, [ref]$tokens, [ref]$parseErrors) | Out-Null
               if ($parseErrors.Count -gt 0) {
-                  $parseErrors | ForEach-Object { Write-Host ("PARSE ERROR in $scriptName: " + $_.ToString()) }
+                  $parseErrors | ForEach-Object { Write-Host ("PARSE ERROR in " + $scriptName + ": " + $_.ToString()) }
                   exit 1
               }
               Write-Host "VALID: $scriptName"
@@ -46,7 +46,7 @@ jobs:
               $parseErrors = $null
               [System.Management.Automation.Language.Parser]::ParseFile($scriptPath, [ref]$tokens, [ref]$parseErrors) | Out-Null
               if ($parseErrors.Count -gt 0) {
-                  $parseErrors | ForEach-Object { Write-Host ("PARSE ERROR in $scriptName: " + $_.ToString()) }
+                  $parseErrors | ForEach-Object { Write-Host ("PARSE ERROR in " + $scriptName + ": " + $_.ToString()) }
                   exit 1
               }
               Write-Host "VALID: $scriptName"
