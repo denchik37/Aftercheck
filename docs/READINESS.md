@@ -90,3 +90,47 @@ npm run demo
 Open `web/inspector.html` locally and import `output/demo/pass/report.json`, `output/demo/violation/report.json` or `output/demo/reserve/report.json`. The primary CI repeats verification and demo, records its checked commit, and retains the generated reports. The separate optional capture workflow is not a dependency of deterministic tests.
 
 See [PROTOCOL.md](PROTOCOL.md) for the exact implemented claim boundary. This prototype is not audited and does not establish safety for real funds.
+
+## DigitalOcean viewer deployment — Issue 19
+
+**6 November 2026 (IST): engineering verified; public deployment blocked by account access.**
+[PR #25](https://github.com/denchik37/aftercheck/pull/25) adds direct static hosting,
+four deterministic public sample reports, publication-boundary tests, and an
+HTTP(S) browser smoke harness. No `src/` or `bin/` implementation changed; all
+three inspector JavaScript blocks and its CSP remained byte-identical to baseline
+`3835c5a933c1f3f493ff726dd3b597f68c8c6330`.
+
+[Verify run 42113544504](https://github.com/denchik37/aftercheck/actions/runs/42113544504)
+passed at exact source **`098c38ba9687ddf292eadaafbbf794988238963c`**. Both job logs
+were inspected. This is the first complete deployment-engineering checkpoint;
+later metadata/runbook commits require their own green PR checks.
+
+| Requirement | Actual executed check | Evidence / source revision | Remaining risk |
+|---|---|---|---|
+| Financial regression | TypeScript and **168/168 Node tests**; demo CLI exits `0/2/3`; saved PASS replay comparison | [Verification artifact](https://github.com/denchik37/aftercheck/actions/runs/42113544504/artifacts/13455443830), `098c38b` | Receipt/RPC trust boundaries remain; no financial engine expansion |
+| Existing inspector | **75/75 offline browser checks**; zero requests, page errors or dialogs | [Browser artifact](https://github.com/denchik37/aftercheck/actions/runs/42113544504/artifacts/13454573912), `098c38b` | Offline `about:blank` checks do not establish production availability |
+| Static configuration | Official checksum-pinned `doctl` v2.3.0 schema validation passed without a credential | `spec-schema-validation.log` in verification artifact, `098c38b` | Provider/account-aware validation, free slot and build detection remain unexecuted |
+| Real HTTP viewer | **44/44 checks**, including **36 browser checks**, at 1280×900, 390×844 and 320×740 | `hosted-local/hosted-results.json` and actual screenshots in browser artifact, `098c38b` | Loopback HTTP does not establish DigitalOcean routing, TLS or response headers |
+| Source and samples | Root HTML and four public report responses matched exact reviewed bytes and fresh offline verifier results | Same hosted result; [`deployment.test.mjs`](../test/deployment.test.mjs) | Matching web bytes does not independently establish a provider's active Git SHA |
+| Publication/privacy | Only five allowlisted assets; ten unintended routes returned 404; no import-phase requests, page errors or dialogs | Same hosted result, `098c38b` | Hosting/CDN sees initial asset requests and ordinary request metadata |
+| Account/deployment | Full CLI validation returned `access token is required`; available cloud dashboard returned `Site Unavailable` | [Deployment access record](DIGITALOCEAN_DEPLOYMENT.md#access-and-cost-gate) | **BLOCKED**: authorized DigitalOcean session, account eligibility and actual app creation |
+| Production HTTPS and recovery | Public harness and supported rollback procedure implemented/documented | [Runbook](DIGITALOCEAN_DEPLOYMENT.md), PR #25 | **NOT EXECUTED**: app/deployment IDs, URL, live source SHA, TLS, production browser checks and rollback |
+
+CI used Node **24.22.2**, Python **3.14.4**, Playwright **1.62.0**, and Chromium
+**151.0.7922.34**. The independently reviewed inspector SHA-256 was
+`8fc5fef9b8ea2e52cd9448e1b5d32efc4c41f2f6b8f395260957031d5dcd958a`.
+The browser artifact ZIP SHA-256 was
+`ed61ca8e974099a05456764ac7f749dcabfedf498df0baa0d1fb068cb04d1ebb`.
+Artifacts have the workflow's 30-day retention; preserve a release copy if needed
+before expiry.
+
+The local runtime separately passed all 168 Node tests, the demo, and the stricter
+output-policy case study. Its HTTP harness completed eight source/HTTP checks, but
+Chromium then failed with `socket() failed: Operation not permitted`. That local
+attempt was recorded as **FAIL with zero browser checks**, not a browser pass.
+GitHub Actions supplied the actual successful browser execution above.
+
+No DigitalOcean resource, public URL, custom domain, or paid monitor was created.
+No unrelated infrastructure was accessed. Issue #19 remains open pending actual
+public deployment and production verification; a green PR is not completion of
+the public hosting milestone.

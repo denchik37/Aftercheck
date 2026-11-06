@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'none'; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
   <meta name="color-scheme" content="light">
+  <meta name="referrer" content="no-referrer">
   <title>Aftercheck — Local report inspector</title>
   <style>
     :root { --ink:#192d29; --muted:#52665f; --paper:#f5f5f0; --card:#fff; --line:#d7dfd8; --accent:#076e54; --pass:#075b3c; --pass-bg:#e1f3e7; --violation:#9c3025; --violation-bg:#ffebe5; --unknown:#79500b; --unknown-bg:#fff1cc; }
@@ -49,6 +50,12 @@
     .empty { margin:25px 0 0; padding:26px 20px; text-align:center; border:1px dashed #b9c8bd; border-radius:10px; }
     .empty strong { display:block; font-weight:650; }
     .empty p { margin:7px auto 0; max-width:650px; color:var(--muted); font-size:14px; }
+    .samples { margin:20px 0; }
+    .samples h2 { font-size:18px; }
+    .samples p { color:var(--muted); font-size:13px; margin:9px 0; }
+    .sample-links { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0; }
+    .sample-links a { display:inline-block; padding:10px 12px; border:1px solid var(--line); border-radius:6px; color:var(--accent); font-size:13px; font-weight:650; overflow-wrap:anywhere; }
+    .sample-links a:hover { background:#edf4ef; }
     .report { margin-top:20px; }
     .display-only { padding:12px 16px; background:#eaf0ec; border-radius:7px; color:#3b5148; font-size:13px; }
     .display-only strong { color:var(--ink); }
@@ -143,7 +150,7 @@
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to report inspector</a>
-  <header><div class="wrap topbar"><div class="brand"><span class="brand-mark" aria-hidden="true">✓</span>Aftercheck</div><span class="local-tag">LOCAL FILES · NO NETWORK</span></div></header>
+  <header><div class="wrap topbar"><div class="brand"><span class="brand-mark" aria-hidden="true">✓</span>Aftercheck</div><span class="local-tag">LOCAL REPORTS · NO UPLOADS</span></div></header>
   <main class="wrap" id="main" tabindex="-1">
     <p class="eyebrow">Local report inspector</p>
     <h1>Did the swap meet your policy?</h1>
@@ -155,7 +162,22 @@
     </details>
     <p id="import-status" class="import-status" role="status" aria-atomic="true">Files stay on this device. No wallet connection is needed.</p>
     <div id="import-error" class="error" role="alert" hidden></div>
-    <div id="empty-state" class="empty"><strong>Your saved report appears here.</strong><p>First collect evidence and run Aftercheck’s verifier. This inspector displays the saved result; it does not perform new blockchain checks.</p></div>
+    <div id="empty-state">
+      <section class="card samples" aria-labelledby="samples-title">
+        <h2 id="samples-title">Try a historical swap report</h2>
+        <p>Download a public sample below, then choose it in <strong>Open a report</strong>. No developer tools or wallet needed.</p>
+        <div class="sample-links">
+          <a href="samples/output-threshold-violation.json" download="aftercheck-output-threshold-violation.json">Download output-policy VIOLATION</a>
+          <a href="samples/pass.json" download="aftercheck-pass.json">Download scoped PASS</a>
+          <a href="samples/input-cap-violation.json" download="aftercheck-input-cap-violation.json">Download input-cap VIOLATION</a>
+          <a href="samples/reserve-unknown.json" download="aftercheck-reserve-unknown.json">Download reserve UNKNOWN</a>
+        </div>
+        <p>All four reports describe the same successful Uniswap swap on <strong>Ethereum Sepolia testnet</strong>, executed by a third party on 12 February 2025 and captured on 5 November 2026. The policies were supplied after execution; they do not establish the original trader’s instructions.</p>
+        <p><strong>PASS</strong>: the supported declared checks passed. <strong>VIOLATION</strong>: a supported financial requirement failed. <strong>UNKNOWN</strong>: evidence cannot establish a requirement, including the wallet’s reserve immediately after the swap.</p>
+        <p>Hosted page and public sample downloads use the network. Importing a saved report processes its contents on this device without uploading them. This viewer displays saved results; it does not perform new blockchain checks.</p>
+      </section>
+      <div class="empty"><strong>Your saved report appears here.</strong><p>Use a sample above or a report from Aftercheck’s local verifier. A saved report does not independently authenticate blockchain state.</p></div>
+    </div>
     <noscript><p class="error">JavaScript is needed to read a local report. This file contains all of its scripts and styles.</p></noscript>
     <article id="report" class="report" hidden aria-label="Imported report">
       <div class="report-head"><p class="eyebrow">Saved outcome review</p><div class="actions"><button type="button" id="download-report">Download report JSON</button><button type="button" id="clear-report">Clear report</button></div></div>

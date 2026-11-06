@@ -1,0 +1,20 @@
+# Serve only the public viewer assets. No service, worker, database or secrets.
+# Promote manually after the exact source commit passes GitHub's Verify workflow.
+name: aftercheck
+static_sites:
+  - name: inspector
+    environment_slug: html
+    github:
+      repo: denchik37/aftercheck
+      branch: main
+      deploy_on_push: false
+    source_dir: web
+    output_dir: .
+    index_document: inspector.html
+ingress:
+  rules:
+    - component:
+        name: inspector
+      match:
+        path:
+          prefix: /
