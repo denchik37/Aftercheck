@@ -7,9 +7,10 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {
   RESULT_MARKER, bindManifestToPublicRevision, parsePublicManifestUrl, prepareFreshCreOutput,
+  reconstructChunkedResult,
   sanitizeCreLog, validateSimulationOutput, verifySourceProvenance
 } from '../scripts/cre-simulate.mjs';
-import {canonicalJson, compareObservation, DEMO_TARGET, parseManifest} from '../integrations/cre/shared.ts';
+import {CRE_RESULT_CHUNK_BYTES, CRE_RESULT_CHUNK_MARKER, canonicalJson, compareObservation, DEMO_TARGET, parseManifest} from '../integrations/cre/shared.ts';
 
 const referenceText = await readFile(new URL('../integrations/cre/public/reference.json', import.meta.url), 'utf8');
 const mismatchText = await readFile(new URL('../integrations/cre/public/intentional-mismatch.json', import.meta.url), 'utf8');
@@ -26,6 +27,18 @@ const observation = {
 // These are parser fixtures. No test in this file represents execution of the CRE simulator.
 const match = compareObservation(manifest, observation, metadata);
 const captured = result => ({stdout: `[USER LOG] ${RESULT_MARKER}${canonicalJson(result)}\n`, stderr: '', exitCode: 0});
+/** Models CRE's <=1KB log events, not a real CRE simulator execution. */
+const capturedChunked = result => {
+  const bytes = Buffer.from(canonicalJson(result), 'utf8');
+  const digest = createHash('sha256').update(bytes).digest('hex');
+  const total = Math.ceil(bytes.length / CRE_RESULT_CHUNK_BYTES);
+  const lines = [];
+  for (let i = 0; i < total; i++) {
+    const fragment = bytes.subarray(i * CRE_RESULT_CHUNK_BYTES, (i + 1) * CRE_RESULT_CHUNK_BYTES);
+    lines.push(`[USER LOG] ${CRE_RESULT_CHUNK_MARKER}v1:${i + 1}/${total}:${digest}:${fragment.toString('hex')}`);
+  }
+  return {stdout: lines.join('\n') + '\n', stderr: '', exitCode: 0};
+};
 const url = (revision, name = 'reference') => `https://raw.githubusercontent.com/denchik37/aftercheck/${revision}/integrations/cre/public/${name}.json`;
 
 function git(root, args) {
@@ -76,6 +89,44 @@ test('UNIT_TEST CRE parser fixtures: legitimate MISMATCH and UNAVAILABLE are val
     chainId: null, chainSelector: null, requestedBlockNumber: null, header: null, call: null, returnData: null,
     errorCode: 'HTTP_STATUS_ERROR'}, metadata);
   assert.equal(validateSimulationOutput(captured(unavailable), manifest, metadata).status, 'UNAVAILABLE');
+});
+
+test('UNIT_TEST CRE log fragments reconstruct the full result below the 1KB logging quota', () => {
+  const fixture = capturedChunked(match);
+  const lines = fixture.stdout.trim().split('\n');
+  assert.ok(lines.length > 1);
+  assert.ok(lines.every(line => Buffer.byteLength(line, 'utf8') < 900));
+  assert.equal(reconstructChunkedResult(fixture.stdout), canonicalJson(match));
+  assert.equal(validateSimulationOutput(fixture, manifest, metadata).status, 'MATCH');
+  // A completed user-log span may be interleaved with other CRE messages.
+  const interleaved = fixture.stdout.replace(/\n/g, '\nCRE capability completed\n');
+  assert.equal(validateSimulationOutput({...fixture, stdout: interleaved}, manifest, metadata).status, 'MATCH');
+  const reversed = lines.toReversed().join('\n') + '\n';
+  assert.equal(validateSimulationOutput({...fixture, stdout: reversed}, manifest, metadata).status, 'MATCH');
+});
+
+test('UNIT_TEST CRE log fragments support intentional MISMATCH and unavailable manifest', () => {
+  const wrong = parseManifest(mismatchText);
+  assert.equal(validateSimulationOutput(capturedChunked(compareObservation(wrong, observation, metadata)), wrong, metadata).status, 'MISMATCH');
+  const unavailable = compareObservation(manifest, {...observation, availability: 'UNAVAILABLE', manifestFetch: 'UNAVAILABLE',
+    chainId: null, chainSelector: null, requestedBlockNumber: null, header: null, call: null, returnData: null,
+    errorCode: 'HTTP_STATUS_ERROR'}, metadata);
+  assert.equal(validateSimulationOutput(capturedChunked(unavailable), manifest, metadata).status, 'UNAVAILABLE');
+});
+
+test('UNIT_TEST CRE log fragment parser rejects missing, duplicate, altered, truncated and mixed messages', () => {
+  const complete = capturedChunked(match);
+  const lines = complete.stdout.trim().split('\n');
+  assert.throws(() => reconstructChunkedResult(lines.slice(0, -1).join('\n')), /CHUNK_MISSING/);
+  assert.throws(() => reconstructChunkedResult(lines.concat(lines[0]).join('\n')), /CHUNK_DUPLICATE|CHUNK_MISSING/);
+  assert.throws(() => reconstructChunkedResult(lines.map((line, i) => i ? line : line.slice(0, -1)).join('\n')), /CHUNK_INVALID|CHUNK_SIZE/);
+  assert.throws(() => reconstructChunkedResult(lines.map((line, i) => i ? line : line.replace(/.$/, c => c === '0' ? '1' : '0')).join('\n')), /CHUNK_CHECKSUM/);
+  assert.throws(() => reconstructChunkedResult(lines.map((line, i) => i ? line : line.replace(/([a-f0-9]{64}):/, '0'.repeat(64) + ':')).join('\n')), /CHUNK_DIGEST_CONFLICT/);
+  assert.throws(() => reconstructChunkedResult(lines.map((line, i) => i ? line : line.replace('v1:1/', 'v1:0/')).join('\n')), /CHUNK_INVALID/);
+  assert.throws(() => validateSimulationOutput({...complete, stdout: complete.stdout + captured(match).stdout}, manifest, metadata), /MARKER_MODE_CONFLICT/);
+  const sanitized = sanitizeCreLog(complete.stdout);
+  assert.ok(sanitized.includes('[UNVALIDATED_FRAGMENT_OMITTED]'));
+  assert.ok(!sanitized.includes(lines[0].split(':').at(-1)));
 });
 
 test('UNIT_TEST CRE parser rejects nonzero exits, missing/duplicate markers, truncation and noncanonical JSON', () => {

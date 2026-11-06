@@ -6,9 +6,9 @@ import {
 import {sha256} from '@noble/hashes/sha2.js';
 import {bytesToHex as hashHex, utf8ToBytes} from '@noble/hashes/utils.js';
 import type {Address, Hex} from 'viem';
-import {canonicalJson, compareObservation, type Observation} from '../shared.ts';
+import {CRE_RESULT_CHUNK_BYTES, CRE_RESULT_CHUNK_MARKER, MAX_CRE_JSON_BYTES, canonicalJson, compareObservation, type Observation} from '../shared.ts';
 import {
-  MAX_MANIFEST_BYTES, RESULT_MARKER, missingManifestObservation, parseWorkflowConfig,
+  MAX_MANIFEST_BYTES, missingManifestObservation, parseWorkflowConfig,
   validateFetchedManifest, type ManifestFetch, type WorkflowConfig,
 } from '../config.ts';
 
@@ -90,7 +90,18 @@ const onCron = (runtime: Runtime<WorkflowConfig>): string => {
     }
   }
   const result = compareObservation(config.expectedManifest, observation, config.metadata);
-  runtime.log(RESULT_MARKER + canonicalJson(result));
+  // The official CRE service enforces a 1 KiB log-line limit. A complete result
+  // (which includes the manifest) exceeds that limit. Emit small, numbered,
+  // SHA-256-bound hex fragments rather than an silently truncated JSON line.
+  // This is an output transport, not a substitute for full result validation.
+  const resultBytes = utf8ToBytes(canonicalJson(result));
+  if (resultBytes.length === 0 || resultBytes.length > MAX_CRE_JSON_BYTES) throw new Error('CRE_RESULT_TOO_LARGE');
+  const digest = hashHex(sha256(resultBytes));
+  const total = Math.ceil(resultBytes.length / CRE_RESULT_CHUNK_BYTES);
+  for (let index = 0; index < total; index++) {
+    const fragment = resultBytes.subarray(index * CRE_RESULT_CHUNK_BYTES, (index + 1) * CRE_RESULT_CHUNK_BYTES);
+    runtime.log(`${CRE_RESULT_CHUNK_MARKER}v1:${index + 1}/${total}:${digest}:${hashHex(fragment)}`);
+  }
   return result.status;
 };
 

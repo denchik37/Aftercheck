@@ -128,8 +128,8 @@ or untracked source remains rejected. A previously stopped Windows run can
 resume without cloning or reinstalling by downloading
 [`scripts/cre-windows-resume.ps1`](../scripts/cre-windows-resume.ps1) and running
 it with `-WorkDir <existing-Aftercheck-checkout>`. The runner fast-forwards
-`main`, requires previously installed locked dependencies and built WASM,
-uses local CLI authentication, and writes each new attempt into a fresh
+`main`, requires previously installed locked dependencies, rebuilds WASM from
+that exact revision, uses local CLI authentication, and writes each new attempt into a fresh
 `output/cre/resume-*` evidence directory. It never treats an earlier failed
 post-check as a verified simulator result.
 
@@ -156,6 +156,18 @@ Run the positive comparison from the repository root:
 ```bash
 npm run cre:simulate -- --manifest integrations/cre/public/reference.json --manifest-url https://raw.githubusercontent.com/denchik37/aftercheck/2b86229b8db8e4cf2217de73aa4ab4d9ef9f8a4d/integrations/cre/public/reference.json --output output/cre/reference
 ```
+
+The [official CRE logging quota](https://docs.chain.link/cre/service-quotas#logging-quotas)
+limits a single workflow log entry to **1 KB**. An unfragmented corroboration
+result is approximately 3.3 KB and was observed being truncated on Windows
+during authenticated CLI simulation. The workflow now emits 256-byte UTF-8
+fragments as lowercase hex with explicit 1-based indices, a total count, and
+a SHA-256 of the full canonical JSON. The operator wrapper requires every
+fragment to be complete, uniquely numbered, size-bounded and checksum-valid
+before applying the original strict schema, manifest, identity, metadata and
+comparison checks. Missing or conflicting fragments fail closed; a CLI exit
+code 0 alone is never a validated result. Sanitized public logs omit raw
+fragments; the fully validated object is kept separately in `result.json`.
 
 The wrapper invokes the actual official command:
 

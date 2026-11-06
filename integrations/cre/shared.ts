@@ -1,5 +1,9 @@
 /** Pure bounded data/compare layer. No Node, RPC, signing, or CRE runtime imports. */
 export const MAX_CRE_JSON_BYTES = 32_768;
+// Chainlink CRE limits a single workflow log event to 1 KB. Chunks of 256 UTF-8
+// bytes are hex-encoded to keep every log event well under that cap.
+export const CRE_RESULT_CHUNK_MARKER = 'AFTERCHECK_CRE_RESULT_CHUNK=';
+export const CRE_RESULT_CHUNK_BYTES = 256;
 const MAX_DEPTH = 16;
 const MAX_NODES = 2_048;
 const FORBIDDEN = new Set(['__proto__', 'prototype', 'constructor']);

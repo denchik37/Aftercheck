@@ -72,6 +72,11 @@ try {
     Announce 'Validating published manifest integrity'
     & npm.cmd run cre:manifest
     Assert-Native 'Manifest integrity check'
+    # main.ts is part of the checked-out source; rebuilding here prevents using
+    # a WASM artifact compiled from the older source revision.
+    Announce 'Rebuilding CRE WASM at the updated source revision'
+    & npm.cmd --prefix integrations/cre/workflow run build
+    Assert-Native 'CRE WASM rebuild'
 
     New-Item -ItemType Directory -Path $outputFull -Force | Out-Null
     Set-Content -LiteralPath (Join-Path $outputFull 'source-revision.txt') -Value $revision -Encoding ascii
