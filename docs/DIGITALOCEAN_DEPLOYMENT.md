@@ -6,9 +6,17 @@
 [aftercheck-g4nsb.ondigitalocean.app](https://aftercheck-g4nsb.ondigitalocean.app/)
 still serves the prior 55,075-byte saved-report viewer, SHA-256
 `8fc5fef9b8ea2e52cd9448e1b5d32efc4c41f2f6b8f395260957031d5dcd958a`.
-The new implementation is complete on `feature/browser-financial-verifier`;
-local TypeScript, deterministic build checking and **343/343 Node tests** passed.
-Actual Chromium/CI acceptance and manual release are pending.
+The new implementation passed both mandatory jobs in
+[push Verify 42260012899](https://github.com/denchik37/aftercheck/actions/runs/42260012899)
+and [PR Verify 42260023168](https://github.com/denchik37/aftercheck/actions/runs/42260023168)
+for feature source `1b4729ef259e2c4641e21e1b77d4369c3def0ae6`. The runs establish
+**343 Node tests, 40 Chromium/Node parity cases, 46 workspace checks including
+18 actual ZIP/offline CLI replays, 75 fallback-viewer cases and 44 local HTTP
+checks including 36 browser checks**. The refreshed desktop, mobile and 320px
+workspace screenshots were visually reviewed. These are local-HTTP CI results;
+manual production release and the public HTTPS walkthrough have not occurred.
+[PR #34](https://github.com/denchik37/aftercheck/pull/34) is the authoritative record
+for current source, integration and required checks.
 
 Authenticated provider access was unavailable in this execution session. The
 connected Browser tool required the originating browser context, and the cloud
@@ -47,11 +55,14 @@ module** limit. The deterministic build has an additional **250,000-byte generat
 asset** budget. Compiler research inputs and internal repository files are not
 published.
 
-The reviewed local candidate measures **21 files / 382,538 bytes**. Generated
-JavaScript plus its build manifest measure **13 assets / 104,394 bytes**, with
-source digest
-`c4b1f7925a5308d4427ea92161d2800d6e94f011958b02baf059e489c8d675c7`.
-These are local candidate measurements, not observations of a new deployment.
+The reviewed candidate at `1b4729ef259e2c4641e21e1b77d4369c3def0ae6` measures
+**21 files / 382,709 bytes**. Generated JavaScript plus its build manifest measure
+**13 assets / 104,465 bytes**, with source digest
+`e10bd20375263954c51712e46c807414f1170bc7002fcb37437e8e5ab85704f0`.
+These are source/CI measurements, not observations of a new deployment. The
+[readiness checkpoint](READINESS.md#browser-verifier-implementation--6-november-2026)
+preserves the earlier `54c861b` run, its 24-screenshot layout findings, and the
+corrected run's 27-screenshot artifact.
 
 The build manifest records exact source-file hashes, generator digest, pinned
 TypeScript version, combined source digest and each emitted asset's size/hash.

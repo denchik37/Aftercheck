@@ -1,12 +1,15 @@
 # Browser financial verification
 
-**Release status, 6 November 2026:** implementation is complete on
-`feature/browser-financial-verifier`; the full local `npm run verify` passed
-TypeScript, deterministic asset reproduction and **343/343 Node tests**. Actual
-Chromium/CI acceptance and manual DigitalOcean deployment remain pending. The public root still serves the
-previous saved-report viewer. [READINESS.md](READINESS.md) records achieved checks
-separately from pending release work; [DIGITALOCEAN_DEPLOYMENT.md](DIGITALOCEAN_DEPLOYMENT.md)
-preserves the earlier provider record and the current access limitation.
+**Release status, 6 November 2026:** the browser verifier is implemented and has
+passed both jobs in
+[Verify run 42260012899](https://github.com/denchik37/aftercheck/actions/runs/42260012899)
+at source `1b4729ef259e2c4641e21e1b77d4369c3def0ae6`, including **343 Node tests**,
+actual Chromium parity and interactive workspace/export checks.
+[PR #34](https://github.com/denchik37/aftercheck/pull/34) is the current integration
+and check record. **The new verifier is not deployed:** the public root still
+serves the previous saved-report viewer. [READINESS.md](READINESS.md) records the
+executed evidence; [DIGITALOCEAN_DEPLOYMENT.md](DIGITALOCEAN_DEPLOYMENT.md) preserves
+the earlier provider record and the authenticated-access blocker.
 
 ## What the browser evaluates
 
@@ -255,10 +258,10 @@ samples/output-threshold-violation.json
 samples/reserve-unknown.json
 ```
 
-The reviewed local implementation contains **21 public files / 382,538 bytes**.
-Generated JavaScript and its manifest account for **13 assets / 104,394 bytes**.
-The current JavaScript build source digest is
-`c4b1f7925a5308d4427ea92161d2800d6e94f011958b02baf059e489c8d675c7`.
+The reviewed implementation at `1b4729ef259e2c4641e21e1b77d4369c3def0ae6`
+contains **21 public files / 382,709 bytes**. Generated JavaScript and its manifest
+account for **13 assets / 104,465 bytes**. The JavaScript build source digest is
+`e10bd20375263954c51712e46c807414f1170bc7002fcb37437e8e5ab85704f0`.
 The stylesheet and HTML are reviewed source files;
 their public bytes are compared with the pinned checkout separately from the
 generated-JavaScript manifest. Publication tests reject symlinks and extra files.
@@ -300,21 +303,48 @@ The application remains experimental and read-only.
 
 ## Validation and release evidence
 
-| Check | What it establishes | Current release status |
+The completed
+[Verify run 42260012899](https://github.com/denchik37/aftercheck/actions/runs/42260012899)
+tested source `1b4729ef259e2c4641e21e1b77d4369c3def0ae6`; both mandatory jobs
+succeeded, as did the corresponding
+[PR run 42260023168](https://github.com/denchik37/aftercheck/actions/runs/42260023168). The push run's
+[browser artifact](https://github.com/denchik37/aftercheck/actions/runs/42260012899/artifacts/13525285490)
+was downloaded and validated. The archive SHA-256 is
+`835a5da6a585d04402eb2230798a368a55ac591bfa9c18709388016e1bcc6eaf`.
+The actual browser was Chromium **151.0.7922.34**, with Playwright **1.62.0**.
+
+| Check | What it establishes | Executed result at this checkpoint |
 |---|---|---|
-| Amount/metadata/export unit suites | Exact conversions, context binding, bounded archive generation, stale-report rejection and synthetic provenance | 24 focused local tests passed during implementation |
+| Amount/metadata/export unit suites | Exact conversions, context binding, bounded archive generation, stale-report rejection and synthetic provenance | **24 focused tests passed**, included in the full Node suite |
 | Independent compiler reproduction | Both complete token runtimes equal the retained bytes | Executed; [result retained](evidence/token-precision/recompilation-result.json) |
 | Export tests with an independent ZIP reader and offline CLI | Four real policy cases reproduce full JSON/Markdown/policy bytes, exits `0/2/2/3` | Executed in the focused export suite |
-| Complete local Node suite and reproducible browser build | Existing regressions plus new engine/publication tests | **343/343 passed**, zero failures; TypeScript and deterministic build check passed at the source digest above. Final committed CI pin pending |
-| `scripts/test-browser-core.py` | Actual Chromium native-crypto reports and rejections equal Node vectors; networking disabled after bootstrap | Final reviewed run pending |
-| `scripts/test-browser-workspace.py --local` | Real input edits, downloads, offline CLI replay, privacy, keyboard interaction and three rendered sizes | Final reviewed run and screenshot inspection pending |
+| Complete Node suite and reproducible browser build | Existing regressions plus new engine/publication tests | **343/343 passed**, zero failures; TypeScript and deterministic build check passed |
+| `scripts/test-browser-core.py` | Actual Chromium native-crypto reports, Markdown and rejections equal complete Node vectors; networking disabled after bootstrap | **40 cases passed**; zero evaluation requests and page errors; no Node `Buffer` or `process` in the browser |
+| `scripts/test-browser-workspace.py --local` | Real input edits, downloads, offline CLI replay, privacy, keyboard interaction and three rendered sizes | **46 checks passed**, including **18 actual downloaded ZIP/offline CLI replays**; **27 screenshots** retained; zero local evaluation requests, page errors or dialogs |
+| Saved-report viewer regression | Existing fallback remains compatible and preserves its prior bytes | **75 cases passed**; separate local HTTP harness passed **44 checks, including 36 browser checks** |
 | Production verifier workflow | HTTPS/TLS delivery, complete public asset equality, UI behavior and downloaded-package replay at a pinned SHA | Pending authenticated manual deployment |
 
+The first complete browser run at
+`54c861b33c507e8dc3522cc84186a7cd8c62a83d` also passed both
+[push](https://github.com/denchik37/aftercheck/actions/runs/42259275673) and
+[PR](https://github.com/denchik37/aftercheck/actions/runs/42259407155) jobs with
+343 Node tests, 40 parity cases, 46 workspace checks, 18 ZIP/CLI replays, 75
+fallback-viewer cases and 44 local HTTP checks. Inspection of its **24 workspace
+screenshots** found overlapping unit labels, wrapped retained amounts and clipped
+precision text at 320px. The correction in `1b4729e` adjusted these layouts and
+UNKNOWN wording. The later run above exercises the corrected source and adds an
+Export-tab screenshot for each viewport, producing **27 workspace screenshots**.
+The refreshed desktop, mobile and 320px screenshots were visually inspected and
+accepted, including PASS, pure VIOLATION, reserve UNKNOWN, mixed checks,
+custom precision and export.
+
 The workspace harness targets desktop 1280×900, mobile 390×844 and narrow mobile
-320×740, recording screenshots, requests, errors, downloaded ZIPs and CLI logs.
+320×844, recording screenshots, requests, errors, downloaded ZIPs and CLI logs.
 Its public mode requires a clean checkout at the full expected revision and
 compares the deployed bytes. Provider deployment identity is separately recorded
 through authenticated access; the public harness does not claim that authentication.
+For the current integration state and checks after this pinned acceptance run,
+refer to [PR #34](https://github.com/denchik37/aftercheck/pull/34).
 
 CI prepares a pinned isolated Playwright environment. With it available locally:
 

@@ -2,14 +2,16 @@
 
 **Experimental, read-only financial verification for a supported Uniswap swap.** Aftercheck compares retained transaction evidence with a user-supplied retrospective policy. The shared browser/Node engine validates the evidence, reconciles the supported receipt and produces exact, reproducible PASS / VIOLATION / UNKNOWN findings. It is not audited and does not establish safety for real funds.
 
-**Browser feature release status — 6 November 2026:** the browser verification
-implementation is complete on `feature/browser-financial-verifier`. Local
-TypeScript, reproducible-build and **343 Node tests** passed; actual Chromium/CI
-acceptance and the manual production deployment are pending. The
+**Browser feature release status — 6 November 2026:** the browser verifier is
+implemented and has passed Node and actual Chromium verification at
+[`1b4729e`](https://github.com/denchik37/aftercheck/commit/1b4729ef259e2c4641e21e1b77d4369c3def0ae6),
+including downloaded-package reproduction through the offline CLI.
+[PR #34](https://github.com/denchik37/aftercheck/pull/34) records the current
+integration and check state. **The new verifier is not deployed:** the
 [public website](https://aftercheck-g4nsb.ondigitalocean.app/) still serves the
-previous saved-report viewer. A repository change or successful local test does
-not mean the new workspace is live. See the [readiness checkpoint](docs/READINESS.md)
-and [release status](docs/DIGITALOCEAN_DEPLOYMENT.md).
+previous saved-report viewer, and authenticated provider access is unavailable.
+See the [readiness checkpoint](docs/READINESS.md) and
+[release status](docs/DIGITALOCEAN_DEPLOYMENT.md).
 
 ## Run locally
 
@@ -164,15 +166,27 @@ It replays `policy-pass.json`, `policy-violation.json` and `policy-reserve.json`
 
 ## Executed verification
 
-**Local browser-enhancement checkpoint:** `npm run verify` passed TypeScript,
-deterministic asset reproduction and **343/343 Node tests**, with zero failures.
-This includes **24 focused amount, metadata and export tests**, four complete
-exported-package CLI replays and explicit synthetic provenance. Both historical
-token runtimes were independently recompiled in full. The current local publication
-contains **21 files / 382,538 bytes**; generated JavaScript plus its manifest are
-**13 assets / 104,394 bytes**. Actual Chromium parity/workspace results, final
-reviewed Git SHA and CI runs remain pending in the [readiness checkpoint](docs/READINESS.md).
-Earlier browser counts are not acceptance for this feature.
+**Browser-enhancement acceptance checkpoint:**
+[Verify run 42260012899](https://github.com/denchik37/aftercheck/actions/runs/42260012899)
+passed both test and browser jobs at source
+`1b4729ef259e2c4641e21e1b77d4369c3def0ae6`. It records **343/343 Node tests**,
+TypeScript and deterministic asset reproduction; **40 complete Chromium/Node
+parity cases**; **46 workspace checks**, including **18 actual downloaded ZIPs
+replayed through the offline CLI**; **75 fallback-viewer cases**; and **44 local
+HTTP checks, including 36 browser checks**. Chromium was **151.0.7922.34**.
+The workspace artifact contains **27 screenshots** across desktop, mobile and
+narrow mobile, including the Export tab. Refreshed verdict, mixed-check,
+custom-precision and export views were visually reviewed at these sizes; this
+CI run used local HTTP and does not establish a new production deployment.
+
+The Node suite includes **24 focused amount, metadata and export tests**, four
+independently extracted package/CLI comparisons and explicit synthetic provenance.
+Both historical token runtimes were independently recompiled in full. The reviewed
+publication contains **21 files / 382,709 bytes**; generated JavaScript plus its
+manifest are **13 assets / 104,465 bytes**. The
+[readiness checkpoint](docs/READINESS.md) pins the source digest, artifacts and
+earlier screenshot findings. Current integration and any subsequent required
+checks are recorded on [PR #34](https://github.com/denchik37/aftercheck/pull/34).
 
 `npm run verify` now includes TypeScript, committed-browser-asset reproducibility
 and Node tests. `npm run build:browser` regenerates the small native ES-module
