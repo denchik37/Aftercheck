@@ -136,7 +136,7 @@ try {
     'Aftercheck reports findings; it does not stop other systems, undo a swap or recover funds.', '',
     `Saved evidence.json, policy.json, report.json and report.md in each of:`,
     ...cases.map(item => `  ${join(outputRoot, item.name)}`),
-    'Open web/inspector.html locally and import either report.json.',
+    'Open web/report-viewer.html locally and import either report.json.',
     'Case-study exit 0 means the expected contrast was reproduced; verifier VIOLATION remains exit 2.'
   ].join('\n'));
 } catch (error) {

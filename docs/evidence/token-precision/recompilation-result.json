@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "mode": "INDEPENDENT_FULL_RECOMPILATION",
+  "compilerVersion": "0.8.26+commit.8a97fa7a.Emscripten.clang",
+  "evidenceDigest": "0x41c8cd52735e76a759e3d93103f4cd6a77d0630f09593e5c9ca0612794880093",
+  "results": [
+    {
+      "token": "0x0f47e03a0383396635846f8495003fc478b71bca",
+      "decimals": 18,
+      "runtimeBytes": 4380,
+      "runtimeSha256": "8d5ab55c4e3ee83c5058ad5912de9ca449035c2e99a462a335ba92cdbb29e71c",
+      "fullRecompilationThisRun": true
+    },
+    {
+      "token": "0x9142fa65aaef921aea2127e88758adee0510a0f0",
+      "decimals": 18,
+      "runtimeBytes": 4380,
+      "runtimeSha256": "a5a02890e3f35fc56e61694f7836a606841ed62bb4f6b7a5affa007c2914b214",
+      "fullRecompilationThisRun": true
+    }
+  ]
+}

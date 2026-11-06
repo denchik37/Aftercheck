@@ -28,7 +28,7 @@ from playwright.sync_api import expect, sync_playwright
 
 
 ROOT = Path(__file__).resolve().parents[1]
-HTML_PATH = ROOT / "web" / "inspector.html"
+HTML_PATH = ROOT / "web" / "report-viewer.html"
 
 
 def sha256(value: bytes) -> str:

@@ -1,7 +1,7 @@
 import {address, hash32, rawAmount, requireRecord} from './values.ts';
 import {parsePolicy} from './policy.ts';
-import {validateReceiptIdentity} from './evidence.ts';
-import {canonicalJson} from './json.ts';
+import {validateReceiptIdentity} from './evidence-core.ts';
+import {canonicalJson} from './json-codec.ts';
 import type {Check, Report} from './evaluate.ts';
 
 // Official Sepolia deployment table, checked 2026-11-05. See docs/PROTOCOL.md.

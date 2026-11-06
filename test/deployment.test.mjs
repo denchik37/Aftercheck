@@ -3,13 +3,15 @@ import assert from 'node:assert/strict';
 import {readFileSync, readdirSync} from 'node:fs';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
+import {createHash} from 'node:crypto';
 import vm from 'node:vm';
 import {verifyEvidence} from '../src/verify.ts';
 import {canonicalJson} from '../src/json.ts';
 
 const root = new URL('../', import.meta.url);
 const web = new URL('web/', root);
-const html = readFileSync(new URL('inspector.html', web), 'utf8');
+const html = readFileSync(new URL('report-viewer.html', web), 'utf8');
+const workspace = readFileSync(new URL('inspector.html', web), 'utf8');
 const read = path => readFileSync(new URL(path, root), 'utf8');
 const appSpec = read('.do/app.yaml');
 const deployTemplate = read('.do/deploy.template.yaml');
@@ -42,7 +44,7 @@ test('public sample downloads match fresh verifier results and load in the actua
   }
 });
 
-test('static publication includes only the standalone viewer and allowlisted public report bytes', () => {
+test('static publication includes only reviewed browser modules, genuine evidence, and viewer assets', () => {
   const published = [];
   function walk(dir, prefix = '') {
     for (const entry of readdirSync(dir, {withFileTypes: true})) {
@@ -53,13 +55,49 @@ test('static publication includes only the standalone viewer and allowlisted pub
     }
   }
   walk(web);
-  assert.deepEqual(published.sort(), ['inspector.html', ...cases.map(([name]) => 'samples/' + name + '.json')].sort());
-  // Asset budget also catches accidental inclusion of evidence archives or vendor bundles.
+  const manifest = JSON.parse(read('web/assets/browser-build.json'));
+  const approvedModules = ['browser-engine', 'json-codec', 'evidence-core', 'verify-core', 'uniswap',
+    'policy', 'values', 'report', 'amounts', 'browser-export', 'browser-workspace', 'token-precision'];
+  const approvedAssets = approvedModules.map(name => 'assets/' + name + '.js');
+  assert.deepEqual(manifest.assets.map(asset => asset.path).sort(), approvedAssets.sort());
+  assert.deepEqual(published.sort(), ['inspector.html', 'workspace.css', 'report-viewer.html', 'evidence/sepolia.json',
+    'assets/browser-build.json', ...approvedAssets, ...cases.map(([name]) => 'samples/' + name + '.json')].sort());
+  // Deliberate budgets include the 184 kB retained capture and a small native ES-module graph.
   const bytes = published.reduce((sum, path) => sum + readFileSync(new URL(path, web)).length, 0);
-  assert.ok(bytes < 128 * 1024, 'Keep this static viewer and its four small reports below 128 KiB');
+  assert.ok(bytes < 512 * 1024, 'Keep the complete static workspace below 512 KiB');
+  assert.ok(readFileSync(new URL('evidence/sepolia.json', web)).length < 256 * 1024);
+  for (const asset of manifest.assets) {
+    const data = readFileSync(new URL(asset.path, web));
+    assert.equal(data.length, asset.bytes);
+    assert.equal(createHash('sha256').update(data).digest('hex'), asset.sha256);
+    assert.ok(data.length < 128 * 1024, 'No oversized runtime module: ' + asset.path);
+  }
+  assert.deepEqual(readFileSync(new URL('evidence/sepolia.json', web)),
+    readFileSync(new URL('examples/sepolia/evidence.json', root)), 'Publish the original capture bytes unchanged');
+  assert.equal(createHash('sha256').update(html).digest('hex'),
+    '8fc5fef9b8ea2e52cd9448e1b5d32efc4c41f2f6b8f395260957031d5dcd958a',
+    'Keep the previously deployed standalone report viewer byte-for-byte as the fallback');
   assert.match(html, /LOCAL REPORTS · NO UPLOADS/);
   assert.match(html, /Hosted page and public sample downloads use the network/);
   assert.match(html, /Importing a saved report processes its contents on this device without uploading them/);
+});
+
+test('browser workspace restricts networking and keeps imported values inert', () => {
+  const csp = workspace.match(/http-equiv="Content-Security-Policy" content="([^"]+)"/)?.[1] ?? '';
+  for (const value of ["default-src 'none'", "script-src 'self'", "connect-src 'self'",
+    "object-src 'none'", "form-action 'none'", "base-uri 'none'"]) assert.ok(csp.includes(value), value);
+  assert.doesNotMatch(workspace, /<iframe\b|<(?:script|link|img)\b[^>]*(?:src|href)="https?:/i);
+  const source = read('src/browser-workspace.ts');
+  assert.doesNotMatch(source, /\b(?:innerHTML|outerHTML|insertAdjacentHTML)\b|document\.write\s*\(/);
+  assert.doesNotMatch(source, /\b(?:localStorage|sessionStorage|indexedDB|sendBeacon|XMLHttpRequest|WebSocket|EventSource)\b/);
+  assert.doesNotMatch(source, /ethereum\.request|requestAccounts|eth_sendTransaction|wallet_/);
+});
+
+test('committed browser assets reproduce from the exact pinned compiler and reviewed source graph', () => {
+  const result = spawnSync(process.execPath, ['scripts/build-browser.mjs', '--check'],
+    {cwd: fileURLToPath(root), encoding: 'utf8', timeout: 30_000});
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.match(result.stdout, /Verified .* browser assets/);
 });
 
 test('the public sample generator checks committed artifacts with networking disabled', () => {

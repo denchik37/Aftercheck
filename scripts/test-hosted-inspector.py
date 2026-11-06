@@ -6,7 +6,7 @@ Public: python scripts/test-hosted-inspector.py --url https://ACTUAL-HOST/ \
           --expected-revision FULL_COMMIT_SHA --out output/hosted-production
 
 --local serves only web/ on an ephemeral loopback port, mapping / to the configured
-inspector.html index. It does not establish DigitalOcean routing, TLS, or headers.
+inspector.html index. The retained viewer regression uses /report-viewer.html. It does not establish DigitalOcean routing, TLS, or headers.
 --url requires a clean checkout at the expected commit and uses normal certificate
 validation in both urllib and Chromium. Public requests contain only public asset
 paths. All attempted browser requests during report import are recorded and blocked.
@@ -205,7 +205,7 @@ def main() -> int:
         require(commit == expected, "Check out the expected source commit before testing this deployment")
         if args.url:
             require(not dirty, "Public release verification requires a clean checkout at the expected commit")
-        html_bytes = (WEB / "inspector.html").read_bytes()
+        html_bytes = (WEB / "report-viewer.html").read_bytes()
         summary["inspectorSha256"] = sha256(html_bytes)
         payloads = make_reports()
         reports = {name: json.loads(data) for name, data in payloads.items()}
@@ -229,9 +229,9 @@ def main() -> int:
         if args.local:
             server = ThreadingHTTPServer(("127.0.0.1", 0), StaticHandler)
             threading.Thread(target=server.serve_forever, daemon=True).start()
-            url = f"http://127.0.0.1:{server.server_port}/"
+            url = f"http://127.0.0.1:{server.server_port}/report-viewer.html"
         else:
-            url = args.url
+            url = urljoin(args.url, "report-viewer.html")
         summary["url"] = url
         root_response, root_body = retrieve(url, url)
         summary["http"].append(root_response)

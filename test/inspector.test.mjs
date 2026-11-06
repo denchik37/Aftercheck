@@ -7,7 +7,7 @@ import {evaluateReceiptBundle} from '../src/uniswap.ts';
 import {verifyEvidence} from '../src/verify.ts';
 import {rpcFixture, policyFixture} from './helpers/uniswap-fixture.mjs';
 
-const html = readFileSync(new URL('../web/inspector.html', import.meta.url), 'utf8');
+const html = readFileSync(new URL('../web/report-viewer.html', import.meta.url), 'utf8');
 const parserSource = html.match(/<script id="report-parser">([\s\S]*?)<\/script>/)?.[1];
 const presentationSource = html.match(/<script id="report-presentation">([\s\S]*?)<\/script>/)?.[1];
 assert.ok(parserSource, 'The actual standalone inspector parser must be present');

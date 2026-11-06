@@ -298,7 +298,7 @@ test('Offline case runner exports eight deterministic files that independently r
 
     // Exercise the actual standalone viewer parser; no parser or schema is
     // invented here, and the other workstream's HTML is read without editing.
-    const html = readFileSync(new URL('../web/inspector.html', import.meta.url), 'utf8');
+    const html = readFileSync(new URL('../web/report-viewer.html', import.meta.url), 'utf8');
     const parserSource = html.match(/<script id="report-parser">([\s\S]*?)<\/script>/)?.[1];
     assert.ok(parserSource, 'The existing report parser must be present');
     const context = vm.createContext({TextEncoder});

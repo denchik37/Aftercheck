@@ -1,4 +1,128 @@
-# DigitalOcean static viewer deployment
+# DigitalOcean static application deployment
+
+## Browser verifier release status — 6 November 2026
+
+**The browser-native verifier has not been deployed.** The existing public root
+[aftercheck-g4nsb.ondigitalocean.app](https://aftercheck-g4nsb.ondigitalocean.app/)
+still serves the prior 55,075-byte saved-report viewer, SHA-256
+`8fc5fef9b8ea2e52cd9448e1b5d32efc4c41f2f6b8f395260957031d5dcd958a`.
+The new implementation passed both mandatory jobs in
+[push Verify 42260012899](https://github.com/denchik37/aftercheck/actions/runs/42260012899)
+and [PR Verify 42260023168](https://github.com/denchik37/aftercheck/actions/runs/42260023168)
+for feature source `1b4729ef259e2c4641e21e1b77d4369c3def0ae6`. The runs establish
+**343 Node tests, 40 Chromium/Node parity cases, 46 workspace checks including
+18 actual ZIP/offline CLI replays, 75 fallback-viewer cases and 44 local HTTP
+checks including 36 browser checks**. The refreshed desktop, mobile and 320px
+workspace screenshots were visually reviewed. These are local-HTTP CI results;
+manual production release and the public HTTPS walkthrough have not occurred.
+[PR #34](https://github.com/denchik37/aftercheck/pull/34) is the authoritative record
+for current source, integration and required checks.
+
+Authenticated provider access was unavailable in this execution session. The
+connected Browser tool required the originating browser context, and the cloud
+DigitalOcean dashboard attempt returned **Site Unavailable**. This is an access
+limitation, not evidence that the public application is down. No new deployment
+ID, active provider Git SHA, current account estimate or rollback availability has
+been authenticated. The previous provider record below is preserved as dated
+evidence rather than represented as a fresh dashboard observation.
+
+| Release item | Current recorded state |
+|---|---|
+| Authorized target | Existing dedicated app `2fb584c9-e7fc-4ab9-8565-8c2d84da13c2` |
+| Existing public URL | `https://aftercheck-g4nsb.ondigitalocean.app/` |
+| Public behavior observed during this enhancement | Prior saved-report viewer remains served |
+| Historical deployment / source | `a0318069-e0fd-4616-a3da-4c8d703feaf7` / `d5414cb43c6d31cc66afd070d14dca4ab9921a75` |
+| New verifier deployment ID / source | Pending; no new provider deployment has been established |
+| Resource architecture | Existing App Platform Static Site; source `web`, index `inspector.html`, no paid component added |
+| Automatic deployment | Remains disabled in the app spec; a push/merge is not a release |
+| Recovery reference | Historical deployment above is a candidate; its continued availability must be checked in the authenticated dashboard |
+| Rollback execution | Not performed |
+
+### New static asset boundary
+
+The new workspace keeps the existing app configuration. Reviewed, committed files
+are served directly; no runtime Node service, database, RPC backend, account,
+wallet, signing or analytics is introduced. The original viewer is preserved
+byte-for-byte as `report-viewer.html`.
+
+The explicit 21-file publication allowlist now covers `inspector.html`,
+`workspace.css`, `report-viewer.html`, the unchanged `evidence/sepolia.json`, four
+sample reports, twelve native JavaScript modules and `assets/browser-build.json`. The
+[browser implementation guide](BROWSER_VERIFIER.md#static-build-and-publication-boundary)
+lists every path. `test/deployment.test.mjs` rejects symlinks and extra files and
+enforces a **512 KiB total** limit, **256 KiB evidence** limit and **128 KiB per
+module** limit. The deterministic build has an additional **250,000-byte generated
+asset** budget. Compiler research inputs and internal repository files are not
+published.
+
+The reviewed candidate at `1b4729ef259e2c4641e21e1b77d4369c3def0ae6` measures
+**21 files / 382,709 bytes**. Generated JavaScript plus its build manifest measure
+**13 assets / 104,465 bytes**, with source digest
+`e10bd20375263954c51712e46c807414f1170bc7002fcb37437e8e5ab85704f0`.
+These are source/CI measurements, not observations of a new deployment. The
+[readiness checkpoint](READINESS.md#browser-verifier-implementation--6-november-2026)
+preserves the earlier `54c861b` run, its 24-screenshot layout findings, and the
+corrected run's 27-screenshot artifact.
+
+The build manifest records exact source-file hashes, generator digest, pinned
+TypeScript version, combined source digest and each emitted asset's size/hash.
+`npm run check:browser` rejects stale output. This provides a reproducible content
+binding; the release record must still name the exact reviewed Git revision and
+the separately authenticated provider deployment. The manifest alone is not a
+provider or Git attestation.
+
+The workspace meta CSP changes connection access from `'none'` to `'self'` for
+retained same-origin evidence and restricts scripts/styles to `'self'`. Policy input,
+imports and generated files stay local. The saved-report fallback retains its old
+no-connections CSP. HTML meta CSP does not establish HTTP framing/security headers;
+actual provider response headers remain part of production inspection.
+
+The last authenticated dashboard estimate was **$0.00/month** for the earlier
+static-only app. This enhancement adds no paid resource or service. The current
+account estimate and transfer usage have not been rechecked; the existing
+provider's transfer accounting still applies. Historical pricing statements below
+are preserved with their original check date.
+
+### Manual promotion and acceptance
+
+1. Review the focused PR, integrate current `main`, and require the complete Node
+   and Chromium CI jobs to pass at the exact release source. Inspect the actual
+   screenshots and exported-package replay logs. Record the full reviewed SHA.
+2. Restore authenticated access to the existing dedicated app. Before deployment,
+   record its current deployment/source and confirm the historical recovery
+   candidate is still available. Do not create another app or change unrelated
+   resources.
+3. Use the existing app's manual deployment control for the intended reviewed
+   revision. Keep automatic deployment disabled and the component static-only.
+   Inspect provider build/deployment logs and wait for the actual live state.
+4. Run the new `Production verifier` workflow with the full reviewed source SHA.
+   It compares all public asset bytes and exercises actual browser evaluation,
+   downloads and offline CLI reproduction. Its equivalent command is:
+
+   ```bash
+   python scripts/test-browser-workspace.py \
+     --url https://aftercheck-g4nsb.ondigitalocean.app/ \
+     --expected-revision <full-reviewed-source-SHA> \
+     --out output/verifier-production
+   ```
+
+5. Inspect the desktop, mobile and narrow screenshots and the actual downloaded
+   PASS/VIOLATION/UNKNOWN packages. Record the authenticated new deployment ID,
+   source identity, public HTTPS/TLS results, manifest/asset hashes, CI run and
+   rollback reference. Update this status only from those observations.
+
+The new HTTPS harness requires a clean checkout at the expected revision, uses
+normal certificate validation, compares reviewed assets, checks unintended paths,
+and records UI/privacy/download behavior. It keeps provider identity separate from
+public byte equality. A local run, a green build, HTTP 200 or matching HTML alone
+does not establish the complete production outcome.
+
+## Preserved saved-report viewer release — 6 November 2026
+
+**Historical scope:** the remainder of this document records the initial viewer
+release at `d5414cb43c6d31cc66afd070d14dca4ab9921a75`. Its five-file publication
+boundary, old CSP, provider observations and test counts apply to that prior
+release. They are not acceptance evidence for the browser-verifier enhancement.
 
 **6 November 2026 (IST): production deployment and public verification complete.**
 The dedicated static viewer is live at
@@ -10,8 +134,9 @@ audited service or protection for real funds.
 
 ## Architecture and source boundary
 
-The versioned [app spec](../.do/app.yaml) publishes the existing self-contained
-[inspector](../web/inspector.html) and four public historical reports. It uses one
+The versioned [app spec](../.do/app.yaml) published the self-contained
+[original inspector at the release SHA](https://github.com/denchik37/aftercheck/blob/d5414cb43c6d31cc66afd070d14dca4ab9921a75/web/inspector.html)
+and four public historical reports. It used one
 **App Platform Static Site**, with no application service, database, worker,
 wallet, report-upload endpoint, analytics, or RPC credentials.
 

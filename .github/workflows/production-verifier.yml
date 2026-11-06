@@ -1,0 +1,50 @@
+name: Production verifier
+on:
+  workflow_dispatch:
+    inputs:
+      source_revision:
+        description: Full reviewed Git SHA selected for the existing static application
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  production-https:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      AFTERCHECK_BROWSER_VENV: /tmp/aftercheck-verifier-browser-venv
+      AFTERCHECK_PRODUCTION_URL: https://aftercheck-g4nsb.ondigitalocean.app/
+      AFTERCHECK_DEPLOYED_REVISION: ${{ inputs.source_revision }}
+    steps:
+      - name: Validate pinned source revision
+        run: |
+          [[ "$AFTERCHECK_DEPLOYED_REVISION" =~ ^[0-9a-f]{40}$ ]]
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          ref: ${{ inputs.source_revision }}
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: '24'
+      - name: Install isolated verification runtime
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          python3 -m venv "$AFTERCHECK_BROWSER_VENV"
+          "$AFTERCHECK_BROWSER_VENV/bin/pip" install --disable-pip-version-check -r test/browser-requirements.txt
+          "$AFTERCHECK_BROWSER_VENV/bin/python" -m playwright install --with-deps chromium
+          node scripts/build-browser.mjs --check
+      - name: Verify public assets, financial interaction, downloads and offline replay
+        run: |
+          "$AFTERCHECK_BROWSER_VENV/bin/python" scripts/test-browser-workspace.py \
+            --url "$AFTERCHECK_PRODUCTION_URL" \
+            --expected-revision "$AFTERCHECK_DEPLOYED_REVISION" \
+            --out output/verifier-production
+      - name: Retain public verification evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: production-verifier-${{ github.run_id }}-${{ github.run_attempt }}
+          path: output/verifier-production/
+          if-no-files-found: error
+          retention-days: 30
