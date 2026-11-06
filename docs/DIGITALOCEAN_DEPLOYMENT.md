@@ -1,8 +1,39 @@
 # DigitalOcean static application deployment
 
-## Browser verifier release status — 6 November 2026
+## Current browser-verifier release — public acceptance 7 November 2026 IST
 
-**The browser-native verifier has not been deployed.** The existing public root
+The dedicated **existing** DigitalOcean App Platform static application is
+publicly accessible at [https://aftercheck-g4nsb.ondigitalocean.app/](https://aftercheck-g4nsb.ondigitalocean.app/).
+[Production GitHub acceptance run 42280622631](https://github.com/denchik37/aftercheck/actions/runs/42280622631) used a clean checkout
+of merged `f4fac3b8b7a3680aaef362c76de39e3d1df65fdd` and passed **47 production HTTPS/browser checks**,
+including exact published asset-byte comparisons, authenticated TLS 1.3,
+transaction/policy PASS, VIOLATION and reserve UNKNOWN, 18 actual browser ZIP
+exports replayed byte-for-byte through the offline CLI, 27 screenshots and zero
+local-policy network requests, browser errors or dialogs.
+The [artifact](https://github.com/denchik37/aftercheck/actions/runs/42280622631/artifacts/13535895576) is retained 30 days.
+
+The app remains static, read-only, local-first, and free of public RPC collection,
+wallets, signers, backend services, secrets or databases. The prior saved-report
+viewer remains published as `/report-viewer.html`. This is a release-status update,
+not a new deployment or an expansion of financial verification scope.
+
+**Provider-identity qualification:** The owner previously reported using the
+DigitalOcean dashboard to launch the release and seeing the `f4fac3b` source
+prefix, but this review did **not** retrieve the new full DigitalOcean deployment
+ID, provider-reported source SHA or verify that the earlier deployment remains
+selectable for rollback. The production test itself records
+`providerIdentityVerified: false`. Public-byte identity plus a GitHub checkout
+is robust content acceptance, not a signed provider identity assertion.
+The known dedicated app ID is `2fb584c9-e7fc-4ab9-8565-8c2d84da13c2`;
+its original deployment ID `a0318069-e0fd-4616-a3da-4c8d703feaf7`
+is a **historical**, not newly authenticated, recovery reference.
+Do not claim current provider metadata or that rollback was exercised.
+Check the app's **Activity** page through an authenticated owner session when
+convenient; no new DigitalOcean app or paid resource is required.
+
+## Historical predeployment checkpoint — 6 November 2026
+
+**At this earlier checkpoint the browser-native verifier had not yet been deployed.** The public root
 [aftercheck-g4nsb.ondigitalocean.app](https://aftercheck-g4nsb.ondigitalocean.app/)
 still serves the prior 55,075-byte saved-report viewer, SHA-256
 `8fc5fef9b8ea2e52cd9448e1b5d32efc4c41f2f6b8f395260957031d5dcd958a`.

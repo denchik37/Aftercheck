@@ -2,16 +2,17 @@
 
 **Experimental, read-only financial verification for a supported Uniswap swap.** Aftercheck compares retained transaction evidence with a user-supplied retrospective policy. The shared browser/Node engine validates the evidence, reconciles the supported receipt and produces exact, reproducible PASS / VIOLATION / UNKNOWN findings. It is not audited and does not establish safety for real funds.
 
-**Browser feature release status — 6 November 2026:** the browser verifier is
-implemented and has passed Node and actual Chromium verification at
-[`1b4729e`](https://github.com/denchik37/aftercheck/commit/1b4729ef259e2c4641e21e1b77d4369c3def0ae6),
-including downloaded-package reproduction through the offline CLI.
-[PR #34](https://github.com/denchik37/aftercheck/pull/34) records the current
-integration and check state. **The new verifier is not deployed:** the
-[public website](https://aftercheck-g4nsb.ondigitalocean.app/) still serves the
-previous saved-report viewer, and authenticated provider access is unavailable.
-See the [readiness checkpoint](docs/READINESS.md) and
-[release status](docs/DIGITALOCEAN_DEPLOYMENT.md).
+**Browser-native verifier: public HTTPS acceptance PASSED (7 November 2026 IST).**
+The existing [Aftercheck static site](https://aftercheck-g4nsb.ondigitalocean.app/) served the exact reviewed assets
+from merged revision `f4fac3b8b7a3680aaef362c76de39e3d1df65fdd`; the external [production acceptance run](https://github.com/denchik37/aftercheck/actions/runs/42280622631)
+passed **47 checks**, exported **18 real verification ZIP packages** and reproduced
+each package through the unchanged offline CLI, and retained **27 live screenshots**
+([artifact](https://github.com/denchik37/aftercheck/actions/runs/42280622631/artifacts/13535895576)). TLS 1.3 validated across three viewports; PASS, VIOLATION,
+reserve UNKNOWN, exact report parity and zero policy-evaluation networking passed.
+The app remains a static retained-evidence verifier, **not** a live browser RPC collector.
+The new provider deployment ID, provider-reported full SHA and rollback retention
+have **not** been independently authenticated; matching public bytes are not a
+provider-signed deployment attestation. [Release record](docs/DIGITALOCEAN_DEPLOYMENT.md).
 
 ## Run locally
 
