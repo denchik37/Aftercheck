@@ -11,3 +11,5 @@ integrations/cre/workflow/config.json
 integrations/cre/workflow/build/
 integrations/cre/workflow/*.wasm
 integrations/cre/workflow/main.js
+# CRE CLI v1.39.0 may leave this transient compiled JavaScript after simulation.
+integrations/cre/workflow/.cre_build_tmp.js
