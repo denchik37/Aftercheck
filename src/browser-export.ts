@@ -1,0 +1,142 @@
+import {canonicalJson, parseJson} from './json-codec.ts';
+import {parsePolicy} from './policy.ts';
+import {verifyEvidenceAsync} from './browser-engine.ts';
+import {renderMarkdown} from './report.ts';
+import {parseDecimals} from './amounts.ts';
+import {authenticatedTokenPrecision, type VerifiedTokenPrecision} from './token-precision.ts';
+import {requireRecord} from './values.ts';
+
+export const MAX_EXPORT_FILE_BYTES = 8_000_000;
+export const MAX_EXPORT_TOTAL_BYTES = 16_000_000;
+const FILE_NAMES = ['evidence.json', 'policy.json', 'report.json', 'report.md', 'display-metadata.json', 'README.txt'] as const;
+const encoder = new TextEncoder();
+const crcTable = Uint32Array.from({length: 256}, (_, value) => {
+  let crc = value;
+  for (let bit = 0; bit < 8; bit++) crc = (crc >>> 1) ^ ((crc & 1) ? 0xedb88320 : 0);
+  return crc >>> 0;
+});
+
+function crc32(bytes: Uint8Array): number {
+  let crc = 0xffffffff;
+  for (const byte of bytes) crc = (crc >>> 8) ^ crcTable[(crc ^ byte) & 255];
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
+function utf8(text: string): Uint8Array {
+  const bytes = encoder.encode(text);
+  // Refuse a raw unpaired surrogate that UTF-8 encoding would replace silently.
+  if (new TextDecoder('utf-8', {fatal: true, ignoreBOM: true}).decode(bytes) !== text) throw new TypeError('EXPORT_INVALID_UTF8');
+  return bytes;
+}
+
+/** Bounded standard ZIP, method STORE. Fixed names, no paths, compression or ZIP64. */
+export function createStoreZip(filesInput: Record<string, string>): Uint8Array {
+  const files = requireRecord(filesInput, 'export files');
+  const names = Object.keys(files);
+  if (names.length === 0 || names.length > FILE_NAMES.length || names.some(name => !FILE_NAMES.includes(name as typeof FILE_NAMES[number]))) {
+    throw new TypeError('EXPORT_FILE_NAMES');
+  }
+  let contentBytes = 0;
+  const entries = FILE_NAMES.filter(name => Object.hasOwn(files, name)).map(name => {
+    const text = files[name];
+    if (typeof text !== 'string' || text.length > MAX_EXPORT_FILE_BYTES) throw new RangeError('EXPORT_SIZE_LIMIT');
+    const bytes = utf8(text);
+    contentBytes += bytes.length;
+    if (bytes.length > MAX_EXPORT_FILE_BYTES || contentBytes > MAX_EXPORT_TOTAL_BYTES) throw new RangeError('EXPORT_SIZE_LIMIT');
+    return {name: encoder.encode(name), bytes, crc: crc32(bytes), offset: 0};
+  });
+  const localSize = entries.reduce((sum, entry) => sum + 30 + entry.name.length + entry.bytes.length, 0);
+  const centralSize = entries.reduce((sum, entry) => sum + 46 + entry.name.length, 0);
+  const archive = new Uint8Array(localSize + centralSize + 22);
+  const view = new DataView(archive.buffer);
+  let at = 0;
+  const u16 = (value: number) => { view.setUint16(at, value, true); at += 2; };
+  const u32 = (value: number) => { view.setUint32(at, value, true); at += 4; };
+  const bytes = (value: Uint8Array) => { archive.set(value, at); at += value.length; };
+  for (const entry of entries) {
+    entry.offset = at;
+    u32(0x04034b50); u16(20); u16(0x0800); u16(0); u16(0); u16(33);
+    u32(entry.crc); u32(entry.bytes.length); u32(entry.bytes.length); u16(entry.name.length); u16(0);
+    bytes(entry.name); bytes(entry.bytes);
+  }
+  for (const entry of entries) {
+    u32(0x02014b50); u16(20); u16(20); u16(0x0800); u16(0); u16(0); u16(33);
+    u32(entry.crc); u32(entry.bytes.length); u32(entry.bytes.length); u16(entry.name.length);
+    u16(0); u16(0); u16(0); u16(0); u32(0); u32(entry.offset); bytes(entry.name);
+  }
+  u32(0x06054b50); u16(0); u16(0); u16(entries.length); u16(entries.length);
+  u32(centralSize); u32(localSize); u16(0);
+  if (at !== archive.length) throw new Error('EXPORT_ARCHIVE_LENGTH');
+  return archive;
+}
+
+export interface VerificationPackageInput {
+  evidenceText: string;
+  policy: unknown;
+  report: unknown;
+  displayDecimals?: {input: number | null; output: number | null};
+}
+
+function displayToken(address: string, decimals: number | null, verified: VerifiedTokenPrecision | null): Record<string, unknown> {
+  if (decimals === null) return {address, decimals: null, provenance: 'RAW_UNITS'};
+  if (verified !== null && verified.address === address && verified.decimals === decimals) return {...verified};
+  return {address, decimals, provenance: 'USER_SUPPLIED_UNVERIFIED'};
+}
+
+/** Export the exact evaluated inputs and report; stale or fabricated results fail closed. */
+export async function createVerificationPackage(input: VerificationPackageInput): Promise<{files: Record<string, string>; zip: Uint8Array}> {
+  if (typeof input.evidenceText !== 'string') throw new TypeError('EXPORT_EVIDENCE_TEXT_REQUIRED');
+  const evidenceText = input.evidenceText;
+  const evidence = parseJson(evidenceText);
+  const policy = parsePolicy(input.policy);
+  const reportText = canonicalJson(input.report);
+  // Snapshot choices before awaiting crypto, so later UI edits cannot alter this package.
+  const display = {
+    input: input.displayDecimals?.input == null ? null : parseDecimals(input.displayDecimals.input),
+    output: input.displayDecimals?.output == null ? null : parseDecimals(input.displayDecimals.output)
+  };
+  const report = await verifyEvidenceAsync(evidence, policy);
+  if (canonicalJson(report) !== reportText) throw new Error('EXPORT_REPORT_MISMATCH');
+  const verified = await authenticatedTokenPrecision(evidence);
+  const displayMetadata = {
+    schemaVersion: 'aftercheck.display-metadata.v1', chainId: policy.chainId,
+    evidenceDigest: report.evidenceDigest, policyDigest: report.policyDigest,
+    input: displayToken(policy.tokenIn, display.input, verified.input),
+    output: displayToken(policy.tokenOut, display.output, verified.output),
+    limitation: 'Display metadata is supplementary. Policy amounts remain exact raw uint256 strings; user-supplied precision is not an authenticated token property.'
+  };
+  const readme = [
+    'Aftercheck verification package', '',
+    'evidence.json: original UTF-8 evidence text evaluated in the browser.',
+    'policy.json: normalized user-supplied retrospective policy in exact raw units.',
+    'report.json: actual browser verifier report, checked against these inputs again before export.',
+    'report.md: deterministic human-readable rendering of that report.',
+    'display-metadata.json: supplementary display precision and its provenance; not part of the policy.', '',
+    'Prepare the Aftercheck CLI and Node.js 24+ locally before going offline.',
+    'Extract this archive, then run from your Aftercheck checkout with the extracted input paths:', '',
+    'npm run cli -- verify evidence.json policy.json output/replay', '',
+    'If the files are outside the checkout, replace evidence.json and policy.json with their full paths.',
+    'Exit codes: 0 PASS; 2 VIOLATION; 3 UNKNOWN; 1 invalid input.',
+    'No RPC or network access is needed for verification of saved evidence.',
+    'Compare output/replay/report.json and report.md with the files in this package.', '',
+    `Transaction: ${report.transactionHash}`,
+    `Evidence SHA-256: ${report.evidenceDigest}`,
+    `Policy SHA-256: ${report.policyDigest}`,
+    `Evaluator version: ${report.evaluatorVersion}`,
+    `Execution: ${report.execution}; financial policy: ${report.verdict}`, '',
+    'Historical evidence replay; no fresh blockchain inspection occurred.',
+    'A matching evidence digest establishes bundle integrity, not RPC-source authenticity, Ethereum consensus or finality.',
+    'The policy was supplied retrospectively; it does not establish the original trader\'s instructions.',
+    'Receipt events do not establish an immediate post-transaction reserve.',
+    'ZIP timestamps are normalized to 1980-01-01 for deterministic bytes, not acquisition times.', ''
+  ].join('\n');
+  const files: Record<string, string> = {
+    'evidence.json': evidenceText,
+    'policy.json': canonicalJson(policy) + '\n',
+    'report.json': reportText + '\n',
+    'report.md': renderMarkdown(report),
+    'display-metadata.json': canonicalJson(displayMetadata) + '\n',
+    'README.txt': readme
+  };
+  return {files, zip: createStoreZip(files)};
+}
