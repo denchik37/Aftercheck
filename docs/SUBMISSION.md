@@ -64,13 +64,31 @@ The [event video guidance](https://ethglobal.com/events/mumbai/info/details) and
 
 ## Sponsor and owner checklist
 
-- **Chainlink CRE: omit from the recommended partner selection.** The 6 November
-  audit found no qualifying CRE simulation before the D−14h cutoff of **19:00
-  IST on 6 November**. Both current official guides still state **7 November,
-  09:00 IST**. See the [decision and CRE01–CRE05 evidence matrix](CRE_DECISION.md).
-  No external form or partner selection was changed by this record.
+- **Chainlink CRE: implemented; official execution qualification remains conditional.**
+  The owner superseded the internal deadline gate and authorized completion.
+  Present the optional manifest-to-pool comparison and Aftercheck appendix using
+  its actual execution classification. Select the third partner as qualified
+  only after a successful official CLI simulation is retained; a WASM build,
+  `RPC_REHEARSAL` or unit test does not establish that requirement. See the
+  [integration guide](CRE_INTEGRATION.md), [readiness evidence](READINESS.md) and
+  [decision history](CRE_DECISION.md). No external form or partner selection was changed.
 - **Uniswap:** retain the public MIT-licensed repository, actual protocol evidence, source locations in the README and [`FEEDBACK.md`](../FEEDBACK.md); submit the [Developer Feedback Form](https://developers.uniswap.org/hackathon-feedback) with the FEEDBACK URL. Form completion is pending. [Requirements](https://ethglobal.com/events/mumbai/prizes/uniswap-foundation).
 - **EF Best CROPS App, conditional:** the README must have a section titled `CROPS` explaining dependencies, reproducibility, third-party exposure and trust assumptions. Retain a video of the lead property surviving dependency loss. The client has no analytics, signing or account system; RPC collection reveals requests and network metadata to the chosen provider. Qualification is unconfirmed. [Requirements](https://ethglobal.com/events/mumbai/prizes/ethereum-foundation).
 - **Final submission:** owner action, still pending. Official deadline: **7 November 2026, 09:00 IST**; aim to finish the package by **05:00 IST**. Confirm any organizer updates and submit through the Hacker Dashboard. [Event details](https://ethglobal.com/events/mumbai/info/details).
 
 The supported operation excludes multicall, Universal Router, multi-hop and delegated/native-value routes. Reserve checks remain UNKNOWN. RPC observations and bytecode presence do not prove arbitrary token balance semantics. No new swap, contract deployment, financial protection, independent audit or sponsor acceptance is claimed.
+
+## Optional CRE presentation segment
+
+After the core receipt-policy and offline demonstrations, show the separate pool-identity appendix. Identify the original recorded pool, the comparison expectation, the historical block and the result status. Run the intentional mismatch to make the discrepancy visible while the core policy verdict remains unchanged. Explain that the EVM call is bound to a block number with a separately compared header; the same Tenderly provider does not establish independent-source authenticity.
+
+If official simulation is authenticated and succeeds, name the actual CLI/SDK versions and source-bound run. Otherwise show `RPC_REHEARSAL` only where a real rehearsal record exists and explicitly state that official CRE execution remains pending. Keep this segment short enough for the event's current video guidance; the pre-existing primary demonstration remains the lead story.
+
+**Current truthful sponsor copy:** “Aftercheck adds an optional Chainlink CRE workflow that combines a revision-pinned public evidence manifest with a historical Sepolia Uniswap factory read. Its separate report appendix exposes MATCH, MISMATCH, UNAVAILABLE and UNSUPPORTED without changing the financial-policy verdict. The official SDK workflow compiles to WASM. Live Node HTTP/RPC rehearsal produced MATCH, intentional MISMATCH and fetch-failure UNAVAILABLE, and Aftercheck consumed those results. Official CLI simulation is currently blocked by account authentication, so sponsor execution qualification remains incomplete.”
+
+For a reproducible presentation without live endpoint or account dependencies,
+run `npm run cre:demo`. It replays the retained real RPC observations, visibly
+labelled **OFFLINE REPLAY OF RETAINED RPC_REHEARSAL**; it performs no new CRE
+execution. The five appendices are under `output/cre-demo`.
+
+**AI assistance and provenance:** the optional CRE implementation, review and tests were assisted by ChatGPT. Actual commits, source revisions and execution logs establish what was built and run. Earlier planning is not relabelled as event-time implementation. The owner must accurately describe their own contributions and resolve any organizer questions about dated inputs; this repository does not certify participation or eligibility.

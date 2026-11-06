@@ -73,3 +73,36 @@ No parent/end-block balance subtraction, wallet signing, token approvals, transa
 Tests use literal public ABI selectors and event topics, manually constructed two's-complement values, both token directions, exact decimal thresholds beyond JavaScript's safe-integer range, and individually corrupted identities. The tests cover the implemented evidence boundary; a passing fixture suite is not evidence that a real swap occurred or that the application has been audited.
 
 The separate [historical Sepolia example](../examples/sepolia/README.md) retains an unchanged genuine RPC capture and a separate incomplete provider attempt. Its [real-case tests](../test/real-case.test.mjs) compare literal transaction identities, calldata, raw logs and quantities independently recorded from the explorer before the successful capture, then exercise the three offline CLI outcomes. These checks add real captured observations to the synthetic regression suite; they retain the same RPC trust and receipt-scoped claim boundary described above.
+
+## Optional CRE corroboration boundary
+
+The [optional integration](CRE_INTEGRATION.md) supplements this adapter with one
+historical factory `getPool` comparison. Its public manifest is derived from the
+retained genuine evidence, pinned to exact transaction, chain, block, factory,
+token, fee and source identities. A successful external manifest fetch is a
+required input; a locally configured fallback identifies the target on failure
+and cannot substitute for fetched evidence.
+
+The official SDK workflow requests a block-number-bound contract read and a
+separate numbered-block header. This differs from the original capture's
+EIP-1898 hash-bound observations. Neither a matching separate header nor an
+artifact digest turns the new call into a consensus proof or transaction-boundary
+state reconstruction. The fixed Tenderly endpoint is the original capture's
+provider, so provider independence is not established.
+
+`aftercheck.cre-corroboration.v1` separates `MATCH`, `MISMATCH`, `UNAVAILABLE` and
+`UNSUPPORTED` from the core report dimensions. Its execution metadata separates
+`CRE_CLI_SIMULATION`, `RPC_REHEARSAL` and `UNIT_TEST`. The digest-bound consumer
+recomputes comparisons, checks the source call/evidence and renders a separate
+`aftercheck.cre-appendix.v1`. Local result files remain self-reported; metadata
+alone does not authenticate execution. The financial-policy report is unchanged,
+including reserve UNKNOWN and any established amount-policy VIOLATION.
+
+The [shared comparator](../integrations/cre/shared.ts),
+[configuration boundary](../integrations/cre/config.ts),
+[official workflow](../integrations/cre/workflow/main.ts) and
+[consumer](../src/corroboration.ts) are the implemented scope. The
+[execution matrix](evidence/cre/README.md) distinguishes actual HTTP/RPC runs and
+WASM compilation from the still authentication-blocked official simulation.
+No token balance, reserve, price feed, CCIP operation, signing or broadcast is
+added to the supported profile.

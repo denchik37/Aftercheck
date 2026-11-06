@@ -1,0 +1,104 @@
+{
+  "records": [
+    {
+      "case": "reference",
+      "command": [
+        "node",
+        "scripts/cre-consume.mjs",
+        "examples/sepolia/evidence.json",
+        "examples/sepolia/policy-pass.json",
+        "integrations/cre/public/reference.json",
+        "output/cre-execution/rpc-reference-15s/result.json",
+        "output/cre-execution/consumed-final/reference"
+      ],
+      "consumerSourceRevision": "f7e4048389d3acf85d7c16020b34990c03fde93f",
+      "resultSourceRevision": "f7e4048389d3acf85d7c16020b34990c03fde93f",
+      "executionMode": "RPC_REHEARSAL",
+      "exitCode": 0,
+      "externalStatus": "MATCH",
+      "coreVerdict": "PASS",
+      "coreJsonAndMarkdownUnchanged": true,
+      "recordedAt": "2026-11-06T15:40:21.781882+00:00"
+    },
+    {
+      "case": "reference-violation",
+      "command": [
+        "node",
+        "scripts/cre-consume.mjs",
+        "examples/sepolia/evidence.json",
+        "examples/sepolia/policy-violation.json",
+        "integrations/cre/public/reference.json",
+        "output/cre-execution/rpc-reference-15s/result.json",
+        "output/cre-execution/consumed-final/reference-violation"
+      ],
+      "consumerSourceRevision": "f7e4048389d3acf85d7c16020b34990c03fde93f",
+      "resultSourceRevision": "f7e4048389d3acf85d7c16020b34990c03fde93f",
+      "executionMode": "RPC_REHEARSAL",
+      "exitCode": 0,
+      "externalStatus": "MATCH",
+      "coreVerdict": "VIOLATION",
+      "coreJsonAndMarkdownUnchanged": true,
+      "recordedAt": "2026-11-06T15:40:22.189780+00:00"
+    },
+    {
+      "case": "reference-reserve",
+      "command": [
+        "node",
+        "scripts/cre-consume.mjs",
+        "examples/sepolia/evidence.json",
+        "examples/sepolia/policy-reserve.json",
+        "integrations/cre/public/reference.json",
+        "output/cre-execution/rpc-reference-15s/result.json",
+        "output/cre-execution/consumed-final/reference-reserve"
+      ],
+      "consumerSourceRevision": "f7e4048389d3acf85d7c16020b34990c03fde93f",
+      "resultSourceRevision": "f7e4048389d3acf85d7c16020b34990c03fde93f",
+      "executionMode": "RPC_REHEARSAL",
+      "exitCode": 0,
+      "externalStatus": "MATCH",
+      "coreVerdict": "UNKNOWN",
+      "coreJsonAndMarkdownUnchanged": true,
+      "recordedAt": "2026-11-06T15:40:22.493173+00:00"
+    },
+    {
+      "case": "intentional-mismatch",
+      "command": [
+        "node",
+        "scripts/cre-consume.mjs",
+        "examples/sepolia/evidence.json",
+        "examples/sepolia/policy-pass.json",
+        "integrations/cre/public/intentional-mismatch.json",
+        "output/cre-execution/rpc-intentional-mismatch-15s/result.json",
+        "output/cre-execution/consumed-final/intentional-mismatch"
+      ],
+      "consumerSourceRevision": "f7e4048389d3acf85d7c16020b34990c03fde93f",
+      "resultSourceRevision": "f7e4048389d3acf85d7c16020b34990c03fde93f",
+      "executionMode": "RPC_REHEARSAL",
+      "exitCode": 2,
+      "externalStatus": "MISMATCH",
+      "coreVerdict": "PASS",
+      "coreJsonAndMarkdownUnchanged": true,
+      "recordedAt": "2026-11-06T15:40:22.846483+00:00"
+    },
+    {
+      "case": "unavailable",
+      "command": [
+        "node",
+        "scripts/cre-consume.mjs",
+        "examples/sepolia/evidence.json",
+        "examples/sepolia/policy-pass.json",
+        "integrations/cre/public/reference.json",
+        "output/cre-execution/rpc-unavailable-15s/result.json",
+        "output/cre-execution/consumed-final/unavailable"
+      ],
+      "consumerSourceRevision": "f7e4048389d3acf85d7c16020b34990c03fde93f",
+      "resultSourceRevision": "f7e4048389d3acf85d7c16020b34990c03fde93f",
+      "executionMode": "RPC_REHEARSAL",
+      "exitCode": 3,
+      "externalStatus": "UNAVAILABLE",
+      "coreVerdict": "PASS",
+      "coreJsonAndMarkdownUnchanged": true,
+      "recordedAt": "2026-11-06T15:40:23.161267+00:00"
+    }
+  ]
+}

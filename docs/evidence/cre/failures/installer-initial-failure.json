@@ -1,0 +1,11 @@
+{
+  "command": [
+    "node",
+    "scripts/cre-install-tools.mjs",
+    "--output",
+    "<scratch>/cre-tools/installer-full-check"
+  ],
+  "exitCode": 1,
+  "observedOutput": "CRE_TOOL_INSTALL_FAILED",
+  "correction": "Use exclusive copy across filesystem boundaries instead of rename; temporary and output directories have different filesystem device IDs."
+}

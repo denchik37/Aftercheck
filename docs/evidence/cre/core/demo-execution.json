@@ -1,0 +1,10 @@
+{
+  "sourceRevision": "ec92456bc401d2c30eff44900ceb634c0d0c7310",
+  "command": [
+    "npm",
+    "run",
+    "demo"
+  ],
+  "exitCode": 0,
+  "recordedAt": "2026-11-06T15:32:55.611555+00:00"
+}

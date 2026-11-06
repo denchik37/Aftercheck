@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "aftercheck.cre-rehearsal-execution.v1",
+  "executionMode": "RPC_REHEARSAL",
+  "startedAt": "2026-11-06T15:33:24.974Z",
+  "finishedAt": "2026-11-06T15:33:47.129Z",
+  "sourceRevision": "ec92456bc401d2c30eff44900ceb634c0d0c7310",
+  "relevantSourceClean": true,
+  "entrypoint": "scripts/cre-rehearse.mjs",
+  "publicSource": {
+    "url": "https://raw.githubusercontent.com/denchik37/aftercheck/2b86229b8db8e4cf2217de73aa4ab4d9ef9f8a4d/integrations/cre/public/intentional-mismatch.json",
+    "revision": "2b86229b8db8e4cf2217de73aa4ab4d9ef9f8a4d",
+    "path": "integrations/cre/public/intentional-mismatch.json",
+    "unavailableExpected": false,
+    "scenario": "intentional-mismatch",
+    "localBytesSha256": "0x63b0b06f69540e7a2ce0aee232f7c208a68dd41a038ea9f8f7d49d470cf671c1",
+    "manifestDigest": "0x03a312fef6bd38858f63e098b817f1afa73022d4333e41a8e1daac09b6110f2f"
+  },
+  "metadata": {
+    "executionMode": "RPC_REHEARSAL",
+    "workflowRevision": "ec92456bc401d2c30eff44900ceb634c0d0c7310",
+    "cliVersion": null,
+    "sdkVersion": null,
+    "rpcProvider": "TENDERLY_PUBLIC_SEPOLIA"
+  },
+  "comparisonStatus": "UNAVAILABLE",
+  "exitCode": 3,
+  "manifestDigest": "0x03a312fef6bd38858f63e098b817f1afa73022d4333e41a8e1daac09b6110f2f",
+  "manifestFileSha256": "0x63b0b06f69540e7a2ce0aee232f7c208a68dd41a038ea9f8f7d49d470cf671c1",
+  "resultSha256": "0xf748897ad69e64057ba486c2f681e62becd0d932c722bab12bfa7cff2edda866",
+  "transcriptSha256": "0x135882ef1555cb724b217705a64df2332d4ccffd31b50ce207a8b1b152559d02",
+  "officialCreSimulation": false,
+  "limitations": [
+    "Ordinary Node HTTP/RPC execution does not satisfy official CRE simulation qualification.",
+    "A local record and its digests do not authenticate Ethereum consensus or a Chainlink attestation."
+  ]
+}

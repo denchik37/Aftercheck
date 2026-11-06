@@ -1,0 +1,27 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> aftercheck-cre-workflow@0.1.0 build
+> bun x --no-install cre-compile main.ts build/workflow.wasm
+
+🚀 Compiling workflow
+📁 Input:   /workspace/scratch/8fc1fda0f4b2/aftercheck/integrations/cre/workflow/main.ts
+🧪 JS out:  /workspace/scratch/8fc1fda0f4b2/aftercheck/integrations/cre/workflow/build/workflow.js
+🎯 WASM out:/workspace/scratch/8fc1fda0f4b2/aftercheck/integrations/cre/workflow/build/workflow.wasm
+
+📦 Step 1: Compiling JS...
+📁 Using input file: /workspace/scratch/8fc1fda0f4b2/aftercheck/integrations/cre/workflow/main.ts
+Bundled 1 module in 54ms
+
+  workflow.js  0.78 MB  (entry point)
+
+✅ Built: /workspace/scratch/8fc1fda0f4b2/aftercheck/integrations/cre/workflow/build/workflow.js
+
+🔨 Step 2: Compiling to WASM...
+🔨 Compiling to WASM
+📁 Input:  /workspace/scratch/8fc1fda0f4b2/aftercheck/integrations/cre/workflow/build/workflow.js
+🎯 Output: /workspace/scratch/8fc1fda0f4b2/aftercheck/integrations/cre/workflow/build/workflow.wasm
+[cre-sdk-javy-plugin] Detected platform: linux, arch: x64
+[cre-sdk-javy-plugin] Using cached binary: /home/agent/.cache/javy/v8.1.0/linux-x64/javy
+✅ Compiled: /workspace/scratch/8fc1fda0f4b2/aftercheck/integrations/cre/workflow/build/workflow.wasm
+
+✅ Workflow built: /workspace/scratch/8fc1fda0f4b2/aftercheck/integrations/cre/workflow/build/workflow.wasm

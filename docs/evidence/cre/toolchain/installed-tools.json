@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "aftercheck.cre-toolchain.v1",
+  "platform": "linux-x64",
+  "installed": [
+    {
+      "name": "bun",
+      "version": "1.4.4",
+      "archiveSha256": "bf8ccbfb2b0b80159e0f9a6d15c55317add8077534dbc6130a3edb52fccb395c",
+      "source": "https://github.com/oven-sh/bun/releases/download/bun-v1.4.4/bun-linux-x64.zip",
+      "checksums": "https://github.com/oven-sh/bun/releases/download/bun-v1.4.4/SHASUMS256.txt",
+      "executable": "bin/bun",
+      "executableSha256": "10702245766b225e70bbf6235fd6b47214fd94b4760d00ffaed8ab0df57ac235"
+    },
+    {
+      "name": "cre",
+      "version": "1.39.0",
+      "archiveSha256": "e840ee945d3741fbc76a3cae73749bc9a1730cc58c6babc5e65c2567413c7af0",
+      "source": "https://github.com/smartcontractkit/cre-cli/releases/download/v1.39.0/cre_linux_amd64.tar.gz",
+      "checksums": "https://github.com/smartcontractkit/cre-cli/releases/download/v1.39.0/checksums.txt",
+      "executable": "bin/cre",
+      "executableSha256": "7ade0cee7bcb02ae49728ca2d4b607c62e573ebc1ee9a85dfc3e5be712baeef1"
+    }
+  ]
+}
