@@ -64,6 +64,11 @@ The [event video guidance](https://ethglobal.com/events/mumbai/info/details) and
 
 ## Sponsor and owner checklist
 
+- **Chainlink CRE: omit from the recommended partner selection.** The 6 November
+  audit found no qualifying CRE simulation before the D−14h cutoff of **19:00
+  IST on 6 November**. Both current official guides still state **7 November,
+  09:00 IST**. See the [decision and CRE01–CRE05 evidence matrix](CRE_DECISION.md).
+  No external form or partner selection was changed by this record.
 - **Uniswap:** retain the public MIT-licensed repository, actual protocol evidence, source locations in the README and [`FEEDBACK.md`](../FEEDBACK.md); submit the [Developer Feedback Form](https://developers.uniswap.org/hackathon-feedback) with the FEEDBACK URL. Form completion is pending. [Requirements](https://ethglobal.com/events/mumbai/prizes/uniswap-foundation).
 - **EF Best CROPS App, conditional:** the README must have a section titled `CROPS` explaining dependencies, reproducibility, third-party exposure and trust assumptions. Retain a video of the lead property surviving dependency loss. The client has no analytics, signing or account system; RPC collection reveals requests and network metadata to the chosen provider. Qualification is unconfirmed. [Requirements](https://ethglobal.com/events/mumbai/prizes/ethereum-foundation).
 - **Final submission:** owner action, still pending. Official deadline: **7 November 2026, 09:00 IST**; aim to finish the package by **05:00 IST**. Confirm any organizer updates and submit through the Hacker Dashboard. [Event details](https://ethglobal.com/events/mumbai/info/details).

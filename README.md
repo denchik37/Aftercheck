@@ -58,12 +58,15 @@ Receipt events are evaluated under an explicit plain-token assumption. Nonempty 
 
 ## Local inspector and demo
 
-**Public hosting work:** [DigitalOcean deployment and rollback](docs/DIGITALOCEAN_DEPLOYMENT.md)
-documents the static-site configuration and release checks. A working production
-URL has not yet been established; account access remains required. The inspector
-now includes four downloadable historical sample reports that can be imported
-without developer tools. Hosted page/sample delivery uses the network; report
-contents are processed locally without uploads.
+**Public viewer:** [aftercheck-g4nsb.ondigitalocean.app](https://aftercheck-g4nsb.ondigitalocean.app/).
+[Production HTTPS run 42234449518](https://github.com/denchik37/aftercheck/actions/runs/42234449518)
+passed **45 checks**, including **36 browser checks**, against the expected source
+checkout `d5414cb43c6d31cc66afd070d14dca4ab9921a75`. Public bytes matched that
+checkout. The separate authenticated provider record and release limitations are
+in [deployment and rollback](docs/DIGITALOCEAN_DEPLOYMENT.md). The inspector includes
+four downloadable historical sample reports that can be imported without
+developer tools. Hosted page/sample delivery uses the network; report contents
+are processed locally without uploads.
 
 Open [web/inspector.html](web/inspector.html) from your checkout and choose a generated `report.json`. Everything is in one HTML file: no backend, remote fonts, analytics or wallet. It displays statuses, raw amounts, identities, digests, checks and limitations. Malformed imports clear the previous result; imported text stays inert. The inspector **displays saved results** and does not recompute or authenticate them. Use CLI `verify` for offline re-evaluation.
 
@@ -78,6 +81,19 @@ npm run demo
 It replays `policy-pass.json`, `policy-violation.json` and `policy-reserve.json` against the same `evidence.json`, with common Node network entry points disabled. The cap policy returns VIOLATION; the reserve policy returns UNKNOWN with PARTIAL coverage. The rehearsal guard is not an operating-system network sandbox. The retained incomplete Publicnode observation separately reproduces UNKNOWN when historical state is unavailable.
 
 ## Executed verification
+
+**Latest audited main checkpoint:** [Verify run 42234382492](https://github.com/denchik37/aftercheck/actions/runs/42234382492)
+at `4130c2af7e6b096b8394f423f7e56ecc75da87ab` passed TypeScript checking,
+**197 Node tests**, the offline PASS/VIOLATION/UNKNOWN demo, **75 offline browser
+cases** and **44 local HTTP checks**. See [the current readiness matrix](docs/READINESS.md#current-audited-status--6-november-2026)
+for source boundaries and the separate public HTTPS result. The records below
+retain earlier implementation checkpoints.
+
+**Optional CRE status:** no Chainlink workflow or successful official simulation
+was established before the deadline-derived decision gate. Chainlink is omitted
+from the recommended partner selection; [the decision record](docs/CRE_DECISION.md)
+contains the verified timing and unmet requirements. The core needs no CRE
+credentials or dependencies.
 
 [Real-case PR #7 CI](https://github.com/denchik37/aftercheck/actions/runs/42069380806) tested merge revision `40ee01b30505ba8163c7e18011b2a8cb5e4878b3` for implementation commit `678cf4344d22af89f0d1114d97bd3c62500b2784`: TypeScript checking and **109 tests passed** on Node `24.22.2`, followed by all three committed demo policies with CLI exits `0/2/3`. Tests include literal historical observations, one-unit boundaries, offline replay, hostile input and output consistency.
 
