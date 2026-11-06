@@ -1,0 +1,51 @@
+# One-off production acceptance for the exact reviewed release. No deployment or secrets.
+# This workflow is branch-scoped and checks out the deployed release, not its own test-run commit.
+name: Production acceptance — f4fac3
+on:
+  push:
+    branches:
+      - verify/production-f4fac3
+permissions:
+  contents: read
+jobs:
+  production-https:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    env:
+      AFTERCHECK_BROWSER_VENV: /tmp/aftercheck-production-acceptance-venv
+      AFTERCHECK_URL: https://aftercheck-g4nsb.ondigitalocean.app/
+      RELEASE_SHA: f4fac3b8b7a3680aaef362c76de39e3d1df65fdd
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          ref: f4fac3b8b7a3680aaef362c76de39e3d1df65fdd
+          persist-credentials: false
+      - name: Authenticate release checkout identity
+        run: |
+          test "$(git rev-parse HEAD)" = "$RELEASE_SHA"
+          test -z "$(git status --porcelain)"
+          echo "Source checkout: $(git rev-parse HEAD)"
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: '24'
+      - name: Install isolated verification dependencies
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          python3 -m venv "$AFTERCHECK_BROWSER_VENV"
+          "$AFTERCHECK_BROWSER_VENV/bin/pip" install --disable-pip-version-check -r test/browser-requirements.txt
+          "$AFTERCHECK_BROWSER_VENV/bin/python" -m playwright install --with-deps chromium
+          node scripts/build-browser.mjs --check
+      - name: Run actual public HTTPS financial verifier acceptance
+        run: |
+          "$AFTERCHECK_BROWSER_VENV/bin/python" scripts/test-browser-workspace.py \
+            --url "$AFTERCHECK_URL" \
+            --expected-revision "$RELEASE_SHA" \
+            --out output/verifier-production
+      - name: Retain real public browser, export and replay evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: production-verifier-f4fac3-${{ github.run_id }}-${{ github.run_attempt }}
+          path: output/verifier-production/
+          if-no-files-found: warn
+          retention-days: 30
