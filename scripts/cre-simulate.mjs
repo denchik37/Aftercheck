@@ -8,7 +8,8 @@ import {basename, dirname, isAbsolute, join, relative, resolve, sep} from 'node:
 import {fileURLToPath} from 'node:url';
 import {stripVTControlCharacters} from 'node:util';
 import {
-  MAX_CRE_JSON_BYTES, assertManifestDigest, canonicalJson, parseCorroboration,
+  CRE_RESULT_CHUNK_BYTES, CRE_RESULT_CHUNK_MARKER, MAX_CRE_JSON_BYTES,
+  assertManifestDigest, canonicalJson, parseCorroboration,
   parseExecutionMetadata, parseManifest
 } from '../integrations/cre/shared.ts';
 
@@ -136,6 +137,46 @@ export async function bindManifestToPublicRevision(root, text, manifestUrl) {
 }
 
 /** Parser tests exercise untrusted output, not a simulated execution of CRE. */
+/**
+ * Decode one complete, checksum-bound simulator result from CRE user-log events.
+ * Chainlink limits each log line to 1 KB; every hex fragment is at most 256
+ * original UTF-8 bytes. Missing, conflicting, or truncated lines fail closed.
+ */
+export function reconstructChunkedResult(logs) {
+  const lines = logs.split('\n').filter(line => line.includes(CRE_RESULT_CHUNK_MARKER));
+  const maxChunks = Math.ceil(MAX_CRE_JSON_BYTES / CRE_RESULT_CHUNK_BYTES);
+  ensure(lines.length > 0 && lines.length <= maxChunks, 'CRE_RESULT_CHUNK_COUNT');
+  const chunks = new Map();
+  let declaredTotal = null, digest = null;
+  for (const line of lines) {
+    const pos = line.indexOf(CRE_RESULT_CHUNK_MARKER);
+    ensure(line.indexOf(CRE_RESULT_CHUNK_MARKER, pos + CRE_RESULT_CHUNK_MARKER.length) === -1, 'CRE_RESULT_CHUNK_INVALID');
+    const candidate = line.slice(pos + CRE_RESULT_CHUNK_MARKER.length);
+    const match = /^v1:([1-9][0-9]{0,2})\/([1-9][0-9]{0,2}):([0-9a-f]{64}):([0-9a-f]{2,512})$/.exec(candidate);
+    ensure(match !== null && match[4].length % 2 === 0, 'CRE_RESULT_CHUNK_INVALID');
+    const index = Number(match[1]), total = Number(match[2]), fragmentDigest = match[3];
+    ensure(total > 0 && total <= maxChunks && index <= total, 'CRE_RESULT_CHUNK_INDEX_INVALID');
+    ensure(declaredTotal === null || declaredTotal === total, 'CRE_RESULT_CHUNK_TOTAL_CONFLICT');
+    ensure(digest === null || digest === fragmentDigest, 'CRE_RESULT_CHUNK_DIGEST_CONFLICT');
+    ensure(!chunks.has(index), 'CRE_RESULT_CHUNK_DUPLICATE');
+    const bytes = Buffer.from(match[4], 'hex');
+    ensure(bytes.length > 0 && bytes.length <= CRE_RESULT_CHUNK_BYTES, 'CRE_RESULT_CHUNK_SIZE');
+    ensure(index === total || bytes.length === CRE_RESULT_CHUNK_BYTES, 'CRE_RESULT_CHUNK_SIZE');
+    declaredTotal = total;
+    digest = fragmentDigest;
+    chunks.set(index, bytes);
+  }
+  ensure(declaredTotal === lines.length, 'CRE_RESULT_CHUNK_MISSING');
+  const bytes = Buffer.concat(Array.from({length: declaredTotal}, (_, i) => {
+    const chunk = chunks.get(i + 1);
+    ensure(chunk !== undefined, 'CRE_RESULT_CHUNK_MISSING');
+    return chunk;
+  }));
+  ensure(bytes.length > 0 && bytes.length <= MAX_CRE_JSON_BYTES, 'CRE_RESULT_CHUNK_SIZE');
+  ensure(createHash('sha256').update(bytes).digest('hex') === digest, 'CRE_RESULT_CHUNK_CHECKSUM');
+  return new TextDecoder('utf-8', {fatal: true, ignoreBOM: true}).decode(bytes);
+}
+
 export function validateSimulationOutput({stdout, stderr = '', exitCode, failure = null}, manifestInput, metadataInput) {
   ensure(exitCode === 0 && failure === null, 'CRE_SIMULATOR_DID_NOT_SUCCEED');
   const manifest = parseManifest(manifestInput);
@@ -145,8 +186,14 @@ export function validateSimulationOutput({stdout, stderr = '', exitCode, failure
     metadata.sdkVersion === CRE_SDK_VERSION, 'CRE_SIMULATOR_METADATA_CONFLICT');
   const logs = stripVTControlCharacters(`${stdout}\n${stderr}`).replace(/\r\n/g, '\n');
   ensure(Buffer.byteLength(logs, 'utf8') <= MAX_LOG_BYTES, 'CRE_LOG_SIZE_LIMIT');
-  ensure(logs.split(RESULT_MARKER).length === 2, 'CRE_RESULT_MARKER_COUNT');
-  const json = logs.slice(logs.indexOf(RESULT_MARKER) + RESULT_MARKER.length).split('\n')[0];
+  const chunked = logs.includes(CRE_RESULT_CHUNK_MARKER);
+  ensure(!chunked || !logs.includes(RESULT_MARKER), 'CRE_RESULT_MARKER_MODE_CONFLICT');
+  const json = chunked ? reconstructChunkedResult(logs) : (() => {
+    // Backward compatibility for short, pre-chunk single-line results. Truncated
+    // old-format logs still fail strict parsing and never become evidence.
+    ensure(logs.split(RESULT_MARKER).length === 2, 'CRE_RESULT_MARKER_COUNT');
+    return logs.slice(logs.indexOf(RESULT_MARKER) + RESULT_MARKER.length).split('\n')[0];
+  })();
   const result = parseCorroboration(json);
   ensure(canonicalJson(result) === json, 'CRE_RESULT_NOT_CANONICAL');
   assertManifestDigest(result.manifest, sha256Text);
@@ -163,6 +210,10 @@ export function sanitizeCreLog(text, {secretValues = [], approvedResult = null} 
   }
   const approvedLine = approvedResult ? RESULT_MARKER + canonicalJson(approvedResult) : null;
   return cleaned.split('\n').map(line => {
+    // A malformed fragment can contain arbitrary untrusted payload; even valid
+    // fragments are represented by the separately validated result.json.
+    if (line.includes(CRE_RESULT_CHUNK_MARKER)) return CRE_RESULT_CHUNK_MARKER +
+      (approvedResult ? '[VALIDATED_FRAGMENT_OMITTED]' : '[UNVALIDATED_FRAGMENT_OMITTED]');
     if (line.includes(RESULT_MARKER)) return approvedLine && line.endsWith(approvedLine)
       ? approvedLine : `${RESULT_MARKER}[UNVALIDATED_RESULT_OMITTED]`;
     return line
