@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {mkdtempSync, readFileSync, writeFileSync, rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join, resolve} from 'node:path';
-import {fileURLToPath} from 'node:url';
+import {fileURLToPath, pathToFileURL} from 'node:url';
 import {spawnSync} from 'node:child_process';
 import {createVerificationPackage, createStoreZip, MAX_EXPORT_FILE_BYTES, MAX_EXPORT_TOTAL_BYTES} from '../src/browser-export.ts';
 import {verifyEvidenceAsync} from '../src/browser-engine.ts';
@@ -140,7 +140,7 @@ for (const [name, expectedCode, expectedVerdict] of [['pass', 0, 'PASS'], ['outp
       const unzip = independentlyExtractZip(zipPath, folder);
       assert.equal(unzip.status, 0, (unzip.stderr ?? '') + (unzip.stdout ?? '') + (unzip.error?.message ?? ''));
       for (const [file, text] of Object.entries(exported.files)) assert.equal(readFileSync(join(folder, file), 'utf8'), text);
-      const replay = spawnSync(process.execPath, ['--experimental-strip-types', '--import', resolve(root, 'scripts/offline-guard.mjs'), resolve(root, 'bin/aftercheck.mjs'), 'verify', join(folder, 'evidence.json'), join(folder, 'policy.json'), join(folder, 'replay')], {cwd: root, encoding: 'utf8', timeout: 15_000});
+      const replay = spawnSync(process.execPath, ['--experimental-strip-types', '--import', pathToFileURL(resolve(root, 'scripts/offline-guard.mjs')).href, resolve(root, 'bin/aftercheck.mjs'), 'verify', join(folder, 'evidence.json'), join(folder, 'policy.json'), join(folder, 'replay')], {cwd: root, encoding: 'utf8', timeout: 15_000});
       assert.equal(replay.status, expectedCode, replay.stderr + replay.stdout);
       assert.equal(JSON.parse(readFileSync(join(folder, 'replay/report.json'), 'utf8')).verdict, expectedVerdict);
       assert.equal(readFileSync(join(folder, 'replay/report.json'), 'utf8'), exported.files['report.json']);
