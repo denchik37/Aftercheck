@@ -1,12 +1,12 @@
 {
   "schemaVersion": "aftercheck.browser-build.v1",
-  "sourceDigest": "10eca359b9ab8f6d32001c60f0905798ad6f1669421d08b282c631a7693369d7",
+  "sourceDigest": "8e0f6e784aad0f188419609ed58781379586297d7369aa6c9cdab50f04f67c1e",
   "typescript": "5.9.3",
-  "generatorDigest": "29e4c92dda9166d210cc90499f52d194c3287fbc828b14314c6915c21f3d4d2b",
+  "generatorDigest": "9ea8135bfb4bf360f05c947b423cf70ee243f4ed9b7ab73de09fdc4665188b12",
   "sources": [
     {
       "path": "src/browser-engine.ts",
-      "sha256": "e0ffc8ff78945332b18bb025a6559069fb465ef4f4ed0cebe479db8cdf346c81"
+      "sha256": "fccbf85cde9661380f3de86793ba3d1b95a92ef2b3cbd70961a2c2379a5577fd"
     },
     {
       "path": "src/evidence-core.ts",
@@ -40,8 +40,8 @@
   "assets": [
     {
       "path": "assets/browser-engine.js",
-      "bytes": 2399,
-      "sha256": "95444c459b4e62a4eebf81d0eedc91e5b0f6bed93a48177fd9c9d2d89c1a1b5a"
+      "bytes": 2725,
+      "sha256": "658084991dc4afe05658582ef4efc82bc4379676820d32e248d225f5ccdff09d"
     },
     {
       "path": "assets/evidence-core.js",

@@ -44,8 +44,14 @@ export async function parseEvidenceAsync(input: unknown): Promise<EvidenceBundle
  */
 export async function verifyEvidenceAsync(input: unknown, policyInput: unknown): Promise<ReplayReport> {
   const snapshot = snapshotEvidence(input);
-  const policy = parsePolicy(policyInput);
+  // Normalize before yielding, but preserve Node's error precedence: an invalid
+  // evidence digest must be reported before an independently invalid policy.
+  let policy: ReturnType<typeof parsePolicy> | undefined;
+  let policyError: unknown;
+  try { policy = parsePolicy(policyInput); }
+  catch (error) { policyError = error; }
   const evidence = await checkSnapshotDigest(snapshot);
+  if (policy === undefined) throw policyError;
   const policyDigest = await digestJsonAsync(policy);
   return createReplayReport(evidence, policy, policyDigest);
 }

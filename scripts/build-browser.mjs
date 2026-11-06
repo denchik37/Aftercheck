@@ -13,7 +13,7 @@ const outputs = new Map();
 const sources = new Map();
 const allowed = new Set([
   'browser-engine', 'json-codec', 'evidence-core', 'verify-core', 'uniswap', 'policy',
-  'values', 'report', 'amounts', 'browser-export', 'browser-workspace'
+  'values', 'report', 'amounts', 'token-precision', 'browser-export', 'browser-workspace'
 ]);
 
 function compile(name) {

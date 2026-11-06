@@ -40,8 +40,19 @@ export async function parseEvidenceAsync(input) {
  */
 export async function verifyEvidenceAsync(input, policyInput) {
     const snapshot = snapshotEvidence(input);
-    const policy = parsePolicy(policyInput);
+    // Normalize before yielding, but preserve Node's error precedence: an invalid
+    // evidence digest must be reported before an independently invalid policy.
+    let policy;
+    let policyError;
+    try {
+        policy = parsePolicy(policyInput);
+    }
+    catch (error) {
+        policyError = error;
+    }
     const evidence = await checkSnapshotDigest(snapshot);
+    if (policy === undefined)
+        throw policyError;
     const policyDigest = await digestJsonAsync(policy);
     return createReplayReport(evidence, policy, policyDigest);
 }

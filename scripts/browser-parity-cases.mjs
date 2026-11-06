@@ -57,6 +57,7 @@ export function browserParityCases() {
   const corrupted = sealEvidence(rpcFixture());
   corrupted.receipt.logs[0].data = '0x' + '0'.repeat(64);
   add('corrupted-evidence-digest', corrupted, policyFixture());
+  add('corrupted-evidence-before-invalid-policy', corrupted, {...policyFixture(), extra: 'invalid'});
   const unknownField = {...sealEvidence(rpcFixture()), extra: 'unreviewed'};
   add('unexpected-evidence-field', unknownField, policyFixture());
   add('unknown-policy-field', sealEvidence(rpcFixture()), {...policyFixture(), extra: 'unreviewed'});
