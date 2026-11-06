@@ -204,16 +204,24 @@ source revisions. The public HTTPS viewer retains its own deployment source;
 this optional CLI integration does not redeploy it. The records below retain
 earlier implementation checkpoints.
 
-**Optional Chainlink CRE integration:** the official SDK workflow fetches a
-revision-pinned public manifest and requests a historical Sepolia factory
-`getPool` read plus a separate block header. Aftercheck validates its structured
-result and produces a separate corroboration appendix while preserving the core
-financial verdict. The actual workflow compiles to WASM; successful official
-simulation remains dependent on CRE account authentication. Direct RPC rehearsal
-is explicitly labelled and is not CRE execution evidence. See the
-[integration and reproduction guide](docs/CRE_INTEGRATION.md),
-[current evidence](docs/READINESS.md), and [superseded gate decision](docs/CRE_DECISION.md).
-The ordinary verifier, replay and viewer require no CRE credentials or packages.
+**Optional Chainlink CRE integration — official simulation VERIFIED (7 November 2026 IST):**
+the official SDK workflow fetches an immutable public evidence manifest with
+CRE's HTTPS capability, performs a historical Sepolia Uniswap factory `getPool`
+read and separate block-header observation using CRE's EVM capability, and
+produces a standalone MATCH / MISMATCH / UNAVAILABLE corroboration appendix.
+A locally authenticated **CRE CLI 1.39.0 / SDK 1.23.0** simulator session at
+source `1ad2dd1ba629bd0751748a7451619cfe8c5d488d` produced three validated
+results: reference **MATCH**, controlled expectation **MISMATCH**, and deliberately
+missing-manifest **UNAVAILABLE**. Aftercheck consumed all three without changing
+the core financial-policy PASS. The reviewed operator-provided
+[complete results, sanitized simulator logs and execution records](docs/evidence/cre/official-2026-11-07/README.md)
+are public with an [exact file-hash index](docs/evidence/cre/official-2026-11-07/audit-index.json);
+the [integration and reproduction guide](docs/CRE_INTEGRATION.md) and
+[Chainlink submission notes](docs/CRE_SUBMISSION.md) identify all limitations.
+This is a **local CRE CLI simulation, not a deployed Chainlink DON attestation**.
+The number-bound read does not prove hash-bound state, and the same public RPC
+provider served the original capture. The ordinary verifier, replay and viewer
+require no CRE credentials or packages.
 
 Run `npm run cre:demo` to replay the retained real HTTP/RPC corroboration results
 offline and generate five separate appendices under `output/cre-demo`. This
