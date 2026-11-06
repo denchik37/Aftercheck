@@ -229,7 +229,9 @@ export async function runRehearsal(args) {
     const {manifest, source} = await bindManifestToPublicRevision(ROOT, manifestText, options.manifestUrl);
     const metadata = {executionMode: 'RPC_REHEARSAL', workflowRevision: revision,
       cliVersion: null, sdkVersion: null, rpcProvider: 'TENDERLY_PUBLIC_SEPOLIA'};
-    const rpc = new RpcClient(PUBLIC_RPC_URL, {timeoutMs: 8_000, totalTimeoutMs: 30_000, maxResponseBytes: 524_288});
+    // Real archive-header attempts exceeded 8 seconds. Keep finite budgets while
+    // allowing the transport's supported 15-second per-request maximum.
+    const rpc = new RpcClient(PUBLIC_RPC_URL, {timeoutMs: 15_000, totalTimeoutMs: 60_000, maxResponseBytes: 524_288});
     phase = 'HTTP_RPC_REHEARSAL';
     const {result, transcript} = await executeComparison({manifest, manifestUrl: options.manifestUrl, metadata,
       fetchImpl: globalThis.fetch, rpcCall: (method, params) => rpc.call(method, params)});
