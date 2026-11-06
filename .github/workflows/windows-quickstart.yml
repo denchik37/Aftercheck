@@ -47,7 +47,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           $npmVersion = npm.cmd --version
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          foreach ($path in @('.\package.json', '.\web\inspector.html', '.\examples\sepolia\evidence.json')) {
+          foreach ($path in @('.\package.json', '.\web\report-viewer.html', '.\examples\sepolia\evidence.json')) {
             if (!(Test-Path -LiteralPath $path -PathType Leaf)) { throw "Required file missing: $path" }
           }
           $os = Get-CimInstance Win32_OperatingSystem
@@ -65,7 +65,7 @@ jobs:
             npm = $npmVersion
             git = $gitVersion
             checkout = (Get-Location).Path
-            inspector = (Resolve-Path .\web\inspector.html).Path
+            inspector = (Resolve-Path .\web\report-viewer.html).Path
           }
           $environment | ConvertTo-Json | Set-Content -Encoding UTF8 .\output\windows\environment.json
           Get-Content .\output\windows\environment.json

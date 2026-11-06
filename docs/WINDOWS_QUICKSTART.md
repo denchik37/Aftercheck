@@ -90,7 +90,7 @@ From now on, commands assume **the repository root**, normally `$HOME\aftercheck
 ```powershell
 Get-Location
 Test-Path .\package.json
-Test-Path .\web\inspector.html
+Test-Path .\web\report-viewer.html
 Test-Path .\examples\sepolia\evidence.json
 ```
 
@@ -127,7 +127,7 @@ These are three **retrospective policies against one unchanged historical transa
 Test-Path .\output\demo\pass\report.json
 (Resolve-Path .\output\demo\pass\report.json).Path
 explorer.exe (Resolve-Path .\output\demo\pass).Path
-Start-Process -FilePath (Resolve-Path .\web\inspector.html).Path
+Start-Process -FilePath (Resolve-Path .\web\report-viewer.html).Path
 ```
 
 `True` means the file exists; `False` means it does not exist at that location. `Resolve-Path` requires an existing file and prints its absolute path. These relative paths work from the repository root.
@@ -179,7 +179,7 @@ Test-Path .\output\inspection\report.json
 (Resolve-Path .\output\inspection\report.json).Path
 Get-Item .\output\inspection\report.json | Select-Object FullName, LastWriteTime, Length
 explorer.exe (Resolve-Path .\output\inspection).Path
-Start-Process -FilePath (Resolve-Path .\web\inspector.html).Path
+Start-Process -FilePath (Resolve-Path .\web\report-viewer.html).Path
 ```
 
 Check that the command just completed successfully before using an existing file. Open the HTML in the browser, then import **`output\inspection\report.json`** through the inspector's file picker. Opening the JSON directly in a browser does not load it into the inspector. The inspector displays the saved result; use CLI `verify` to re-evaluate evidence.
@@ -228,7 +228,7 @@ Keep the actual error/UNKNOWN result; do not relabel it as PASS or borrow curren
 | npm cannot find `package.json`, or `Test-Path` is `False` | Use `Get-Location` and return to the repository root; repeat the three checks in section 2. |
 | The retained capture's exact-file hash test fails in an older checkout | Preserve the checkout and use the pinned ZIP in section 7. A clean `git status` does not rule out old CRLF working-tree bytes. |
 | `INVALID_INPUT` or a missing policy/report file | Check the exact path and file type. Import `report.json`; CLI `verify` takes `evidence.json` plus a separate policy. |
-| The HTML opens in an editor or no browser opens | Find `web\inspector.html` in File Explorer and use **Open with** to select your browser. |
+| The HTML opens in an editor or no browser opens | Find `web\report-viewer.html` in File Explorer and use **Open with** to select your browser. |
 
 ## 7. Optional: Git-free source ZIP
 
@@ -249,7 +249,7 @@ Test-Path .\web\inspector.html
 Test-Path .\examples\sepolia\evidence.json
 ```
 
-All three checks must print `True`. For this pinned archive, GitHub's inner folder is `aftercheck-c44db55d937d924fda8a9b8f4cad2db9f5d83828`. Other ZIP revisions and extraction tools can produce different directory names; enter the folder actually containing `package.json`, not its outer container. Continue with section 3's `npm.cmd ci`, `npm.cmd run verify` and `npm.cmd run demo`. Your `output` folder will be inside this extracted directory, not `$HOME\aftercheck`.
+All three checks must print `True`. For this pinned archive, GitHub's inner folder is `aftercheck-c44db55d937d924fda8a9b8f4cad2db9f5d83828`. Other ZIP revisions and extraction tools can produce different directory names; enter the folder actually containing `package.json`, not its outer container. Continue with section 3's `npm.cmd ci`, `npm.cmd run verify` and `npm.cmd run demo`. Your `output` folder will be inside this extracted directory, not `$HOME\aftercheck`. This older archive predates the browser verifier: open its `web\inspector.html` for saved-report viewing instead of the current checkout's `web\report-viewer.html`.
 
 The pinned ZIP was downloaded and its dependency-free demo executed on Linux; the new Windows tests also exercise a Git-free runtime copy with no `node_modules`. The actual `Invoke-WebRequest`/`Expand-Archive` sequence above has not been executed on Windows. Download and dependency installation still need network access; subsequent retained-evidence replay does not.
 

@@ -21,7 +21,7 @@ async function portableCopy(t) {
   t.after(() => rm(temporary, {recursive: true, force: true}));
   const working = join(temporary, 'checkout with spaces');
   for (const name of ['package.json', 'bin', 'src', 'scripts/offline-guard.mjs',
-    'scripts/check-public-example-inspection.mjs', 'examples/sepolia', 'web/inspector.html']) {
+    'scripts/check-public-example-inspection.mjs', 'examples/sepolia', 'web/report-viewer.html']) {
     const destination = join(working, name);
     await mkdir(dirname(destination), {recursive: true});
     await cp(join(root, name), destination, {recursive: true});
@@ -55,7 +55,7 @@ test('Windows quickstart is reachable and its PowerShell examples use the safe n
   assert.doesNotMatch(commands, /\bSet-ExecutionPolicy\b/i, 'onboarding must not change execution policy');
   const evidence = await readJson(join(root, 'examples/sepolia/evidence.json'));
   assert.ok(guide.includes(evidence.transactionHash), 'the guide must use the retained historical transaction');
-  for (const name of ['package.json', 'web/inspector.html', 'examples/sepolia/evidence.json',
+  for (const name of ['package.json', 'web/report-viewer.html', 'examples/sepolia/evidence.json',
     'examples/sepolia/policy-pass.json', 'examples/sepolia/policy-violation.json', 'examples/sepolia/policy-reserve.json']) {
     assert.ok((await stat(join(root, name))).isFile(), name);
   }

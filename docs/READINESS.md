@@ -1,5 +1,65 @@
 # Readiness checkpoint
 
+## Browser verifier implementation — 6 November 2026
+
+**Current release status: local implementation complete and reviewed; the new
+browser verifier is not deployed.** Full local `npm run verify` passed TypeScript,
+deterministic build reproduction and **343/343 Node tests**, zero failures. Actual
+Chromium acceptance, final committed CI and manual deployment remain pending.
+The public root at
+[aftercheck-g4nsb.ondigitalocean.app](https://aftercheck-g4nsb.ondigitalocean.app/)
+still returns the previous 55,075-byte saved-report viewer, SHA-256
+`8fc5fef9b8ea2e52cd9448e1b5d32efc4c41f2f6b8f395260957031d5dcd958a`.
+That observation establishes public byte equality, not a newly authenticated
+provider deployment identity.
+
+Work began from actual `main`
+`ee572a8b6558751c56e7b2eeaf0a0d1b283c9f6c`, whose
+[Verify run 42248352228](https://github.com/denchik37/aftercheck/actions/runs/42248352228)
+was green, on branch `feature/browser-financial-verifier`. The focused browser
+enhancement preserves the existing optional integration and the previous viewer.
+The reviewed local JavaScript build source digest is
+`c4b1f7925a5308d4427ea92161d2800d6e94f011958b02baf059e489c8d675c7`.
+The local verification log is `output/browser-implementation/full-verify.log`.
+The final committed source SHA, PR/merge and actual browser/CI results will be added
+from completed runs; earlier browser counts are not relabelled as results for this
+feature.
+
+| Feature / requirement | Actual implementation or executed evidence | Source / evidence | Remaining work or limit |
+|---|---|---|---|
+| Full local verification | `npm run verify`: TypeScript, deterministic build check and **343/343 Node tests passed**, zero failures | Local log `output/browser-implementation/full-verify.log`; [build manifest](../web/assets/browser-build.json), digest above | Actual Chromium/CI results at the final committed revision pending |
+| Shared browser verifier | Portable strict JSON/evidence/identity/report core; native Web Crypto adapter calls the same Uniswap verifier as Node | `src/browser-engine.ts`, `src/verify-core.ts`; focused core commits | Final full Chromium/Node parity run and reviewed source pin pending |
+| Exact readable financial input | **9 focused amount tests passed**, including all 256 supported precisions, uint256 bounds, one-unit comparisons and malformed forms; included in the full local 343-test pass | `src/amounts.ts`, `test/amounts.test.mjs`; implementation commit `7c3a93f` | Final CI/revision pin pending; raw policies remain canonical |
+| Historical token precision | **5 metadata tests passed**; both complete 4,380-byte runtimes independently compiled and matched, with no warnings | [Source, compiler and runtime manifest](evidence/token-precision/manifest.json), [executed recompilation](evidence/token-precision/recompilation-result.json), `7c3a93f` | Bound only to the exact retained capture; source/RPC trust is not consensus proof |
+| Reproducible browser export | **10 focused export tests passed**; independently extracted ZIPs reproduce complete JSON/Markdown/policy through offline CLI for PASS, two VIOLATION cases and reserve UNKNOWN, exits **0/2/2/3**; synthetic imports retain explicit test-data provenance | `test/browser-export.test.mjs`; base implementation `de9b971` plus the branch's synthetic-provenance correction | Actual UI-generated downloads and final browser run pending |
+| Transaction-first workspace | Implemented known-hash retained lookup, strict local import, editable retrospective policy, separate execution/verdict, checks/evidence/export and precision controls | [Browser feature contract](BROWSER_VERIFIER.md), `src/browser-workspace.ts`, `scripts/test-browser-workspace.py` | Final rendered behavior, stale-result handling, accessibility and screenshot inspection pending |
+| Static publication integrity | Explicit **21 files / 382,538 bytes**; generated JS/manifest **13 assets / 104,394 bytes**. Exact allowlist, hashes, bounds and reproducibility checks passed locally | `scripts/build-browser.mjs`, `test/deployment.test.mjs`, [manifest](../web/assets/browser-build.json) | Deployed byte comparison and final committed CI pending |
+| Privacy/security regression | Same-origin public bootstrap only; test harness disables networking for policy edits, imports and exports and rejects unexpected requests/storage/errors | `scripts/test-browser-core.py`, `scripts/test-browser-workspace.py` | Final actual Chromium results pending; browser/device/source compromise remains outside scope |
+| GitHub integration | Dedicated branch and focused increments; mandatory CI workflow includes core parity and workspace/export jobs | `feature/browser-financial-verifier`, `.github/workflows/ci.yml` | Final reviewed PR, mandatory green jobs, merge and exact source pin pending |
+| Public release | Existing static website remains available with the prior saved-report viewer | [Historical production run 42234449518](https://github.com/denchik37/aftercheck/actions/runs/42234449518); unchanged root bytes observed in this session | New verifier not live; authenticated provider access unavailable |
+| Rollback and cost | Prior recorded deployment `a0318069-e0fd-4616-a3da-4c8d703feaf7` / source `d5414cb…`; existing static-only configuration and manual deployment retained | [Deployment record](DIGITALOCEAN_DEPLOYMENT.md) | Current provider state, retained rollback availability and account estimate not reauthenticated; no rollback executed |
+
+### Exact remaining release steps
+
+Run mandatory CI, including actual Chromium checks, at the final reviewed commit;
+the local full Node suite is already green. Inspect the actual three-viewport
+screenshots and downloaded-package replay logs, then merge only after mandatory
+CI is green. The production update additionally
+requires authenticated access to the existing dedicated DigitalOcean application:
+the connected Browser tool did not have the originating browser context, and the
+cloud dashboard attempt returned **Site Unavailable**. No new provider deployment
+was created or authenticated in this session.
+
+After access is restored, record the active deployment/source and available
+rollback target, manually deploy the reviewed revision without enabling automatic
+deployment or adding paid components, inspect provider logs, and run the
+`Production verifier` HTTPS workflow against that exact SHA. Record the resulting
+deployment ID and public test artifacts only after observing them. Public byte
+matching alone cannot identify a provider deployment.
+
+The following sections preserve earlier implementation and deployment checkpoints.
+Their dates, source revisions and test counts apply to those historical releases.
+
 ## Current audited status — 6 November 2026
 
 **Optional CRE: implemented and demonstrable; official execution qualification remains incomplete because account authentication is unavailable.** The owner superseded the internal deadline stop rule. The full evidence and CRE01–CRE05 matrix are in the [CRE delivery record](evidence/cre/README.md); commands and trust boundaries are in [CRE_INTEGRATION.md](CRE_INTEGRATION.md).

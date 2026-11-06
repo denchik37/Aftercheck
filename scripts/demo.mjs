@@ -42,7 +42,7 @@ try {
     console.log(`  output/demo/${item.name}/report.json and report.md`);
   }
   console.log(`Same evidence digest for every policy: ${digest}`);
-  console.log('Open web/inspector.html locally and import one generated report.json.');
+  console.log('Open web/report-viewer.html locally and import one generated report.json.');
   console.log('PASS concerns receipt-emitted amounts; reserve state, consensus and finality are not proved.');
 } catch (error) {
   const code = error instanceof Error && /^[A-Z][A-Z0-9_]{0,80}$/.test(error.message)

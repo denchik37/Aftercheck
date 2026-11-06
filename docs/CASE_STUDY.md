@@ -82,7 +82,7 @@ BigInt(policy.minReceivedRaw) - BigInt(report.protocol.amountOutRaw)
 // = 503746230655540n raw output-token units
 ```
 
-This subtracts output-token units from an output-token requirement. It does not compare the economic values of the input and output assets. The contracts are testnet tokens; this case does not authenticate decimals or prices and asserts no human-readable token conversion, USD value, exchange-rate loss or missing funds.
+This subtracts output-token units from an output-token requirement. It does not compare the economic values of the input and output assets. The canonical case report remains in raw units. The later [token-precision investigation](TOKEN_PRECISION.md) independently reproduced both complete token runtimes from verified source and matched them to this unchanged capture, establishing constant 18-decimal precision under the retained-RPC/source trust boundary. Under that binding, the observed output is `0.999496253769344460` token units and the stricter floor is `1`, with a shortfall of `0.000503746230655540`. These are testnet token quantities; no USD value, price, exchange-rate loss, backing or missing funds is established.
 
 ## E. Why this matters
 
@@ -153,6 +153,6 @@ npm run cli -- verify output/case-study/output-threshold-violation/evidence.json
 
 That command intentionally exits `2` for `VIOLATION`; `0` means `PASS`, `3` means `UNKNOWN`, and `1` means invalid input or failure. See [`bin/aftercheck.mjs`](../bin/aftercheck.mjs).
 
-Open [`web/inspector.html`](../web/inspector.html) locally and import either `report.json`. The existing report fields expose the four separate dimensions and the `minReceivedRaw` check. The supplied threshold is retained in `policy.json` and in the check explanation; no custom business-verdict schema is required.
+Open [`web/report-viewer.html`](../web/report-viewer.html) locally and import either `report.json`. The existing report fields expose the four separate dimensions and the `minReceivedRaw` check. The supplied threshold is retained in `policy.json` and in the check explanation; no custom business-verdict schema is required.
 
 [`test/case-study.test.mjs`](../test/case-study.test.mjs) covers the policy contrast and runner; [`test/real-case.test.mjs`](../test/real-case.test.mjs) retains the independent historical capture regressions. Reproduction results and source revision should be taken from the corresponding commit's test and CI logs.
