@@ -123,10 +123,15 @@ export async function createVerificationPackage(input: VerificationPackageInput)
     `Evidence SHA-256: ${report.evidenceDigest}`,
     `Policy SHA-256: ${report.policyDigest}`,
     `Evaluator version: ${report.evaluatorVersion}`,
+    `Evidence class: ${report.evidenceClass}`,
     `Execution: ${report.execution}; financial policy: ${report.verdict}`, '',
-    'Historical evidence replay; no fresh blockchain inspection occurred.',
+    report.evidenceClass === 'RPC_RECEIPT'
+      ? 'Historical evidence replay; no fresh blockchain inspection occurred.'
+      : 'Synthetic fixture replay; no real-chain observation or real transaction execution is established.',
     'A matching evidence digest establishes bundle integrity, not RPC-source authenticity, Ethereum consensus or finality.',
-    'The policy was supplied retrospectively; it does not establish the original trader\'s instructions.',
+    report.evidenceClass === 'RPC_RECEIPT'
+      ? 'The policy was supplied retrospectively; it does not establish the original trader\'s instructions.'
+      : 'The supplied policy and chain-shaped observations are test data; no real trader instructions are established.',
     'Receipt events do not establish an immediate post-transaction reserve.',
     'ZIP timestamps are normalized to 1980-01-01 for deterministic bytes, not acquisition times.', ''
   ].join('\n');

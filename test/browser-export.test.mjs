@@ -8,6 +8,8 @@ import {spawnSync} from 'node:child_process';
 import {createVerificationPackage, createStoreZip, MAX_EXPORT_FILE_BYTES, MAX_EXPORT_TOTAL_BYTES} from '../src/browser-export.ts';
 import {verifyEvidenceAsync} from '../src/browser-engine.ts';
 import {canonicalJson} from '../src/json.ts';
+import {sealEvidence} from '../src/evidence.ts';
+import {rpcFixture, policyFixture} from './helpers/uniswap-fixture.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const evidenceText = readFileSync(join(root, 'examples/sepolia/evidence.json'), 'utf8');
@@ -56,6 +58,18 @@ test('user-supplied decimals remain unverified supplemental metadata without cha
   await assert.rejects(createVerificationPackage({evidenceText, policy: supplied, report, displayDecimals: {input: 256, output: 18}}), /Decimals/);
 });
 
+test('synthetic packages label replay as test data rather than a historical onchain observation', async () => {
+  const synthetic = sealEvidence(rpcFixture());
+  const supplied = policyFixture();
+  const report = await verifyEvidenceAsync(synthetic, supplied);
+  const exported = await createVerificationPackage({evidenceText: canonicalJson(synthetic) + '\n', policy: supplied, report});
+  assert.equal(JSON.parse(exported.files['report.json']).evidenceClass, 'SYNTHETIC_RPC_FIXTURE');
+  assert.match(exported.files['README.txt'], /Synthetic fixture replay; no real-chain observation/);
+  assert.match(exported.files['README.txt'], /Evidence class: SYNTHETIC_RPC_FIXTURE/);
+  assert.doesNotMatch(exported.files['README.txt'], /Historical evidence replay/);
+  assert.equal(JSON.parse(exported.files['display-metadata.json']).input.provenance, 'RAW_UNITS');
+});
+
 test('package creation snapshots policy, report and display values before asynchronous hashing', async () => {
   const supplied = policy('pass');
   const report = await verifyEvidenceAsync(evidence, supplied);
@@ -86,7 +100,7 @@ for (const [name, expectedCode, expectedVerdict] of [['pass', 0, 'PASS'], ['outp
       const exported = await createVerificationPackage({evidenceText, policy: supplied, report, displayDecimals: {input: 18, output: 18}});
       const zipPath = join(folder, 'verification.zip');
       writeFileSync(zipPath, exported.zip);
-      const unzip = spawnSync('python3', ['-c', [
+      const unzip = spawnSync(process.platform === 'win32' ? 'python' : 'python3', ['-c', [
         'import zipfile,sys',
         'with zipfile.ZipFile(sys.argv[1]) as z:',
         ' assert z.testzip() is None',
