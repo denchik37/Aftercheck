@@ -8,11 +8,11 @@ Prepared 5 November 2026; submission-requirements refresh 7 November 2026 IST. S
 
 **Tagline:** Check a swap's recorded effects. Keep the evidence.
 
-**Description:** Aftercheck is a local, read-only verifier for a narrow direct Uniswap v3 SwapRouter02 swap on Ethereum Sepolia. It collects transaction, receipt and block evidence, checks router/factory/pool identities with hash-bound historical reads, and compares reconciled receipt-emitted amounts with a declared financial policy. Execution, protocol support, evidence coverage and policy verdict remain separate. Portable evidence and JSON/Markdown reports can be replayed offline; a local browser viewer explains the saved report without a wallet connection.
+**Description:** Aftercheck is a read-only, browser-native verifier for a supported direct Uniswap v3 SwapRouter02 swap on Ethereum Sepolia. Given a historical transaction and a user-supplied retrospective policy, it validates retained transaction, receipt and block-bound protocol evidence, reconciles receipt-emitted token amounts, and checks declared input and output limits. Execution success, protocol support, evidence coverage and financial-policy verdict are distinct; unverifiable transaction-boundary reserves stay UNKNOWN. A portable ZIP and offline CLI/browser replay make the reasoning independently reproducible without a wallet or proprietary backend.
 
 **Problem:** A successful receipt does not say whether a swap respected a separately declared spending cap, recipient or received-amount floor. Reviewers also need the evidence and assumptions behind a verdict so that they can reproduce it when an author or service is unavailable.
 
-**Technical contribution:** Strict seven-field ABI decoding; independent factory/pool observations; signed Swap and ordered Transfer reconciliation; exact `bigint` policy checks; fail-closed uncertainty; bounded input and RPC handling; digest-bound evidence; offline replay; a static local report viewer. The application uses public protocol interfaces and Node.js; it has no required application backend.
+**Technical contribution:** Strict seven-field Router02 ABI decoding; hash-bound factory/pool observations; signed Swap and ordered Transfer reconciliation; exact `bigint` policy checks; fail-closed reserve uncertainty; bounded input/RPC handling; digest-bound evidence and verified export/CLI parity; a browser-native shared evaluator with responsive policy edits. The CLI can inspect an existing transaction locally via a separately selected RPC. No required application backend or signing authority.
 
 ## Integration evidence
 
