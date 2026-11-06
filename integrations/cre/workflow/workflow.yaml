@@ -1,0 +1,7 @@
+sepolia:
+  user-workflow:
+    workflow-name: aftercheck-pool-corroboration
+  workflow-artifacts:
+    workflow-path: ./main.ts
+    config-path: ./config.json
+    secrets-path: ''

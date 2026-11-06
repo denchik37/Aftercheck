@@ -1,0 +1,5 @@
+# Public, read-only testnet endpoint. No wallet, secret, or broadcasting settings.
+sepolia:
+  rpcs:
+    - chain-name: ethereum-testnet-sepolia
+      url: https://sepolia.gateway.tenderly.co

@@ -235,6 +235,20 @@ test('CRE metadata separates unit fixtures, ordinary RPC rehearsal and actual si
   assert.equal(parseExecutionMetadata(simulatedMetadata).executionMode, 'CRE_CLI_SIMULATION');
 });
 
+test('CRE identifiers, decimals, bytes and versions reject trailing line terminators', () => {
+  for (const suffix of ['\n', '\r', '\r\n', '\u2028', '\u2029']) {
+    assert.throws(() => parseManifest({...reference, manifestDigest: reference.manifestDigest + suffix}), /INVALID_HASH/);
+    assert.throws(() => parseObservation({...observed(), chainId: '11155111' + suffix}), /INVALID_DECIMAL/);
+    assert.throws(() => parseObservation({...observed(), returnData: observed().returnData + suffix}), /INVALID_HEX/);
+    assert.throws(() => parseObservation({...observed(), header: {...observed().header, blockHash: DEMO_TARGET.blockHash + suffix}}), /INVALID_HASH/);
+    assert.throws(() => parseObservation({...observed(), call: {...observed().call, to: DEMO_TARGET.factory + suffix}}), /INVALID_ADDRESS/);
+    assert.throws(() => parseExecutionMetadata({...metadata, workflowRevision: metadata.workflowRevision + suffix}), /INVALID_SOURCE_REVISION/);
+    const simulatedMetadata = {...metadata, executionMode: 'CRE_CLI_SIMULATION', rpcProvider: 'TENDERLY_PUBLIC_SEPOLIA', cliVersion: '1.39.0', sdkVersion: '1.23.0'};
+    assert.throws(() => parseExecutionMetadata({...simulatedMetadata, cliVersion: '1.39.0' + suffix}), /INVALID_VERSION/);
+    assert.throws(() => parseExecutionMetadata({...simulatedMetadata, sdkVersion: '1.23.0' + suffix}), /INVALID_VERSION/);
+  }
+});
+
 test('CRE comparisons leave source evidence, manifest, input observation and core policy results unchanged', () => {
   const observation = observed();
   const before = [canonicalJson(reference), canonicalJson(observation), digestJson(evidence), digestJson(verifyEvidence(evidence, policy))];

@@ -7,3 +7,7 @@ aftercheck-output/
 *.log
 .DS_Store
 __pycache__/
+integrations/cre/workflow/config.json
+integrations/cre/workflow/build/
+integrations/cre/workflow/*.wasm
+integrations/cre/workflow/main.js

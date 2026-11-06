@@ -182,7 +182,7 @@ export function canonicalJson(input: unknown): string {
     if (typeof value !== 'object' || value === null) throw new TypeError('CRE_UNSUPPORTED_JSON_VALUE');
     if (Object.getOwnPropertySymbols(value).length) throw new TypeError('CRE_UNSUPPORTED_JSON_VALUE');
     if (Array.isArray(value)) {
-      if (Object.getPrototypeOf(value) !== Array.prototype || value.length > MAX_NODES || Object.keys(value).length !== value.length) throw new TypeError('CRE_INVALID_JSON_ARRAY');
+      if (Object.getPrototypeOf(value) !== Array.prototype || value.length > MAX_NODES || Object.keys(value).sort().length !== value.length) throw new TypeError('CRE_INVALID_JSON_ARRAY');
       const entries: string[] = [];
       for (let i = 0; i < value.length; i++) {
         const descriptor = Object.getOwnPropertyDescriptor(value, String(i));
@@ -217,7 +217,7 @@ function record(value: unknown): Record<string, unknown> {
 }
 function fields(value: unknown, names: readonly string[]): Record<string, unknown> {
   const obj = record(value);
-  if (Object.keys(obj).length !== names.length || names.some(key => !has(obj, key))) throw new TypeError('CRE_INVALID_FIELDS');
+  if (Object.keys(obj).sort().length !== names.length || names.some(key => !has(obj, key))) throw new TypeError('CRE_INVALID_FIELDS');
   return obj;
 }
 function literal(value: unknown, expected: string, code = 'CRE_UNSUPPORTED_IDENTITY'): void {
@@ -227,7 +227,7 @@ function member(value: unknown, allowed: readonly string[], code = 'CRE_INVALID_
   if (typeof value !== 'string' || !allowed.includes(value)) throw new TypeError(code);
 }
 function pattern(value: unknown, regex: RegExp, code: string): void {
-  if (typeof value !== 'string' || !regex.test(value)) throw new TypeError(code);
+  if (typeof value !== 'string' || regex.exec(value)?.[0] !== value) throw new TypeError(code);
 }
 function decimal(value: unknown): void {
   pattern(value, /^(?:0|[1-9][0-9]{0,77})$/, 'CRE_INVALID_DECIMAL');
