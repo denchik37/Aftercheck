@@ -11,6 +11,8 @@ const root = new URL('../', import.meta.url);
 const web = new URL('web/', root);
 const html = readFileSync(new URL('inspector.html', web), 'utf8');
 const read = path => readFileSync(new URL(path, root), 'utf8');
+const appSpec = read('.do/app.yaml');
+const deployTemplate = read('.do/deploy.template.yaml');
 const cases = [
   ['pass', 'pass', 'PASS', 'COMPLETE', null],
   ['input-cap-violation', 'violation', 'VIOLATION', 'COMPLETE', 'maxInputRaw'],
@@ -68,4 +70,21 @@ test('the public sample generator checks committed artifacts with networking dis
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /Public samples verified: 4/);
   assert.match(read('scripts/public-samples.mjs'), /import '\.\/offline-guard\.mjs'/);
+});
+
+test('DigitalOcean launch files describe the same static-only manual release', () => {
+  for (const spec of [appSpec, deployTemplate]) {
+    assert.match(spec, /name: aftercheck/);
+    assert.match(spec, /static_sites:/);
+    assert.match(spec, /name: inspector/);
+    assert.match(spec, /branch: main/);
+    assert.match(spec, /deploy_on_push: false/);
+    assert.match(spec, /source_dir: web/);
+    assert.match(spec, /output_dir: \./);
+    assert.match(spec, /index_document: inspector\.html/);
+    assert.doesNotMatch(spec, /^\s*(services|workers|jobs|functions|databases):/m);
+  }
+  assert.match(appSpec, /repo: denchik37\/aftercheck/);
+  assert.match(deployTemplate, /^spec:/);
+  assert.match(deployTemplate, /repo_clone_url: https:\/\/github\.com\/denchik37\/aftercheck\.git/);
 });
