@@ -2,6 +2,7 @@
 examples/sepolia/*.json text eol=lf
 # The hosted bytes and generated reports are compared with the release checkout.
 web/inspector.html text eol=lf
+web/workspace.css text eol=lf
 web/samples/*.json text eol=lf
 # Shared source digests and static replay assets must also survive autocrlf.
 src/*.ts text eol=lf

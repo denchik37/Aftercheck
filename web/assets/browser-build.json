@@ -1,12 +1,24 @@
 {
   "schemaVersion": "aftercheck.browser-build.v1",
-  "sourceDigest": "8e0f6e784aad0f188419609ed58781379586297d7369aa6c9cdab50f04f67c1e",
+  "sourceDigest": "c4b1f7925a5308d4427ea92161d2800d6e94f011958b02baf059e489c8d675c7",
   "typescript": "5.9.3",
   "generatorDigest": "9ea8135bfb4bf360f05c947b423cf70ee243f4ed9b7ab73de09fdc4665188b12",
   "sources": [
     {
+      "path": "src/amounts.ts",
+      "sha256": "3e96687bf76db258e4edb037007e4aebb82c1fcdf5fd8f9d3f27f171f4954012"
+    },
+    {
       "path": "src/browser-engine.ts",
       "sha256": "fccbf85cde9661380f3de86793ba3d1b95a92ef2b3cbd70961a2c2379a5577fd"
+    },
+    {
+      "path": "src/browser-export.ts",
+      "sha256": "71159e154950506c884fc3ac41bd6eca18a1051e076975b5e90bbc98fcfc6097"
+    },
+    {
+      "path": "src/browser-workspace.ts",
+      "sha256": "a401baa2bbf92f68b793c4298227f6af68cc90ec14460b15d21d1a342d7cfe7e"
     },
     {
       "path": "src/evidence-core.ts",
@@ -25,6 +37,10 @@
       "sha256": "4020059f4eb0d9697c6931551cf1c37c4ffd9928ff44ae09d88642044e768311"
     },
     {
+      "path": "src/token-precision.ts",
+      "sha256": "9e84d2dc85ff6f9ae05d5bf393360c7f3af5004e17b3075bed68cd6477207ff9"
+    },
+    {
       "path": "src/uniswap.ts",
       "sha256": "bc1bb8380ffe04fa9a803a7dc864c2e9ee348d04db1c7b7d487a5a26aa3dfc3a"
     },
@@ -39,9 +55,24 @@
   ],
   "assets": [
     {
+      "path": "assets/amounts.js",
+      "bytes": 2990,
+      "sha256": "46bab14aaf901bc099893a3d497fcceea4a7738148ec32959d1d4bd7bf5cd21f"
+    },
+    {
       "path": "assets/browser-engine.js",
       "bytes": 2725,
       "sha256": "658084991dc4afe05658582ef4efc82bc4379676820d32e248d225f5ccdff09d"
+    },
+    {
+      "path": "assets/browser-export.js",
+      "bytes": 8612,
+      "sha256": "c228df9bc7503645c669f8b02e3c0d1beea72ac24a4c9e79891c8e365699d227"
+    },
+    {
+      "path": "assets/browser-workspace.js",
+      "bytes": 37410,
+      "sha256": "ce1750f3f025741a309673db5949ac7b40df04d7779ff9f6bfc3e5ed1ded7672"
     },
     {
       "path": "assets/evidence-core.js",
@@ -62,6 +93,11 @@
       "path": "assets/report.js",
       "bytes": 2219,
       "sha256": "82f0e84baa3eab1fc4e37e5ba339a259538dac0b011cb4850eeac7a297239f3c"
+    },
+    {
+      "path": "assets/token-precision.js",
+      "bytes": 3832,
+      "sha256": "c098fe802696455c0ef706bf9039b7e76ca29488c8837793856c471d1e3e2a91"
     },
     {
       "path": "assets/uniswap.js",
