@@ -1,0 +1,18 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> aftercheck-cre-workflow@0.1.0 build
+> bun x --no-install cre-compile main.ts build/workflow.wasm
+
+🚀 Compiling workflow
+📁 Input:   /workspace/scratch/8fc1fda0f4b2/aftercheck/integrations/cre/workflow/main.ts
+🧪 JS out:  /workspace/scratch/8fc1fda0f4b2/aftercheck/integrations/cre/workflow/build/workflow.js
+🎯 WASM out:/workspace/scratch/8fc1fda0f4b2/aftercheck/integrations/cre/workflow/build/workflow.wasm
+
+📦 Step 1: Compiling JS...
+
+❌ TypeScript typecheck failed before workflow compilation.
+Using tsconfig: tsconfig.json
+Fix TypeScript errors, or re-run compile with --skip-type-checks.
+
+main.ts:32:68 Argument of type 'ConsensusAggregation<ManifestFetch, ManifestFetch, false>' is not assignable to parameter of type 'ConsensusAggregation<ManifestFetch, ManifestFetch, true>'.
+  Type 'false' is not assignable to type 'true'.

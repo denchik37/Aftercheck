@@ -2,6 +2,25 @@
 
 ## Current audited status — 6 November 2026
 
+**Optional CRE: implemented and demonstrable; official execution qualification remains incomplete because account authentication is unavailable.** The owner superseded the internal deadline stop rule. The full evidence and CRE01–CRE05 matrix are in the [CRE delivery record](evidence/cre/README.md); commands and trust boundaries are in [CRE_INTEGRATION.md](CRE_INTEGRATION.md).
+
+| Feature / requirement | Actual test or execution | Source revision | Remaining risk |
+|---|---|---|---|
+| Core verifier and optional consumer regression | [Verify 42244604886](https://github.com/denchik37/aftercheck/actions/runs/42244604886): TypeScript, **272/272 Node tests**, zero failures | `f7e4048389d3acf85d7c16020b34990c03fde93f` | Narrow receipt/RPC assumptions remain |
+| Offline core demo | Same run: PASS / VIOLATION / UNKNOWN, exits 0 / 2 / 3 | `f7e4048…` | Third-party historical testnet observations and retrospective policies |
+| Offline inspector and local HTTP delivery | Same completed run: **75/75 browser cases**, no requests/errors/dialogs; **44/44 local HTTP checks**, including 36 browser checks | `f7e4048…` | Saved-report display, not consensus authentication |
+| Optional official SDK workflow | [CRE 42244604852](https://github.com/denchik37/aftercheck/actions/runs/42244604852): actual WASM build passed with isolated SDK 1.23.0; local [build log/hash](evidence/cre/build/build.json) also retained | CI `f7e4048389d3acf85d7c16020b34990c03fde93f`; local build `ec92456…` | Compilation does not establish capability execution |
+| Real public HTTP + historical RPC comparison | [MATCH](evidence/cre/rpc-reference/execution.json), [intentional MISMATCH](evidence/cre/rpc-intentional-mismatch/execution.json), [actual HTTP-404 UNAVAILABLE](evidence/cre/rpc-unavailable/execution.json); correct chain/block/hash; no RPC after missing manifest | `f7e4048…` | Explicit **RPC_REHEARSAL**, same Tenderly provider, number-bound read plus separate header |
+| Actual application consumption | [Five retained consumer runs](evidence/cre/consumption.json); core JSON **and Markdown** byte-identical to PASS / VIOLATION / UNKNOWN demo outputs | `f7e4048…` | Imported execution metadata is self-reported; no DON attestation |
+| Presentation replay | `npm run cre:demo` revalidates five retained cases with networking disabled and explicit intentional-mismatch/RPC_REHEARSAL labels | Presentation commit carries its own CI log | Offline replay is not a fresh observation or official simulation |
+| Official CRE execution | [Actual CLI attempt](evidence/cre/official-reference/execution.json): CLI 1.39.0, SDK 1.23.0, Bun 1.4.4; exit 1, **CRE_AUTHENTICATION_UNAVAILABLE**. Optional CI also records BLOCKED and skips simulator execution | Actual attempt `ec92456…`; current optional CI `f7e4048…` | Owner must authenticate, then actual simulator runs may reveal runtime issues |
+
+The transport correction in `f7e4048` followed two preserved eight-second header timeouts. It changes only the optional Node rehearsal's bounded timeout, and its fresh live runs establish the three results above. [Verify 42244604886](https://github.com/denchik37/aftercheck/actions/runs/42244604886) passed the correction's complete regression and browser checks; both job logs were inspected. Later commits and final merge require their own CI, recorded in the delivery PR rather than relabelling older runs.
+
+Remaining CRE work is narrowly defined: authenticated official reference, negative and unavailable simulations; consume those outputs; update the sponsor matrix and presentation from their actual logs. Existing Uniswap and offline CROPS demonstrations remain independent. No new infrastructure, signing, contract deployment, financial transaction or external partner selection was performed.
+
+### Preserved core and hosting baseline before CRE implementation
+
 Initial audit source: **`4130c2af7e6b096b8394f423f7e56ecc75da87ab`**, current `main`
 when the logs below were inspected. The subsequent deployment-documentation merge
 `e8c36203c2d8f096d46dac2980b6cd14c408b18e` supplies the separate authenticated
@@ -15,7 +34,7 @@ a later documentation revision needs its own CI result.
 | Offline inspector | Same run: **75/75 browser cases**, zero requests, page errors or dialogs | `4130c2a` | Saved-report display; no refreshed chain authentication |
 | Local HTTP delivery and privacy | Same run: **44/44 checks**, including **36 browser checks** | `4130c2a` | Local mode alone does not establish public hosting |
 | Public HTTPS viewer | [Production run 42234449518](https://github.com/denchik37/aftercheck/actions/runs/42234449518): **45/45 checks**, including **36 browser checks**, against [the public viewer](https://aftercheck-g4nsb.ondigitalocean.app/) | Expected clean checkout **`d5414cb43c6d31cc66afd070d14dca4ab9921a75`**; workflow run HEAD `4130c2a` | Public bytes alone do not authenticate provider identity; the separate operator record appears below |
-| Optional Chainlink CRE | **Not implemented; omitted at the decision gate**. No CLI simulation or consumption evidence | Audited tree `4130c2a` | CRE01–CRE05 are not qualified; see [CRE_DECISION.md](CRE_DECISION.md) |
+| Optional Chainlink CRE at this historical audit | Not implemented in that old source; subsequent implementation is recorded above | Audited tree `4130c2a` | The internal stop rule was subsequently superseded; see [CRE_DECISION.md](CRE_DECISION.md) |
 
 Both Verify job logs and the production job log were inspected. The production
 harness deliberately leaves `deploymentIdentityVerified` false. Its expected
@@ -24,10 +43,10 @@ web assets are identical between these two revisions; this does not identify a
 provider deployment. The later operator record supplies its own provider and
 screenshot observations; this log audit did not repeat those UI inspections.
 
-The official deadline remains **7 November 2026, 09:00 IST** in both public event
-guides. The optional CRE D−14h gate was **6 November, 19:00 IST**, already passed at
-the audit. Preserve the primary demonstration and submission time; do not infer a
-CRE success from the core or browser results.
+At that audit, both public event guides stated **7 November 2026, 09:00 IST**.
+The owner subsequently superseded the internal CRE D−14h stop rule. This changes
+the engineering scope, not the external deadline. Core/browser success does not
+establish a successful official CRE simulation.
 
 ## Historical implementation checkpoint — 5 November 2026
 

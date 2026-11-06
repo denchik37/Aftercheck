@@ -1,0 +1,10 @@
+{
+  "command": [
+    "node",
+    "scripts/cre-install-tools.mjs",
+    "--output",
+    "/workspace/scratch/8fc1fda0f4b2/cre-tools/installer-final-check"
+  ],
+  "exitCode": 0,
+  "installerSourceSha256": "2492812df598229bcdb3e3ae8f21aa6b930bbba2f82940f466c6ac925438ff2d"
+}

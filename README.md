@@ -82,18 +82,32 @@ It replays `policy-pass.json`, `policy-violation.json` and `policy-reserve.json`
 
 ## Executed verification
 
-**Latest audited main checkpoint:** [Verify run 42234382492](https://github.com/denchik37/aftercheck/actions/runs/42234382492)
-at `4130c2af7e6b096b8394f423f7e56ecc75da87ab` passed TypeScript checking,
-**197 Node tests**, the offline PASS/VIOLATION/UNKNOWN demo, **75 offline browser
-cases** and **44 local HTTP checks**. See [the current readiness matrix](docs/READINESS.md#current-audited-status--6-november-2026)
-for source boundaries and the separate public HTTPS result. The records below
-retain earlier implementation checkpoints.
+**Audited implementation checkpoint:** [Verify run 42244604886](https://github.com/denchik37/aftercheck/actions/runs/42244604886)
+at `f7e4048389d3acf85d7c16020b34990c03fde93f` passed TypeScript checking,
+**272 Node tests**, the offline PASS/VIOLATION/UNKNOWN demo, **75 offline browser
+cases** and **44 local HTTP checks**. The [current readiness matrix](docs/READINESS.md#current-audited-status--6-november-2026)
+separately pins the latest real corroboration runs and actual SDK builds to their
+source revisions. The public HTTPS viewer retains its own deployment source;
+this optional CLI integration does not redeploy it. The records below retain
+earlier implementation checkpoints.
 
-**Optional CRE status:** no Chainlink workflow or successful official simulation
-was established before the deadline-derived decision gate. Chainlink is omitted
-from the recommended partner selection; [the decision record](docs/CRE_DECISION.md)
-contains the verified timing and unmet requirements. The core needs no CRE
-credentials or dependencies.
+**Optional Chainlink CRE integration:** the official SDK workflow fetches a
+revision-pinned public manifest and requests a historical Sepolia factory
+`getPool` read plus a separate block header. Aftercheck validates its structured
+result and produces a separate corroboration appendix while preserving the core
+financial verdict. The actual workflow compiles to WASM; successful official
+simulation remains dependent on CRE account authentication. Direct RPC rehearsal
+is explicitly labelled and is not CRE execution evidence. See the
+[integration and reproduction guide](docs/CRE_INTEGRATION.md),
+[current evidence](docs/READINESS.md), and [superseded gate decision](docs/CRE_DECISION.md).
+The ordinary verifier, replay and viewer require no CRE credentials or packages.
+
+Run `npm run cre:demo` to replay the retained real HTTP/RPC corroboration results
+offline and generate five separate appendices under `output/cre-demo`. This
+demonstrates MATCH, intentional MISMATCH and UNAVAILABLE while preserving core
+PASS, VIOLATION and reserve UNKNOWN. It is labelled **RPC_REHEARSAL**, and does not
+claim a fresh observation or official CRE simulation. [Recorded evidence and
+sponsor status](docs/evidence/cre/README.md).
 
 [Real-case PR #7 CI](https://github.com/denchik37/aftercheck/actions/runs/42069380806) tested merge revision `40ee01b30505ba8163c7e18011b2a8cb5e4878b3` for implementation commit `678cf4344d22af89f0d1114d97bd3c62500b2784`: TypeScript checking and **109 tests passed** on Node `24.22.2`, followed by all three committed demo policies with CLI exits `0/2/3`. Tests include literal historical observations, one-unit boundaries, offline replay, hostile input and output consistency.
 
@@ -104,7 +118,7 @@ Its [browser artifact](https://github.com/denchik37/aftercheck/actions/runs/4206
 ## CROPS
 
 - **Censorship resistance:** No Aftercheck domain or server is required. After checkout and Node setup, saved-evidence replay and the viewer work without GitHub, npm or RPC access; fresh collection still needs an accessible historical RPC provider.
-- **Open source:** [MIT license](LICENSE); Node.js 24 runs the CLI/demo without runtime packages. Locked npm dependencies are needed for development type checks. Code and public references are linked in [PROTOCOL.md](docs/PROTOCOL.md).
+- **Open source:** Aftercheck-authored source is [MIT licensed](LICENSE); Node.js 24 runs the CLI/demo without runtime packages. Locked npm dependencies are needed for development type checks. Optional official CRE SDK/plugin dependencies have separate BUSL-1.1 nonproduction terms, listed in [third-party notices](integrations/cre/THIRD_PARTY_NOTICES.md); the core does not depend on them. Code and public references are linked in [PROTOCOL.md](docs/PROTOCOL.md).
 - **Privacy:** The RPC provider sees the client's IP and requested transactions, contracts and blocks. GitHub/npm see initial download metadata. Policies and reports stay local during evaluation/inspection; the client has no trackers or analytics.
 - **Security:** No wallet keys or signing. Strict parsing, exact arithmetic and explicit trust limits reduce accidental overclaiming; this prototype has no audit, consensus proof or reserve-state guarantee.
 

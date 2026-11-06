@@ -43,6 +43,10 @@ jobs:
           npm run demo 2>&1 | tee output/demo.log
       - name: Validate persisted public example output
         run: node scripts/check-public-example-inspection.mjs output/demo/pass
+      - name: Replay retained optional corroboration without networking or CRE packages
+        run: |
+          set -o pipefail
+          npm run cre:demo 2>&1 | tee output/cre-demo.log
       - name: Retain verification evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

@@ -1,0 +1,16 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> aftercheck@0.2.0 demo
+> node --disable-warning=ExperimentalWarning --experimental-strip-types scripts/demo.mjs
+
+Historical Sepolia RPC observations; policies are supplied retrospectively.
+Replay runs with fetch and common Node networking entry points disabled.
+pass: SUCCEEDED / SUPPORTED / COMPLETE / PASS (CLI exit 0)
+  output/demo/pass/report.json and report.md
+violation: SUCCEEDED / SUPPORTED / COMPLETE / VIOLATION (CLI exit 2)
+  output/demo/violation/report.json and report.md
+reserve: SUCCEEDED / SUPPORTED / PARTIAL / UNKNOWN (CLI exit 3)
+  output/demo/reserve/report.json and report.md
+Same evidence digest for every policy: 0x41c8cd52735e76a759e3d93103f4cd6a77d0630f09593e5c9ca0612794880093
+Open web/inspector.html locally and import one generated report.json.
+PASS concerns receipt-emitted amounts; reserve state, consensus and finality are not proved.

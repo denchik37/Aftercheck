@@ -1,0 +1,16 @@
+AFTERCHECK — OPTIONAL CRE CORROBORATION
+Transaction execution: SUCCEEDED
+Protocol support: SUPPORTED
+Evidence coverage: COMPLETE
+Financial-policy verdict: PASS (unchanged)
+External pool identity: UNAVAILABLE
+Execution classification: RPC_REHEARSAL
+Scenario: REFERENCE
+Manifest HTTP fetch: UNAVAILABLE
+Result authenticity: self-reported local file; not an authenticated Chainlink or DON attestation.
+RPC_REHEARSAL: direct RPC execution is not an executed CRE CLI simulation.
+Original evidence pool: 0x029603931809d430ae47d2f55212cc0e89dbfd52
+Compared expectation: 0x029603931809d430ae47d2f55212cc0e89dbfd52
+Observed pool: UNAVAILABLE
+Saved core/report.json, core/report.md, corroboration/report.json and corroboration/report.md under /workspace/scratch/8fc1fda0f4b2/aftercheck/output/cre-execution/consumed-final/unavailable
+Exit code describes external corroboration only; the independent financial-policy verdict is shown above.

@@ -1,0 +1,8 @@
+[cli version]
+CRE CLI version v1.39.0
+
+[bun version]
+1.4.4
+
+
+

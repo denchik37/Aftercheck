@@ -1,0 +1,31 @@
+{
+  "call": {
+    "calldata": "0x1698ee820000000000000000000000000f47e03a0383396635846f8495003fc478b71bca0000000000000000000000009142fa65aaef921aea2127e88758adee0510a0f000000000000000000000000000000000000000000000000000000000000001f4",
+    "expectedPool": "0x0000000000000000000000000000000000000001",
+    "factory": "0x0227628f3f023bb0b980b67d528571c95c6dac1c",
+    "fee": "500",
+    "method": "getPool(address,address,uint24)",
+    "token0": "0x0f47e03a0383396635846f8495003fc478b71bca",
+    "token1": "0x9142fa65aaef921aea2127e88758adee0510a0f0"
+  },
+  "evidence": {
+    "acquiredAt": "2026-11-05T16:49:14.801Z",
+    "digest": "0x41c8cd52735e76a759e3d93103f4cd6a77d0630f09593e5c9ca0612794880093",
+    "evidenceClass": "RPC_RECEIPT",
+    "origin": "THIRD_PARTY_HISTORICAL_SEPOLIA_CAPTURE",
+    "sourcePath": "examples/sepolia/evidence.json",
+    "sourceRevision": "17ac1368d238f594a6e46728402c298b9e3968f1",
+    "sourceUrl": "https://raw.githubusercontent.com/denchik37/aftercheck/17ac1368d238f594a6e46728402c298b9e3968f1/examples/sepolia/evidence.json"
+  },
+  "manifestDigest": "0x03a312fef6bd38858f63e098b817f1afa73022d4333e41a8e1daac09b6110f2f",
+  "observationMode": "HISTORICAL_BLOCK_NUMBER",
+  "scenario": "INTENTIONAL_MISMATCH",
+  "schemaVersion": "aftercheck.cre-manifest.v1",
+  "target": {
+    "blockHash": "0x6526359f4e3c5e1db4d70ecef4510b8f510fd1e05e3dce986a9de32bd7fa7a34",
+    "blockNumber": "7689923",
+    "chainId": "11155111",
+    "chainSelector": "16015286601757825753",
+    "transactionHash": "0x608ca58e7d01dbe0c7fe48af8c0bb9f2bddcf07ccc36f5c28d033bc8d198d5e9"
+  }
+}
