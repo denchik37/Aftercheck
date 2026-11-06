@@ -49,7 +49,7 @@
       },
       "consumption": {
         "corroborationJsonSha256": "55b43cbfd3525076ddbde690764b867b08c3b748ae62e97e25d1f636e1d44699",
-        "corroborationMarkdownSha256": "108d685dd3777ecd0f7855f3dfd606ee2ee4066238644c0621e626e2cc4e82de3652"
+        "corroborationMarkdownSha256": "108d685dd3777ecd0f7855f3dfd606ee4066238644c0621e626e2cc4e82de"
       },
       "expectedConsumerExit": 0
     },
