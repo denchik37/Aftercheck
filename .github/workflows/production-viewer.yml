@@ -1,0 +1,40 @@
+name: Production viewer
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  production-https:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      AFTERCHECK_BROWSER_VENV: /tmp/aftercheck-production-browser-venv
+      AFTERCHECK_PRODUCTION_URL: https://aftercheck-g4nsb.ondigitalocean.app/
+      AFTERCHECK_DEPLOYED_REVISION: d5414cb43c6d31cc66afd070d14dca4ab9921a75
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          ref: ${{ env.AFTERCHECK_DEPLOYED_REVISION }}
+          persist-credentials: false
+      - name: Install isolated browser test runtime
+        run: |
+          python3 -m venv "$AFTERCHECK_BROWSER_VENV"
+          "$AFTERCHECK_BROWSER_VENV/bin/pip" install --disable-pip-version-check -r test/browser-requirements.txt
+          "$AFTERCHECK_BROWSER_VENV/bin/python" -m playwright install --with-deps chromium
+      - name: Verify the deployed viewer over public HTTPS
+        run: |
+          git rev-parse HEAD | tee production-source-revision.txt
+          "$AFTERCHECK_BROWSER_VENV/bin/python" scripts/test-hosted-inspector.py \
+            --url "$AFTERCHECK_PRODUCTION_URL" \
+            --expected-revision "$AFTERCHECK_DEPLOYED_REVISION" \
+            --out output/hosted-production
+      - name: Retain production results and screenshots
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: production-viewer-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            production-source-revision.txt
+            output/hosted-production/
+          if-no-files-found: error
+          retention-days: 30
