@@ -1,6 +1,6 @@
 # Uniswap developer feedback
 
-Prepared 5 November 2026 from Aftercheck's implementation work. This file does not indicate that the Developer Feedback Form has been submitted.
+Prepared 5 November 2026 from Aftercheck's implementation work. **Submission update (7 November 2026 IST):** The project owner completed the Uniswap Developer Feedback Form and supplied a screenshot of the confirmation screen reading “Thanks for sharing your feedback.” No form response ID or email receipt has been provided. This records the form completion, not Uniswap prize qualification.
 
 ## Integration
 
@@ -33,4 +33,4 @@ The [Mumbai Uniswap challenge](https://ethglobal.com/events/mumbai/prizes/uniswa
 
 <https://github.com/denchik37/aftercheck/blob/main/FEEDBACK.md>
 
-Form completion and sponsor qualification remain unconfirmed.
+**Form submission:** confirmed by the project owner's success-screen screenshot on 7 November 2026 IST. **Sponsor qualification:** not independently established.
