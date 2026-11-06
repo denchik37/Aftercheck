@@ -10,3 +10,4 @@ web/assets/*.js text eol=lf
 web/assets/*.json text eol=lf
 web/report-viewer.html text eol=lf
 web/evidence/*.json text eol=lf
+docs/evidence/token-precision/** text eol=lf

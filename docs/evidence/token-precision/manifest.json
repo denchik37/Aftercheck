@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "aftercheck.token-precision-research.v1",
+  "checkedAt": "2026-11-06T16:43:26.083Z",
+  "evidence": {
+    "sourcePath": "examples/sepolia/evidence.json",
+    "sha256": "d57013b097c323271d25a021f6244e79a00ec72853dd6aed0828f2a481fe0c36",
+    "digest": "0x41c8cd52735e76a759e3d93103f4cd6a77d0630f09593e5c9ca0612794880093",
+    "chainId": 11155111,
+    "transactionHash": "0x608ca58e7d01dbe0c7fe48af8c0bb9f2bddcf07ccc36f5c28d033bc8d198d5e9",
+    "blockNumber": "0x7556c3",
+    "blockHash": "0x6526359f4e3c5e1db4d70ecef4510b8f510fd1e05e3dce986a9de32bd7fa7a34"
+  },
+  "compiler": {
+    "package": "solc",
+    "version": "0.8.26",
+    "fullVersion": "0.8.26+commit.8a97fa7a.Emscripten.clang",
+    "registry": "https://registry.npmjs.org/solc/-/solc-0.8.26.tgz",
+    "integrity": "sha512-yiPQNVf5rBFHwN6SIf3TUUvVAFKcQqmSUFeq+fb6pNRCo0ZCgpYOZDi3BVoezCPIAcKrVYd/qXlBLUP9wVrZ9g=="
+  },
+  "tokens": [
+    {
+      "role": "tokenIn",
+      "address": "0x0f47e03a0383396635846f8495003fc478b71bca",
+      "decimals": 18,
+      "provenance": "SOURCE_VERIFIED_PINNED_RUNTIME",
+      "sourceUrl": "https://sourcify.dev/server/v2/contract/11155111/0x0f47e03a0383396635846f8495003fc478b71bca?fields=all",
+      "sourceResponseSha256": "f6dc54fcad30510306ce630af164e1a0fa0d7d1f2b04812d846bb295216e9afa",
+      "sourceResponseBytes": 450887,
+      "sourceVerifiedAt": "2025-02-03T21:48:55Z",
+      "sourceMatchId": "6012523",
+      "sourceMatch": "exact_match",
+      "compilationTarget": "contracts/TIGER.sol:TIGER",
+      "compilerVersion": "0.8.26+commit.8a97fa7a",
+      "standardInputPath": "tokenIn-standard-input.json",
+      "standardInputSha256": "35b6e4ae31da50d3f53fe1ab689a3e1a44496b51bcb783b2afbd66f54983c62d",
+      "compiledRuntimePath": "tokenIn-compiled-runtime.txt",
+      "runtimeBytes": 4380,
+      "runtimeSha256": "8d5ab55c4e3ee83c5058ad5912de9ca449035c2e99a462a335ba92cdbb29e71c",
+      "onchainRecordEqualsRetained": true,
+      "independentFullRecompilationEqualsRetained": true,
+      "decimalsSource": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+      "decimalsSourceSha256": "c322867b0b30f6d5f791e5ab9af5e3f5ff1c8c127906748f6725e592a5f40719",
+      "constantReturn": "18",
+      "noDecimalsOverride": true,
+      "proxy": false,
+      "warnings": []
+    },
+    {
+      "role": "tokenOut",
+      "address": "0x9142fa65aaef921aea2127e88758adee0510a0f0",
+      "decimals": 18,
+      "provenance": "SOURCE_VERIFIED_PINNED_RUNTIME",
+      "sourceUrl": "https://sourcify.dev/server/v2/contract/11155111/0x9142fa65aaef921aea2127e88758adee0510a0f0?fields=all",
+      "sourceResponseSha256": "c71c8790e06c9dfbe337fb4c933024b04b3c4af11d5df27fe2af881eba9f6d05",
+      "sourceResponseBytes": 450848,
+      "sourceVerifiedAt": "2025-02-03T21:49:50Z",
+      "sourceMatchId": "6012525",
+      "sourceMatch": "exact_match",
+      "compilationTarget": "contracts/LUSD.sol:LUSD",
+      "compilerVersion": "0.8.26+commit.8a97fa7a",
+      "standardInputPath": "tokenOut-standard-input.json",
+      "standardInputSha256": "f5d17d601ee90c15af479dadcf4bc291068f54bd056e9a6491cf2e6513247083",
+      "compiledRuntimePath": "tokenOut-compiled-runtime.txt",
+      "runtimeBytes": 4380,
+      "runtimeSha256": "a5a02890e3f35fc56e61694f7836a606841ed62bb4f6b7a5affa007c2914b214",
+      "onchainRecordEqualsRetained": true,
+      "independentFullRecompilationEqualsRetained": true,
+      "decimalsSource": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+      "decimalsSourceSha256": "c322867b0b30f6d5f791e5ab9af5e3f5ff1c8c127906748f6725e592a5f40719",
+      "constantReturn": "18",
+      "noDecimalsOverride": true,
+      "proxy": false,
+      "warnings": []
+    }
+  ],
+  "limitations": [
+    "This binds verified source to the exact full runtime bytes in the retained RPC capture; it is not independent Ethereum consensus or finality proof.",
+    "The decimals value is statically constant in the matched source. No new historical decimals() RPC observation is claimed.",
+    "No token symbol, price, backing, real-world value or reserve is established by the display precision.",
+    "Different evidence is not covered by this metadata reference."
+  ]
+}
