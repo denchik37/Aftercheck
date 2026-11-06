@@ -5,11 +5,18 @@ observation with a deliberately public manifest derived from the retained
 Sepolia evidence. The result is a separate, inspectable appendix. The original
 financial-policy report is regenerated unchanged.
 
-**Engineering status: implemented; sponsor execution qualification incomplete
-until a successful official CLI simulation is retained.** The SDK workflow has
-compiled into WASM. Account authentication is required before the official
-simulator can execute its HTTP and EVM capabilities. A direct RPC rehearsal and
-ordinary tests are explicitly different execution classes.
+**Engineering status: official local CRE CLI simulation VERIFIED (7 November
+2026 IST).** The official SDK workflow compiled into WASM and the authenticated
+CRE CLI **1.39.0** produced independently reviewed and source-bound
+**MATCH, intentional MISMATCH and UNAVAILABLE** results at revision
+`1ad2dd1ba629bd0751748a7451619cfe8c5d488d`. Aftercheck consumed all
+three results without changing its core PASS; the original CLI logs and full
+result/execution JSONs are published under
+[official 7 November simulation evidence](evidence/cre/official-2026-11-07/README.md).
+The exact operator-supplied ZIP and its SHA-256 are documented there. This
+establishes successful **local** CRE simulation, *not* a deployed DON attestation
+or financial-state proof. Earlier direct RPC rehearsals and ordinary tests remain
+explicitly different execution classes.
 
 The retained real Node HTTP/RPC runs produced **MATCH, intentional MISMATCH and
 HTTP-404 UNAVAILABLE** at source `f7e4048389d3acf85d7c16020b34990c03fde93f`.
