@@ -1,6 +1,6 @@
 # Submission preparation
 
-Prepared 5 November 2026. Selected track: **Start from Scratch / Classic**. This is technical submission material, not a statement of accepted participation, prize qualification or completed external submission.
+Prepared 5 November 2026; submission-requirements refresh 7 November 2026 IST. Selected track: **Start from Scratch / Classic**. This is technical submission material, not a statement of accepted participation, prize qualification or completed external submission.
 
 ## Project copy
 
@@ -38,7 +38,13 @@ npm run verify
 npm run demo
 ```
 
-Open `web/inspector.html` locally and import `output/demo/pass/report.json`, then compare `output/demo/violation/report.json` and `output/demo/reserve/report.json`. This rehearsal replays **historical testnet RPC evidence**. The viewer displays a saved report; it does not independently verify Ethereum or execute the evaluator.
+For the **current browser-native verifier**, serve committed assets over loopback HTTP (native modules require localhost or HTTPS):
+
+```bash
+python3 -m http.server 8080 --bind 127.0.0.1 --directory web
+```
+
+Open `http://127.0.0.1:8080/inspector.html` and use the retained transaction or import evidence. The separate self-contained `web/report-viewer.html` can open a saved `report.json` directly, but only displays it; it does not rerun evaluation. These rehearsals use **historical testnet evidence** and **retrospectively supplied policies**, not a new event swap.
 
 The underlying standalone replay command is:
 
@@ -60,7 +66,7 @@ Use the retained historical testnet case and identify its transaction date separ
 | 1:25–2:15 | Disable network access after setup. Run offline replay and reopen the local report viewer. Show that evidence, policy and reports remain available with no author-controlled backend. Explain that fresh collection still depends on an RPC provider. |
 | 2:15–2:45 | Show source, tests and limitations. “The supported slice is one direct Sepolia swap. This checks receipt-emitted amounts under explicit token assumptions. It does not simulate the AMM, verify consensus, audit tokens or protect real funds.” |
 
-The [event video guidance](https://ethglobal.com/events/mumbai/info/details) and [CROPS challenge](https://ethglobal.com/events/mumbai/prizes/ethereum-foundation) together call for a 2–3 minute video. Use at least 720p, the owner's narration, and an actual dependency-loss demonstration. Recording is pending.
+The [event video guidance](https://ethglobal.com/events/mumbai/info/details) and [CROPS challenge](https://ethglobal.com/events/mumbai/prizes/ethereum-foundation) together call for a 2–3 minute video. Use at least 720p, the owner's narration, and an actual dependency-loss demonstration. The final video has not been independently inspected here. **ETHGlobal expressly disallows AI/text-to-speech voiceover** (as well as sped-up playback and music-plus-text-only narration); use the founder's own human narration. Event upload requires **2–4 minutes** and **at least 720p**; the selected EF CROPS challenge imposes a stricter **3-minute maximum** and requires visibly demonstrating the loss-of-dependency property. Verify the final edit and audio origin before upload.
 
 ## Sponsor and owner checklist
 
@@ -74,9 +80,27 @@ The [event video guidance](https://ethglobal.com/events/mumbai/info/details) and
   [decision history](CRE_DECISION.md). No external form or partner selection was changed.
 - **Uniswap:** retain the public MIT-licensed repository, actual protocol evidence, source locations in the README and [`FEEDBACK.md`](../FEEDBACK.md); submit the [Developer Feedback Form](https://developers.uniswap.org/hackathon-feedback) with the FEEDBACK URL. Form completion is pending. [Requirements](https://ethglobal.com/events/mumbai/prizes/uniswap-foundation).
 - **EF Best CROPS App, conditional:** the README must have a section titled `CROPS` explaining dependencies, reproducibility, third-party exposure and trust assumptions. Retain a video of the lead property surviving dependency loss. The client has no analytics, signing or account system; RPC collection reveals requests and network metadata to the chosen provider. Qualification is unconfirmed. [Requirements](https://ethglobal.com/events/mumbai/prizes/ethereum-foundation).
-- **Final submission:** owner action, still pending. Official deadline: **7 November 2026, 09:00 IST**; aim to finish the package by **05:00 IST**. Confirm any organizer updates and submit through the Hacker Dashboard. [Event details](https://ethglobal.com/events/mumbai/info/details).
+- **Final submission:** owner action, still pending. The currently published official details and participant guide both say **Sunday 8 November 2026, 09:00 IST**, superseding this repository's older **7 November** planning date. **Confirm inside the authenticated Hacker Dashboard** before relying on the extra day; submit with a buffer. [Official event details](https://ethglobal.com/events/mumbai/info/details), [participant guide](https://ethglobal.com/events/mumbai/info/start).
 
 The supported operation excludes multicall, Universal Router, multi-hop and delegated/native-value routes. Reserve checks remain UNKNOWN. RPC observations and bytecode presence do not prove arbitrary token balance semantics. No new swap, contract deployment, financial protection, independent audit or sponsor acceptance is claimed.
+
+## Submission handoff and evidence gate — refreshed 7 November 2026 IST
+
+**Checked repository state:** public `main` at `1ad2dd1ba629bd0751748a7451619cfe8c5d488d`. [Current main Verify run](https://github.com/denchik37/aftercheck/actions/runs/42300692948) completed successfully, as did [Windows syntax checks](https://github.com/denchik37/aftercheck/actions/runs/42300692969). [Optional CRE run](https://github.com/denchik37/aftercheck/actions/runs/42300693047) is **green for workflow availability and WASM build, not a successful simulator run**: authentication was absent and the actual simulation/consumption steps were skipped. Earlier [public HTTPS acceptance](https://github.com/denchik37/aftercheck/actions/runs/42280622631) passed against deployed `f4fac3b8b7a3680aaef362c76de39e3d1df65fdd`; do not claim the newer `main` revision was deployed merely because its CI passed.
+
+**Prepare and confirm separately; a repository file does not submit a form:**
+
+- [ ] Confirm the live deadline and participation/project status inside the authenticated ETHGlobal Hacker Dashboard.
+- [ ] Review the finished video: human voice, 2–3 minutes for the EF intersection, ≥720p, normal playback speed, readable app, honest historical Sepolia/retrospective-policy labels and a visible local/offline replay or dependency-loss demonstration.
+- [ ] Verify the public HTTPS app opens and the read-only PASS / VIOLATION / reserve UNKNOWN flow matches the retained evidence; keep an offline CLI/report fallback and record the exact deployed revision.
+- [ ] Confirm public repo, license, meaningful development history, README setup, CROPS section, integration code pointers, receipt/explorer link, tests and data provenance; scan public artifacts and video frames for confidential material or secrets.
+- [ ] Confirm [FEEDBACK.md](../FEEDBACK.md) reflects the actual experience; **submit the external [Uniswap Developer Feedback Form](https://developers.uniswap.org/hackathon-feedback)** with `https://github.com/denchik37/aftercheck/blob/main/FEEDBACK.md`; save the form receipt/screenshot. This is separate from selecting the Uniswap partner in the ETHGlobal form.
+- [ ] In ETHGlobal submission select **Start from Scratch / Classic**, enter the title/description, public source, deployed app, demo video, and the required integration/feedback fields; choose **Uniswap — Build with Uniswap** and **Ethereum Foundation — Best CROPS App**. The dashboard controls the available partner choices.
+- [ ] Select **Chainlink — Best workflow with CRE** only when an **actual successful official CRE CLI simulation or live deployment** and meaningful consumed result are recorded; `RPC_REHEARSAL`, a successful WASM build or a green authentication-gated CI job are insufficient.
+- [ ] Check AI/tool attribution and actual pre-event planning-input provenance against Classic rules. Do not misdate or silently claim approval of contested inputs; seek an organizer ruling where required while protecting unrelated confidential context.
+- [ ] Save the final form confirmation, selected partners, public project URL, source SHA, video location, evidence/run links and the time of submission. Return to the dashboard to verify the submission is marked complete; check the assigned judging slot after submission.
+
+**External submission state:** no Hacker Dashboard project submission, partner selection or Uniswap feedback-form completion has been independently confirmed in this review.
 
 ## Optional CRE presentation segment
 
