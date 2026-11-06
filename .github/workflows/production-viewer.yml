@@ -23,18 +23,16 @@ jobs:
           "$AFTERCHECK_BROWSER_VENV/bin/python" -m playwright install --with-deps chromium
       - name: Verify the deployed viewer over public HTTPS
         run: |
-          git rev-parse HEAD | tee production-source-revision.txt
           "$AFTERCHECK_BROWSER_VENV/bin/python" scripts/test-hosted-inspector.py \
             --url "$AFTERCHECK_PRODUCTION_URL" \
             --expected-revision "$AFTERCHECK_DEPLOYED_REVISION" \
             --out output/hosted-production
+          git rev-parse HEAD | tee output/hosted-production/source-revision.txt
       - name: Retain production results and screenshots
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: production-viewer-${{ github.run_id }}-${{ github.run_attempt }}
-          path: |
-            production-source-revision.txt
-            output/hosted-production/
+          path: output/hosted-production/
           if-no-files-found: error
           retention-days: 30
