@@ -11,7 +11,11 @@
     "verify": "npm run typecheck && npm test",
     "cli": "node --disable-warning=ExperimentalWarning --experimental-strip-types bin/aftercheck.mjs",
     "demo": "node --disable-warning=ExperimentalWarning --experimental-strip-types scripts/demo.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "cre:manifest": "node --disable-warning=ExperimentalWarning --experimental-strip-types scripts/cre-manifest.mjs --check",
+    "cre:consume": "node --disable-warning=ExperimentalWarning --experimental-strip-types scripts/cre-consume.mjs",
+    "cre:simulate": "node --disable-warning=ExperimentalWarning --experimental-strip-types scripts/cre-simulate.mjs",
+    "cre:rehearse": "node --disable-warning=ExperimentalWarning --experimental-strip-types scripts/cre-rehearse.mjs"
   },
   "devDependencies": {
     "@types/node": "24.19.2",

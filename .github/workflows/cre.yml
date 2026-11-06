@@ -1,0 +1,122 @@
+name: Optional CRE
+on:
+  push:
+    branches: [main, feature/chainlink-cre-corroboration]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compile:
+    name: CRE WASM build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: '24'
+      - name: Record source and install checked Bun binary
+        run: |
+          mkdir -p output/cre-build
+          git rev-parse HEAD > output/cre-build/source-revision.txt
+          node scripts/cre-install-tools.mjs --bun-only --output "$RUNNER_TEMP/aftercheck-cre-tools"
+          echo "$RUNNER_TEMP/aftercheck-cre-tools/bin" >> "$GITHUB_PATH"
+      - name: Install optional locked dependencies
+        working-directory: integrations/cre/workflow
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Validate public manifests from the retained evidence
+        run: npm run cre:manifest
+      - name: Compile actual SDK workflow to WASM
+        run: |
+          set -o pipefail
+          npm --prefix integrations/cre/workflow run build 2>&1 | tee output/cre-build/compiler.log
+          sha256sum integrations/cre/workflow/build/workflow.wasm > output/cre-build/wasm.sha256
+          node --version > output/cre-build/node-version.txt
+          bun --version > output/cre-build/bun-version.txt
+          git diff --exit-code
+      - name: Retain actual build evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: cre-build-${{ github.run_id }}-${{ github.run_attempt }}
+          path: output/cre-build/
+          if-no-files-found: error
+          retention-days: 30
+  simulate:
+    name: CRE simulation availability and execution
+    needs: compile
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: '24'
+      - name: Check private authentication availability
+        id: auth
+        env:
+          CRE_API_KEY: ${{ secrets.CRE_API_KEY }}
+        run: |
+          mkdir -p output/cre-simulation
+          git rev-parse HEAD > output/cre-simulation/source-revision.txt
+          if [ -n "$CRE_API_KEY" ]; then
+            echo 'available=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'available=false' >> "$GITHUB_OUTPUT"
+            echo '{"status":"BLOCKED","reason":"CRE_AUTHENTICATION_UNAVAILABLE","officialSimulationExecuted":false,"successfulSimulationClaimed":false}' > output/cre-simulation/authentication.json
+            echo '### CRE simulation BLOCKED: no privately configured CRE_API_KEY. No official simulation ran.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Install checked official CLI and Bun
+        if: steps.auth.outputs.available == 'true'
+        run: |
+          node scripts/cre-install-tools.mjs --output "$RUNNER_TEMP/aftercheck-cre-tools"
+          echo "$RUNNER_TEMP/aftercheck-cre-tools/bin" >> "$GITHUB_PATH"
+      - name: Install optional locked SDK
+        if: steps.auth.outputs.available == 'true'
+        working-directory: integrations/cre/workflow
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Execute official positive, mismatch and unavailable simulations
+        if: steps.auth.outputs.available == 'true'
+        env:
+          CRE_API_KEY: ${{ secrets.CRE_API_KEY }}
+        run: |
+          node scripts/cre-simulate.mjs --manifest integrations/cre/public/reference.json --manifest-url https://raw.githubusercontent.com/denchik37/aftercheck/2b86229b8db8e4cf2217de73aa4ab4d9ef9f8a4d/integrations/cre/public/reference.json --output output/cre-simulation/reference
+          node scripts/cre-simulate.mjs --manifest integrations/cre/public/intentional-mismatch.json --manifest-url https://raw.githubusercontent.com/denchik37/aftercheck/2b86229b8db8e4cf2217de73aa4ab4d9ef9f8a4d/integrations/cre/public/intentional-mismatch.json --output output/cre-simulation/intentional-mismatch
+          node scripts/cre-simulate.mjs --manifest integrations/cre/public/reference.json --manifest-url https://raw.githubusercontent.com/denchik37/aftercheck/2b86229b8db8e4cf2217de73aa4ab4d9ef9f8a4d/integrations/cre/public/unavailable.json --output output/cre-simulation/unavailable
+      - name: Consume and verify actual simulation results
+        if: steps.auth.outputs.available == 'true'
+        run: |
+          python3 - <<'PY'
+          import json, pathlib, subprocess
+          root = pathlib.Path('output/cre-simulation')
+          for case, expected, expected_exit in [('reference','MATCH',0),('intentional-mismatch','MISMATCH',2),('unavailable','UNAVAILABLE',3)]:
+              result_path = root / case / 'result.json'
+              result = json.loads(result_path.read_text())
+              assert result['metadata']['executionMode'] == 'CRE_CLI_SIMULATION'
+              assert result['status'] == expected, (case, result['status'])
+              manifest = 'intentional-mismatch' if case == 'intentional-mismatch' else 'reference'
+              cmd = ['node','scripts/cre-consume.mjs','examples/sepolia/evidence.json','examples/sepolia/policy-pass.json',f'integrations/cre/public/{manifest}.json',str(result_path),str(root / case / 'aftercheck')]
+              proc = subprocess.run(cmd, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+              (root / case / 'consumption.log').write_text(proc.stdout)
+              print(proc.stdout)
+              assert proc.returncode == expected_exit, (case, proc.returncode)
+              report = json.loads((root / case / 'aftercheck/core/report.json').read_text())
+              assert report['verdict'] == 'PASS'
+          PY
+          echo '### Official CRE simulations and Aftercheck consumption passed for MATCH, intentional MISMATCH and HTTP UNAVAILABLE.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Retain execution or explicit authentication gap
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: cre-simulation-${{ github.run_id }}-${{ github.run_attempt }}
+          path: output/cre-simulation/
+          if-no-files-found: error
+          retention-days: 30
