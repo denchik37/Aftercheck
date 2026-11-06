@@ -1,5 +1,57 @@
 # Readiness checkpoint
 
+## Chainlink CRE sponsor technical readiness — 7 November 2026 IST
+
+**CRE READY — VERIFIED local CLI simulation, but no live DON deployment or
+external award acceptance claimed.** An authenticated Chainlink CRE CLI **1.39.0**
+at exact source `1ad2dd1ba629bd0751748a7451619cfe8c5d488d` executed an
+actual HTTP-manifest-plus-historical-Sepolia-EVM workflow in QuickJS/WASM with
+SDK **1.23.0**, Bun **1.4.4**, producing three validated results:
+**MATCH**, deliberate **MISMATCH**, and HTTP-failure **UNAVAILABLE**.
+All three `execution.json` records report `exitCode=0` and
+`VALIDATED_SIMULATOR_RESULT`. The Aftercheck consumer recomputed each separate
+corroboration appendix with the **core PASS unchanged**. The owner-supplied
+34,752-byte ZIP was inspected offline (ZIP CRC, 28 entries, bounded paths,
+secret/privacy patterns, per-file hashes, canonical result hashes, execution
+source binding, unchanged core report byte hashes) before the matching sanitized
+records were published.
+
+**Primary evidence:** [official CRE simulator records, logs and review](evidence/cre/official-2026-11-07/README.md),
+[byte-hash index](evidence/cre/official-2026-11-07/audit-index.json),
+[full integration guide](CRE_INTEGRATION.md), and [sponsor submission copy](CRE_SUBMISSION.md).
+The original archive SHA-256 is
+`3aefbda5ed2899cfd3b41bee257505f362a1f72efec51ca95bdc12b4d5ad4c45`.
+
+| Sponsor-readiness axis | Status | Evidence / bound |
+|---|---|---|
+| CRE01 meaningful HTTP+blockchain workflow | **PASS** | Immutable public HTTPS evidence manifest plus block-number-bound Sepolia `factory.getPool` from actual CRE SDK workflow |
+| CRE02 official execution | **PASS** | Locally authenticated CRE CLI results MATCH/MISMATCH/UNAVAILABLE at `1ad2dd1`; not merely compiler or rehearsal |
+| CRE03 application consumption | **PASS** | Core `SUCCEEDED / SUPPORTED / COMPLETE / PASS` unchanged; three external statuses imported, including discrepancy and missing-input semantics |
+| CRE04 source and execution reproduction | **PASS, bounded** | Committed source/results/logs/execution, hashes, pinned versions/manifest and offline consumer; authenticated local rerun uses owner's CRE session |
+| CRE05 truthful security and provenance | **PASS for technical claims** | Same underlying Tenderly RPC, separate header not hash-pinned call, simulation not deployed DON, historical third-party transaction |
+| Classic-track event provenance/AI eligibility | **UNRESOLVED — organizer/owner gate** | Detailed project-specific planning from 28 October predates kickoff; participation and permissible use are not certified by CI |
+| Actual hacker dashboard partner selection/submission | **NOT YET VERIFIED** | Owner must select Chainlink (third partner) and confirm submission/AI disclosure in dashboard |
+
+The owner-supplied Windows batch ran the CRE cases and Aftercheck consumption
+successfully. Its later local `npm run verify` recorded **342 pass / 4 fail** on
+missing Python in four ZIP-replay tests; those four failures were subsequently
+repaired by [PR #40](https://github.com/denchik37/aftercheck/pull/40) and
+validated with **10/10 Windows-specific tests** in actual Windows GitHub Actions.
+The later CI success is a different source revision and is not misrepresented
+as re-running CRE. The source-bound retained CRE results are unchanged.
+The dated 6 November status below records **historical** missing-credential
+conditions which the subsequent local login/simulation resolved.
+
+**Official event time correction:** the current
+[ETHGlobal submission guide](https://ethglobal.com/events/mumbai/info/details)
+specifies **Sunday 8 November 2026 at 09:00 IST**, not the older 7 November
+date in initial planning snapshots. This does not modify historic decisions
+retroactively. The primary Uniswap/CROPS demo and final submission remain
+separate acceptance gates.
+
+---
+
+
 ## Browser verifier public HTTPS acceptance — 7 November 2026 IST
 
 **PUBLIC ACCEPTANCE: PASS for merged source `f4fac3b8b7a3680aaef362c76de39e3d1df65fdd`.**
