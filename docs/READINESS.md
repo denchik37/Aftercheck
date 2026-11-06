@@ -93,44 +93,69 @@ See [PROTOCOL.md](PROTOCOL.md) for the exact implemented claim boundary. This pr
 
 ## DigitalOcean viewer deployment — Issue 19
 
-**6 November 2026 (IST): engineering verified; public deployment blocked by account access.**
-[PR #25](https://github.com/denchik37/aftercheck/pull/25) adds direct static hosting,
-four deterministic public sample reports, publication-boundary tests, and an
-HTTP(S) browser smoke harness. No `src/` or `bin/` implementation changed; all
-three inspector JavaScript blocks and its CSP remained byte-identical to baseline
-`3835c5a933c1f3f493ff726dd3b597f68c8c6330`.
+**6 November 2026 (IST): COMPLETE.** The dedicated static viewer is live at
+[`https://aftercheck-g4nsb.ondigitalocean.app/`](https://aftercheck-g4nsb.ondigitalocean.app/).
+The production app, provider deployment, public bytes, TLS/HTTP behavior and all
+browser outcomes were inspected. Issue #19 closes with this evidence record.
 
-[Verify run 42113544504](https://github.com/denchik37/aftercheck/actions/runs/42113544504)
-passed at exact source **`098c38ba9687ddf292eadaafbbf794988238963c`**. Both job logs
-were inspected. This is the first complete deployment-engineering checkpoint;
-later metadata/runbook commits require their own green PR checks.
+### Release identity
 
-| Requirement | Actual executed check | Evidence / source revision | Remaining risk |
-|---|---|---|---|
-| Financial regression | TypeScript and **168/168 Node tests**; demo CLI exits `0/2/3`; saved PASS replay comparison | [Verification artifact](https://github.com/denchik37/aftercheck/actions/runs/42113544504/artifacts/13455443830), `098c38b` | Receipt/RPC trust boundaries remain; no financial engine expansion |
-| Existing inspector | **75/75 offline browser checks**; zero requests, page errors or dialogs | [Browser artifact](https://github.com/denchik37/aftercheck/actions/runs/42113544504/artifacts/13454573912), `098c38b` | Offline `about:blank` checks do not establish production availability |
-| Static configuration | Official checksum-pinned `doctl` v2.3.0 schema validation passed without a credential | `spec-schema-validation.log` in verification artifact, `098c38b` | Provider/account-aware validation, free slot and build detection remain unexecuted |
-| Real HTTP viewer | **44/44 checks**, including **36 browser checks**, at 1280×900, 390×844 and 320×740 | `hosted-local/hosted-results.json` and actual screenshots in browser artifact, `098c38b` | Loopback HTTP does not establish DigitalOcean routing, TLS or response headers |
-| Source and samples | Root HTML and four public report responses matched exact reviewed bytes and fresh offline verifier results | Same hosted result; [`deployment.test.mjs`](../test/deployment.test.mjs) | Matching web bytes does not independently establish a provider's active Git SHA |
-| Publication/privacy | Only five allowlisted assets; ten unintended routes returned 404; no import-phase requests, page errors or dialogs | Same hosted result, `098c38b` | Hosting/CDN sees initial asset requests and ordinary request metadata |
-| Account/deployment | Full CLI validation returned `access token is required`; available cloud dashboard returned `Site Unavailable` | [Deployment access record](DIGITALOCEAN_DEPLOYMENT.md#access-and-cost-gate) | **BLOCKED**: authorized DigitalOcean session, account eligibility and actual app creation |
-| Production HTTPS and recovery | Public harness and supported rollback procedure implemented/documented | [Runbook](DIGITALOCEAN_DEPLOYMENT.md), PR #25 | **NOT EXECUTED**: app/deployment IDs, URL, live source SHA, TLS, production browser checks and rollback |
+| Record | Verified value |
+|---|---|
+| Project | `Aftercheck` (`d350d2ff-22f5-4f1c-84f4-ccc14555e7a7`) |
+| Static app | `aftercheck` (`2fb584c9-e7fc-4ab9-8565-8c2d84da13c2`) |
+| Live deployment | `a0318069-e0fd-4616-a3da-4c8d703feaf7`, Healthy, region `blr1`, Global CDN |
+| Tested release source | [`d5414cb43c6d31cc66afd070d14dca4ab9921a75`](https://github.com/denchik37/aftercheck/commit/d5414cb43c6d31cc66afd070d14dca4ab9921a75) |
+| Public verification | [Workflow run 42234449518](https://github.com/denchik37/aftercheck/actions/runs/42234449518), artifact `13509454311` |
+| Displayed estimate | **$0.00/month**; static-site-only free allowance shown by the account |
 
-CI used Node **24.22.2**, Python **3.14.4**, Playwright **1.62.0**, and Chromium
-**151.0.7922.34**. The independently reviewed inspector SHA-256 was
-`8fc5fef9b8ea2e52cd9448e1b5d32efc4c41f2f6b8f395260957031d5dcd958a`.
-The browser artifact ZIP SHA-256 was
-`ed61ca8e974099a05456764ac7f749dcabfedf498df0baa0d1fb068cb04d1ebb`.
-Artifacts have the workflow's 30-day retention; preserve a release copy if needed
-before expiry.
+The dashboard's deployment screen did not expose the source Git SHA. The release
+record therefore combines the authenticated app/deployment identity, the reviewed
+source used for launch, and byte-for-byte equality between production assets and a
+clean checkout at `d5414cb`. It is not represented as a provider-signed Git
+attestation. Automatic deployment remains disabled, so subsequent documentation
+commits do not change the live app.
 
-The local runtime separately passed all 168 Node tests, the demo, and the stricter
-output-policy case study. Its HTTP harness completed eight source/HTTP checks, but
-Chromium then failed with `socket() failed: Operation not permitted`. That local
-attempt was recorded as **FAIL with zero browser checks**, not a browser pass.
-GitHub Actions supplied the actual successful browser execution above.
+### Executed acceptance matrix
 
-No DigitalOcean resource, public URL, custom domain, or paid monitor was created.
-No unrelated infrastructure was accessed. Issue #19 remains open pending actual
-public deployment and production verification; a green PR is not completion of
-the public hosting milestone.
+| Requirement | Actual result | Evidence / remaining boundary |
+|---|---|---|
+| Pre-deploy regression | PR #28 and post-merge CI passed; **197/197 Node tests** and the hosted local gate passed before launch | [PR #28](https://github.com/denchik37/aftercheck/pull/28); receipt/provider trust boundaries are unchanged |
+| Production root and source | 200, 55,075 bytes, exact SHA-256 `8fc5fef9b8ea2e52cd9448e1b5d32efc4c41f2f6b8f395260957031d5dcd958a` | Production run; matching bytes cannot distinguish commits with identical web assets |
+| Public samples | All four JSON files matched the clean release checkout and fresh offline outputs | PASS, two distinct VIOLATION reports and reserve UNKNOWN retained |
+| TLS and redirect | HTTP→HTTPS 301; default certificate/hostname validation; TLS 1.3 in all three browser contexts | Assigned `.ondigitalocean.app` hostname; no custom domain or DNS change |
+| Browser behavior | **36/36 browser checks** across 1280×900, 390×844 and 320×740; 18 screenshots visually inspected | No post-load/import requests, page errors or dialogs |
+| Exposure boundary | Nine unintended repository/API paths returned true 404s | Provider also generated its default `404.html`; it is not an application route |
+| Provider scope | One Static Site; no service, worker, database, environment variable, secret or upload endpoint | Hosting/CDN still observes ordinary request metadata |
+| Recovery | Manual promotion and rollback procedure documented; first deployment retained as future recovery candidate | Rollback not exercised because there is no earlier verified production target |
+
+The production workflow reported **`PUBLIC_HTTPS: PASS — 45 checks (36 browser
+checks)`** from a clean checkout at exactly `d5414cb`; `workingTreeHasChanges` was
+false. The artifact ZIP SHA-256 is
+`2df466e0e09d16670ebf866e117285e8f2d04e394a43d05aefd7cabc8ad777fe`.
+Runtime versions were Python **3.14.4**, Playwright **1.62.0** and Chromium
+**151.0.7922.34**. Artifact retention is controlled by the workflow; preserve a
+release copy before expiry if it is needed beyond that period.
+
+The local production attempt separately passed source and HTTP checks but Chromium
+startup failed with `socket() failed: Operation not permitted`; it recorded **FAIL
+with zero browser checks**, not a pass. GitHub Actions supplied the authoritative
+production browser execution. Earlier launch-template validation also preserved the
+provider's rejected-field error before [PR #28](https://github.com/denchik37/aftercheck/pull/28)
+fixed the generic-Git dialect.
+
+The release work was delivered in focused increments: [PR #25](https://github.com/denchik37/aftercheck/pull/25)
+added the static publication boundary and harness; [PR #27](https://github.com/denchik37/aftercheck/pull/27)
+added the launch wrapper and parity test; [PR #28](https://github.com/denchik37/aftercheck/pull/28)
+fixed provider compatibility; [PR #29](https://github.com/denchik37/aftercheck/pull/29)
+added the pinned production workflow; and [PR #30](https://github.com/denchik37/aftercheck/pull/30)
+kept its checkout clean before verification. The first production workflow failure
+was preserved: it created its source-record file too early and correctly tripped the
+clean-tree guard. Run `42234449518` is the passing replacement.
+
+No unrelated infrastructure was changed. The viewer remains a local saved-report
+inspector: PASS is receipt-scoped, reserve UNKNOWN remains unresolved, and successful
+execution can coexist with a policy VIOLATION. It does not authenticate original
+intent, establish full wallet state or consensus/finality, and is not audited or a
+fund-protection service. See the [deployment runbook](DIGITALOCEAN_DEPLOYMENT.md)
+for exact provider records, cache observations, limitations and release procedure.
