@@ -38,7 +38,7 @@ async function repository(t) {
   const root = await mkdtemp(join(tmpdir(), 'aftercheck-cre-source-test-'));
   t.after(() => rm(root, {recursive: true, force: true}));
   const files = {
-    '.gitignore': 'output/\naftercheck-output/\nnode_modules/\nintegrations/cre/workflow/config.json\n*.wasm\n*.js\nintegrations/cre/workflow/build/\n',
+    '.gitignore': 'output/\naftercheck-output/\nnode_modules/\nintegrations/cre/workflow/config.json\n*.wasm\n*.js\nintegrations/cre/workflow/build/\nintegrations/cre/workflow/.cre_build_tmp.js\n',
     'integrations/cre/shared.ts': '// Test repository source.\n',
     'integrations/cre/config.ts': '// Test repository source.\n',
     'integrations/cre/project.yaml': 'sepolia:\n  rpcs: []\n',
@@ -150,11 +150,12 @@ test('UNIT_TEST clean-source guard rejects tracked, staged and ignored/untracked
 
 test('UNIT_TEST clean-source guard allows only known generated outputs and ignored configuration', async t => {
   const {root, revision} = await repository(t);
-  for (const path of ['config.json', 'main.js', 'main.wasm', 'build/workflow.js', 'build/workflow.wasm', 'node_modules/package/index.js']) {
+  for (const path of ['config.json', 'main.js', 'main.wasm', 'build/workflow.js', 'build/workflow.wasm', '.cre_build_tmp.js', 'node_modules/package/index.js']) {
     await mkdir(join(root, 'integrations/cre/workflow', path, '..'), {recursive: true});
     await writeFile(join(root, 'integrations/cre/workflow', path), 'generated\n');
   }
   assert.equal(await verifySourceProvenance(root), revision);
+  // A specific leftover from an actual CLI simulation is permitted; arbitrary ignored source remains blocked.
   await writeFile(join(root, 'integrations/cre/workflow/build/untracked-source.ts'), '// ignored unexpected source\n');
   await assert.rejects(verifySourceProvenance(root), /IGNORED_SOURCE_NOT_COMMITTED/);
 });
