@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "node --disable-warning=ExperimentalWarning --experimental-strip-types --test test/*.test.mjs",
-    "verify": "npm run typecheck && npm test",
+    "verify": "npm run typecheck && npm run check:browser && npm test",
     "cli": "node --disable-warning=ExperimentalWarning --experimental-strip-types bin/aftercheck.mjs",
     "demo": "node --disable-warning=ExperimentalWarning --experimental-strip-types scripts/demo.mjs",
     "typecheck": "tsc --noEmit",
@@ -16,7 +16,9 @@
     "cre:consume": "node --disable-warning=ExperimentalWarning --experimental-strip-types scripts/cre-consume.mjs",
     "cre:simulate": "node --disable-warning=ExperimentalWarning --experimental-strip-types scripts/cre-simulate.mjs",
     "cre:rehearse": "node --disable-warning=ExperimentalWarning --experimental-strip-types scripts/cre-rehearse.mjs",
-    "cre:demo": "node --disable-warning=ExperimentalWarning --experimental-strip-types scripts/cre-demo.mjs"
+    "cre:demo": "node --disable-warning=ExperimentalWarning --experimental-strip-types scripts/cre-demo.mjs",
+    "build:browser": "node scripts/build-browser.mjs",
+    "check:browser": "node scripts/build-browser.mjs --check"
   },
   "devDependencies": {
     "@types/node": "24.19.2",
