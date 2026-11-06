@@ -30,7 +30,7 @@ The simulator's sanitized stderr mentions a **default simulation-only key for po
 
 ## Reproduce
 
-Follow [the integration guide](../../CRE_INTEGRATION.md) for CLI, SDK, Bun and login requirements. Run from a clean checkout with the immutable publication commit in Git history:
+Follow [the integration guide](../../../CRE_INTEGRATION.md) for CLI, SDK, Bun and login requirements. Run from a clean checkout with the immutable publication commit in Git history:
 
 ```bash
 npm ci --ignore-scripts --no-audit --no-fund
@@ -44,7 +44,7 @@ npm run cre:consume -- examples/sepolia/evidence.json examples/sepolia/policy-pa
 
 For a non-networked test of the **already recorded** result, use `scripts/cre-consume.mjs` with [`reference/result.json`](reference/result.json) (and analogously the mismatch/unavailable files). Consumer exits **0 = MATCH, 2 = MISMATCH, 3 = UNAVAILABLE/UNSUPPORTED**; those codes do not replace the financial-policy verdict.
 
-The independent `npm run cre:demo` is explicitly an **offline replay of earlier RPC_REHEARSAL** captures, *not* the genuine CRE CLI simulator session. Don't label it otherwise in a judge video. The current public [source and sponsor guidance](../../CRE_INTEGRATION.md) preserves both classes without conflation.
+The independent `npm run cre:demo` is explicitly an **offline replay of earlier RPC_REHEARSAL** captures, *not* the genuine CRE CLI simulator session. Don't label it otherwise in a judge video. The current public [source and sponsor guidance](../../../CRE_INTEGRATION.md) preserves both classes without conflation.
 
 ## Sponsor criteria (technical evidence only)
 
