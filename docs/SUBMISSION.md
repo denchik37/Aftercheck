@@ -1,5 +1,7 @@
 # Submission preparation
 
+> **7 November 2026 final handoff:** [ready-to-paste ETHGlobal fields, three partner links, 2:58 human-voiced master-video direction, and the owner submission checklist](ETHGLOBAL_SUBMISSION_HANDOFF.md). This handoff preserves the verified CRE simulator evidence. **Final MP4, Uniswap feedback-form confirmation, Classic provenance resolution and ETHGlobal submission confirmation remain pending.**
+
 Prepared 5 November 2026. Selected track: **Start from Scratch / Classic**. This is technical submission material, not a statement of accepted participation, prize qualification or completed external submission.
 
 ## Project copy
