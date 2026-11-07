@@ -3,7 +3,7 @@
 **Partner:** Chainlink · **Best workflow with CRE** (not the CCIP 2.0 prize).
 **Selected event track:** Start from Scratch / Classic (fixed).
 **Technical status:** CRE01–CRE05 evidenced with a **successful local official CRE CLI simulation**.
-**External status:** Hacker Dashboard submission, partner selection, Classic eligibility and prize acceptance **not verified**.
+**External status:** The owner reports Aftercheck's ETHGlobal submission (including video) is complete and provided the [public showcase](https://ethglobal.com/showcase/aftercheck-ypb4t) on 7 November 2026 IST. Actual Chainlink partner selection, Classic eligibility and prize acceptance have **not** been independently verified.
 
 ## Ready-to-paste partner-specific description
 
@@ -68,7 +68,7 @@ Use natural-speed footage and the presenter's genuine voice; the [ETHGlobal vide
 
 - **Technically evidenced:** CRE workflow combines external HTTPS with historical Sepolia EVM; real official CRE CLI simulation; meaningful application consumption; public reproducible source and logs; honest limitations.
 - **Owner/organizer gate:** the selected **Classic** track's [current rules](https://ethglobal.com/events/mumbai/info/details) prohibit project-specific designs before kickoff. Some detailed preparation originated on **28 October 2026**. Their permissible use and required disclosure are unresolved; a later regenerated file or new repository does not erase actual input provenance. Disclose accurately and obtain organizer confirmation rather than certifying eligibility without it.
-- **Owner dashboard action:** submit a real project through [ETHGlobal Hacker Dashboard](https://ethglobal.com/events/mumbai/info/details); add repository and a **human-narrated 2–4-minute video**; select **Chainlink / Best workflow with CRE** as the third partner **without dropping Uniswap and EF** if those remain your selections. Maximum **three** partners. Add precise technical evidence link above. Record final submission URL, selected partner names and confirmation. No submission confirmation has been observed in this work.
+- **Owner dashboard action:** the owner reports submission of the complete Aftercheck project and final video, with [public showcase URL](https://ethglobal.com/showcase/aftercheck-ypb4t). Preserve the actual saved partner selections and dashboard confirmation separately; this update cannot independently establish that **Chainlink / Best workflow with CRE** was selected or that Classic eligibility and prize acceptance were approved.
 - **Other sponsor actions remain separate:** the Uniswap Developer Feedback Form was submitted and confirmed by the owner on 7 November 2026 IST; check the separate Uniswap prize selection and EF CROPS video-specific requirements. CRE evidence does not satisfy those by implication.
 - **Deadline:** the owner directly confirmed **Saturday 7 November 2026, 09:00 IST** in the authenticated Hacker Dashboard. Follow that earlier cutoff rather than the conflicting later public-page date; submit with a buffer.
 
