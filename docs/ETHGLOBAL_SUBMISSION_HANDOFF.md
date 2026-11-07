@@ -1,6 +1,6 @@
 # ETHGlobal Mumbai 2026 — final submission handoff
 
-**Prepared:** 7 November 2026 IST. **Submission:** NOT submitted; no dashboard confirmation or final video upload has been observed. **Track:** Start from Scratch / Classic (unchanged). **Technical baseline:** public `main` at `4232debe14a2ce98dc2745bf39d24b99a7d68a01`, with verified official CRE simulator evidence from source `1ad2dd1ba629bd0751748a7451619cfe8c5d488d`. Documentation-only revisions do not retroactively change which source was simulated.
+**Prepared:** 7 November 2026 IST. **Submission:** Owner-reported complete, with the final video and project details, 7 November 2026 IST; public [showcase URL](https://ethglobal.com/showcase/aftercheck-ypb4t) provided. The public page could not be independently fetched in this update, and sponsor selections/judging status were not independently checked. **Track:** Start from Scratch / Classic (unchanged). **Technical baseline:** public `main` at `4232debe14a2ce98dc2745bf39d24b99a7d68a01`, with verified official CRE simulator evidence from source `1ad2dd1ba629bd0751748a7451619cfe8c5d488d`. Documentation-only revisions do not retroactively change which source was simulated.
 
 ## Copy for the ETHGlobal project form
 
@@ -16,7 +16,7 @@
 
 **Working static browser demo:** https://aftercheck-g4nsb.ondigitalocean.app/ (the public browser build was verified against deployed source `f4fac3b8`; the hosted UI does **not** display the optional CRE appendix).
 
-**Video:** **NOT YET ASSEMBLED OR UPLOADED.** Add the final human-narrated MP4 link/upload only after viewing the rendered master.
+**Video:** The owner reports uploading the finished video as part of the completed ETHGlobal project submission. Final upload bytes, duration, audio and embedded playback were not independently inspected in this documentation update.
 
 **Contract deployments by this project:** None. The demonstration inspects an existing *third-party* Sepolia transaction: `0x608ca58e7d01dbe0c7fe48af8c0bb9f2bddcf07ccc36f5c28d033bc8d198d5e9`, block `7689923`; no new swap, funded wallet or contract was deployed by this read-only verifier.
 
@@ -54,10 +54,10 @@ Select at most **three** in the Hacker Dashboard (subject to actual eligibility)
 ## Owner submission checklist — incomplete items are NOT done
 
 1. Confirm participation/Classic provenance with organizers as required; this technical package does not establish eligibility.
-2. Verify final video meets the duration, audio and resolution rules; upload it to the ETHGlobal form. **Video upload: PENDING.**
+2. **Owner-reported complete:** Final video included in the project submission. Independently review playback and metadata when feasible; no claim of separate video-content verification is made here.
 3. **DONE:** [Uniswap Developer Feedback](https://developers.uniswap.org/hackathon-feedback) form submitted with its public `FEEDBACK.md` link; owner success-screen screenshot provided on 7 November 2026 IST. ETHGlobal Uniswap partner selection is a separate outstanding action.
-4. Submit [Hacker Dashboard](https://ethglobal.com/events/mumbai/info/details) project name, description, repo, public demo, video and selected **Uniswap / Ethereum Foundation / Chainlink** partner challenges. **External submission: PENDING.**
-5. Retain the actual dashboard submission URL/confirmation, selected partners and final video asset digest. Do not claim an award or verified partner acceptance.
+4. **Owner-reported complete:** ETHGlobal submission with full details and video, public link [Aftercheck showcase](https://ethglobal.com/showcase/aftercheck-ypb4t). The exact selected prize categories were not independently inspected.
+5. **Final evidence checkpoint:** Retain the submitted dashboard confirmation, three partner selections if made, exact submitted source SHA, final video file/digest and assigned judging slot when shown. Public showcase link is known; upload confirmation identifiers and video digest were not shared here. Do not claim an award or verified partner acceptance.
 
 **Submission cutoff to follow:** **Saturday 7 November 2026, 09:00 IST**, directly confirmed by the owner in the authenticated Hacker Dashboard. Public guidance appeared to indicate 8 November, but do **not** rely on that later date. The Hacker Dashboard controls the practical deadline; submit with a buffer.
 
