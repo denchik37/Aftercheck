@@ -2,7 +2,7 @@
 
 **Experimental, read-only financial verification for a supported Uniswap swap.** Aftercheck compares retained transaction evidence with a user-supplied retrospective policy. The shared browser/Node engine validates the evidence, reconciles the supported receipt and produces exact, reproducible PASS / VIOLATION / UNKNOWN findings. It is not audited and does not establish safety for real funds.
 
-**ETHGlobal Mumbai submission handoff:** [final project copy, three partner evidence links and a concise 2:58 video cut plan](docs/ETHGLOBAL_SUBMISSION_HANDOFF.md). The local CRE simulator is verified; **final video upload and Hacker Dashboard submission are not confirmed**. Official [submission guidance](https://ethglobal.com/events/mumbai/info/details) gives **8 November 2026, 09:00 IST** as the deadline.
+**ETHGlobal Mumbai submission handoff:** [final project copy, three partner evidence links and a concise 2:58 video cut plan](docs/ETHGLOBAL_SUBMISSION_HANDOFF.md). The local CRE simulator is verified; **final video upload and Hacker Dashboard submission are not confirmed**. **Owner-confirmed Hacker Dashboard cutoff is Saturday 7 November 2026, 09:00 IST**. Do not rely on a later date displayed in conflicting public guidance.
 
 **Browser-native verifier: public HTTPS acceptance PASSED (7 November 2026 IST).**
 The existing [Aftercheck static site](https://aftercheck-g4nsb.ondigitalocean.app/) served the exact reviewed assets
